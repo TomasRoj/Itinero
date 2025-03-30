@@ -20,6 +20,16 @@
             "outputPath": "dist/itinero",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "styles": [
+                "node_modules/bootstrap/dist/css/bootstrap.min.css",
+                "node_modules/bootstrap-icons/font/bootstrap-icons.css",
+                "src/styles.css"
+            ],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/popper.js/dist/umd/popper.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+            ],
             "polyfills": [
               "zone.js"
             ],
@@ -30,11 +40,7 @@
                 "glob": "**/*",
                 "input": "public"
               }
-            ],
-            "styles": [
-              "src/styles.scss"
-            ],
-            "scripts": []
+            ]
           },
           "configurations": {
             "production": {
@@ -89,11 +95,7 @@
                 "glob": "**/*",
                 "input": "public"
               }
-            ],
-            "styles": [
-              "src/styles.scss"
-            ],
-            "scripts": []
+            ]
           }
         }
       }
