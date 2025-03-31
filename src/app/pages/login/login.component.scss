@@ -1,6 +1,7 @@
+
 .red-circle-top {
-    width: 250px;
-    height: 250px;
+    width: 350px;
+    height: 350px;
     background-color: #e1052c;
     border-radius: 50%;
     transform: translateX(50%);
@@ -8,9 +9,9 @@
   }
   
   .red-circle-bottom {
-    width: 150px;
-    height: 150px;
-    background-color: #e1052c;
+    width: 400px;
+    height: 400px;
+    background-color: rgba(217, 4, 41, 0.7);
     border-radius: 50%;
     transform: translateY(50%);
     z-index: 0;
