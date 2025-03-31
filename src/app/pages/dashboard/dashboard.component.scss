@@ -1,0 +1,58 @@
+.dashboard-content {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+  }
+  
+  /* Trip Card Styles */
+  .card {
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .card img {
+    height: 180px;
+    object-fit: cover;
+  }
+  
+  /* Button Styles */
+  .btn-danger {
+    background-color: #D90429;
+    border-radius: 15px;
+    padding: 8px 24px;
+  }
+  
+  /* Trip Details */
+  .text-muted {
+    color: #6c757d !important;
+  }
+  
+  .bg-light {
+    background-color: #F3F3F3 !important;
+  }
+  
+  .rounded {
+    border-radius: 8px !important;
+  }
+  
+  /* Trip participants icon */
+  .bi-people-fill {
+    font-size: 2rem;
+  }
+  
+  /* Media queries for responsive design */
+  @media (max-width: 768px) {
+    .dashboard-content {
+      padding: 1rem !important;
+    }
+    
+    .card-img-top {
+      height: 160px;
+    }
+  }

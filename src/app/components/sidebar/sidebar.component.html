@@ -1,0 +1,25 @@
+<div class="sidebar bg-dark text-white h-100 d-flex flex-column">
+    <div class="d-flex align-items-center p-3 border-bottom border-secondary">
+      <img src="assets/images/profile.jpg" class="rounded-circle me-2" width="40" height="40" alt="Profile">
+      <div class="dropdown flex-grow-1">
+        <a>Můj účet</a>
+        <ul class="dropdown-menu" aria-labelledby="userDropdown">
+          <li><a class="dropdown-item" href="#">Profil</a></li>
+          <li><a class="dropdown-item" href="#">Nastavení</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="#">Odhlásit se</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="nav-items flex-grow-1">
+      <div class="list-group list-group-flush border-0" *ngFor="let item of navigationItems">
+        <a [class]="'list-group-item list-group-item-action border-0 text-white ' + (item.active ? 'bg-danger' : 'bg-dark')" href="#">
+          <div class="d-flex justify-content-center">
+            <i [class]="'bi bi-' + item.icon + ' mb-2'"></i>
+          </div>
+          <div class="text-center">{{ item.name }}</div>
+        </a>
+      </div>
+    </div>
+  </div>
