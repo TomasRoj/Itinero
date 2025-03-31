@@ -1,1 +1,87 @@
-<p>registrace works!</p>
+<div class="container-fluid vh-100 p-0">
+    <div class="row h-100 g-0">
+      <!-- Left Panel -->
+      <div class="col-lg-5 bg-dark text-white d-flex flex-column justify-content-center position-relative h-100">
+        <!-- Logo -->
+        <div class="logo ps-4 pt-4 position-absolute top-0 start-0">
+          <span class="display-4 text-danger fw-bold">I</span>
+        </div>
+        
+        <!-- Welcome Text -->
+        <div class="welcome-text text-center py-5">
+          <h1 class="display-5 mb-4">Začněte plánovat<br>svou cestu.</h1>
+          <p class="lead">
+            Založte si svůj účet a poznejte všechny<br>
+            skvělé funkce aplikace Itinero.
+          </p>
+        </div>
+        
+        <!-- Red Circles -->
+        <div class="red-circle-top position-absolute top-0 end-0"></div>
+        <div class="red-circle-bottom position-absolute bottom-0 start-0"></div>
+      </div>
+      
+      <!-- Right Panel -->
+      <div class="col-lg-7 bg-white d-flex align-items-center justify-content-center h-100">
+        <div class="registration-form-container p-4 w-75">
+          <h2 class="text-muted mb-5">Registrace</h2>
+          
+          <form>
+            <!-- Name Inputs - Two columns -->
+            <div class="row mb-4">
+              <div class="col-md-6 mb-3 mb-md-0">
+                <label for="firstName" class="form-label text-muted">Jméno</label>
+                <input type="text" class="form-control bg-light border-0 py-3" id="firstName" placeholder="">
+              </div>
+              <div class="col-md-6">
+                <label for="lastName" class="form-label text-muted">Příjmení</label>
+                <input type="text" class="form-control bg-light border-0 py-3" id="lastName" placeholder="">
+              </div>
+            </div>
+            
+            <!-- Email Input -->
+            <div class="mb-4">
+              <label for="email" class="form-label text-muted">E-mail</label>
+              <input type="email" class="form-control bg-light border-0 py-3" id="email" placeholder="">
+            </div>
+            
+            <!-- Password Input -->
+            <div class="mb-4">
+              <label for="password" class="form-label text-muted">Heslo</label>
+              <input type="password" class="form-control bg-light border-0 py-3" id="password" placeholder="">
+            </div>
+            
+            <!-- Confirm Password Input -->
+            <div class="mb-4">
+              <label for="confirmPassword" class="form-label text-muted">Potvrzení hesla</label>
+              <input type="password" class="form-control bg-light border-0 py-3" id="confirmPassword" placeholder="">
+            </div>
+            
+            <!-- Register Button -->
+            <div class="d-grid gap-2 mb-4">
+              <button class="btn btn-danger py-3" type="submit">Zaregistrovat se</button>
+            </div>
+            
+            <!-- Social Registration Options -->
+            <div class="social-registration">
+              <div class="d-grid gap-2 mb-3">
+                <button class="btn btn-outline-secondary py-2" type="button">
+                  <i class="bi bi-google me-2"></i> Sign in with Google
+                </button>
+              </div>
+              <div class="d-grid gap-2 mb-3">
+                <button class="btn btn-outline-secondary py-2" type="button">
+                  <i class="bi bi-apple me-2"></i> Sign in with Apple
+                </button>
+              </div>
+              <div class="d-grid gap-2">
+                <button class="btn btn-outline-secondary py-2" type="button">
+                  <i class="bi bi-facebook me-2"></i> Sign in with Facebook
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

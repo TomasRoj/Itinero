@@ -1,0 +1,54 @@
+/* Custom CSS to match the design */
+.red-circle-top {
+    width: 250px;
+    height: 250px;
+    background-color: #e1052c;
+    border-radius: 50%;
+    transform: translateX(50%);
+    z-index: 0;
+  }
+  
+  .red-circle-bottom {
+    width: 150px;
+    height: 150px;
+    background-color: #e1052c;
+    border-radius: 50%;
+    transform: translateY(50%);
+    z-index: 0;
+  }
+  
+  .bg-dark {
+    background-color: #1e1e2d !important;
+  }
+  
+  .btn-danger {
+    background-color: #e1052c;
+    border-color: #e1052c;
+  }
+  
+  .btn-danger:hover {
+    background-color: #c2041f;
+    border-color: #c2041f;
+  }
+  
+  .welcome-text {
+    z-index: 1;
+  }
+  
+  /* Ensure layout works on all device sizes */
+  @media (max-width: 991.98px) {
+    .row.h-100 {
+      min-height: 100vh;
+    }
+    
+    .col-lg-5, .col-lg-7 {
+      min-height: 50vh;
+    }
+  }
+  
+  /* Ensure the form is responsive */
+  @media (max-width: 576px) {
+    .registration-form-container {
+      width: 90%;
+    }
+  }
