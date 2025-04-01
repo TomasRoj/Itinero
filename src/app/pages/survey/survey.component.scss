@@ -1,5 +1,15 @@
-* {
-    background-image: url('/public/survey-bg.png') !important;
-    background-size: cover;
-    background-position: center;
+.button-container {
+    position: absolute;
+    bottom: 15px;
+    padding: 40px;
+    right: 0px;
+}
+
+.btn-step {
+    padding-right: 30px;
+    padding-left: 30px;
+}
+
+.btn {
+    padding: 15px 30px 15px 30px;
 }

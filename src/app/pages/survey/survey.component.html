@@ -19,16 +19,22 @@
     </div>
     
     <!-- Navigační tlačítka -->
-    <div class="button-container d-flex justify-content-between mt-4">
-      <button class="btn btn-outline-secondary" 
-              *ngIf="currentStep > 1" 
-              (click)="prevStep()">Zpět</button>
+    <div class="button-container d-flex">
+        <div class="btn-step">
+            <button class="btn btn-outline-secondary" 
+            *ngIf="currentStep > 1" 
+            (click)="prevStep()">Zpět</button>
+        </div>
       <div></div> <!-- Placeholder pro správné zarovnání -->
-      <button class="btn btn-danger" 
-              *ngIf="currentStep < totalSteps" 
-              (click)="nextStep()">Další</button>
-      <button class="btn btn-success" 
-              *ngIf="currentStep === totalSteps" 
-              (click)="submitSurvey()">Odeslat</button>
+      <div class="">
+        <button class="btn btn-danger" 
+        *ngIf="currentStep < totalSteps" 
+        (click)="nextStep()">Další</button>
+      </div>
+      <div class="btn-step">
+        <button class="btn btn-success" 
+        *ngIf="currentStep === totalSteps" 
+        (click)="submitSurvey()">Odeslat</button>
+      </div>
     </div>
 </div>
