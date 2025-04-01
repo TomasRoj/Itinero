@@ -1,0 +1,34 @@
+<app-questionaire-navbar></app-questionaire-navbar>
+
+<div class="survey-container">
+    
+    <!-- survey.component.html -->
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+        
+        <!-- Main Content -->
+        <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100 p-0">
+            <!-- Obsah podle aktuálního kroku -->
+            <div [ngSwitch]="currentStep">
+            <app-step-destination *ngSwitchCase="1"></app-step-destination>
+            <app-step-dates *ngSwitchCase="2"></app-step-dates>
+            <app-step-invite *ngSwitchCase="3"></app-step-invite>
+            </div>
+        </div>
+        </div>
+    </div>
+    
+    <!-- Navigační tlačítka -->
+    <div class="button-container d-flex justify-content-between mt-4">
+      <button class="btn btn-outline-secondary" 
+              *ngIf="currentStep > 1" 
+              (click)="prevStep()">Zpět</button>
+      <div></div> <!-- Placeholder pro správné zarovnání -->
+      <button class="btn btn-danger" 
+              *ngIf="currentStep < totalSteps" 
+              (click)="nextStep()">Další</button>
+      <button class="btn btn-success" 
+              *ngIf="currentStep === totalSteps" 
+              (click)="submitSurvey()">Odeslat</button>
+    </div>
+</div>

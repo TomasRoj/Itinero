@@ -11,13 +11,12 @@ import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 })
 export class DashboardComponent {
   username: string = 'Kateřino';
-  imagePath = "assets/valetta.jpg";
   trips = [
     {
       id: 1,
       destination: 'Valetta',
       country: 'Malta',
-      image: 'assets/images/valetta.jpg',
+      image: 'valetta.jpg',
       dateRange: '7.-13.8.2025',
       participants: 5,
       description: 'Lorem ipsum dolor sit amet consectetur. Viverra mauris scelerisque nec in amet tortor tempus nullam sodales.'
@@ -26,7 +25,7 @@ export class DashboardComponent {
       id: 2,
       destination: 'Ammán',
       country: 'Jordánsko',
-      image: 'assets/images/amman.jpg',
+      image: 'amman.jpg',
       dateRange: '1.-7.12.2025',
       participants: 2,
       description: 'Lorem ipsum dolor sit amet consectetur. Viverra mauris scelerisque nec in amet tortor tempus nullam sodales.'
