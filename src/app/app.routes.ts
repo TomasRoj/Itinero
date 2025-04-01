@@ -10,6 +10,6 @@ export const routes: Routes = [
     { path: 'Login', component: LoginComponent},
     { path: 'Register', component: RegistraceComponent},
     { path: 'Settings', component: SettingsComponent},
-pr
+
 ];
     
