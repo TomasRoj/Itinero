@@ -1,6 +1,6 @@
 .dashboard-content {
-    background-color: #f8f9fa;
     min-height: 100vh;
+    width: 100%;
   }
   
   /* Trip Card Styles */
@@ -10,6 +10,8 @@
     transition: transform 0.3s;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
+    border: rgba(239, 35, 60, 0.8) 1px solid !important;
+    box-shadow: rgba(239, 35, 60, 0.25) 10px 10px 10px !important;
   }
   
   .card:hover {
@@ -44,6 +46,10 @@
   /* Trip participants icon */
   .bi-people-fill {
     font-size: 2rem;
+  }
+
+  .bi-plus-circle {
+    font-size: 5rem;
   }
   
   /* Media queries for responsive design */

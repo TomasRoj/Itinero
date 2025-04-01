@@ -1,7 +1,6 @@
 
-/* Sidebar Styles */
 .sidebar {
-  background-color: #2B2D42 !important; 
+  background-color: #2B2D42; 
   color: white;
   min-height: 100vh;
   position: sticky;
@@ -11,46 +10,44 @@
   width: 75%;
 }
 
-/* User profile section */
-.user-profile {
-  padding: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.dropdown-menu{
+  padding: 10%;
+}
+
+.dropdown-header {
+  padding-left: 15px;
 }
 
 .rounded-circle {
   object-fit: cover;
 }
 
-/* Navigation items */
 .list-group-item {
   background-color: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.7);
   transition: all 0.3s;
-  padding-top: 50px;
-  padding-bottom: 50px;
-  //padding: 0.75rem 1rem;
+  padding-top: 30px;
+  padding-bottom: 30px;
   text-align: center;
 }
 
-.list-group-item:hover:not(.active) {
-  background-color: #2b2d42 !important;
-  color: white;
+.list-group-item:hover{
+  background-color: #EDF2F4;
+  color: black !important;
 }
 
 .list-group-item.active {
-  background-color: #2b2d42 !important;
+  background-color: #EDF2F4 !important;
   color: rgb(229, 22, 22);
 }
 
-/* Icon styling */
 .bi {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
   display: block;
 }
 
-/* Media queries for responsive design */
 @media (max-width: 768px) {
   .sidebar {
     min-height: auto;
