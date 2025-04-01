@@ -13,3 +13,18 @@
 .btn {
     padding: 15px 30px 15px 30px;
 }
+
+.survey-background {
+    background-image: url('/public/survey-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    position: relative;
+  }
+
+
+.survey-content {
+    width: 100%;
+    max-width: 1200px;
+  }
