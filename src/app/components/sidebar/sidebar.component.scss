@@ -1,13 +1,14 @@
 
 /* Sidebar Styles */
 .sidebar {
-  background-color: #2B2D42;
+  background-color: #2B2D42 !important; 
   color: white;
   min-height: 100vh;
   position: sticky;
   top: 0;
   padding-top: 20px;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  width: 75%;
 }
 
 /* User profile section */
@@ -26,17 +27,19 @@
   border: none;
   color: rgba(255, 255, 255, 0.7);
   transition: all 0.3s;
-  padding: 0.75rem 1rem;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  //padding: 0.75rem 1rem;
   text-align: center;
 }
 
 .list-group-item:hover:not(.active) {
-  background-color: #26283b;
+  background-color: #2b2d42 !important;
   color: white;
 }
 
 .list-group-item.active {
-  background-color: #26283b;
+  background-color: #2b2d42 !important;
   color: rgb(229, 22, 22);
 }
 

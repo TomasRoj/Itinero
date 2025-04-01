@@ -11,6 +11,7 @@ import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 })
 export class DashboardComponent {
   username: string = 'Kateřino';
+  imagePath = "assets/valetta.jpg";
   trips = [
     {
       id: 1,

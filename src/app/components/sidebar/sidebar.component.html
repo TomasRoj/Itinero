@@ -1,4 +1,4 @@
-<div class="sidebar bg-dark text-white h-100 d-flex flex-column">
+<div class="sidebar text-white h-100 d-flex flex-column">
     <div class="d-flex align-items-center p-3 border-bottom border-secondary">
       <img src="assets/images/profile.jpg" class="rounded-circle me-2" width="40" height="40" alt="Profile">
       <div class="dropdown flex-grow-1">
@@ -14,7 +14,7 @@
     
     <div class="nav-items flex-grow-1">
       <div class="list-group list-group-flush border-0" *ngFor="let item of navigationItems">
-        <a [class]="'list-group-item list-group-item-action border-0 text-white ' + (item.active ? 'bg-danger' : 'bg-dark')" href="#">
+        <a [class]="'list-group-item list-group-item-action border-0 text-white '" href="#">
           <div class="d-flex justify-content-center">
             <i [class]="'bi bi-' + item.icon + ' mb-2'"></i>
           </div>
