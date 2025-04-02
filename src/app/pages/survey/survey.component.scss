@@ -14,17 +14,18 @@
     padding: 15px 30px 15px 30px;
 }
 
-.survey-background {
-    background-image: url('/public/survey-bg.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    min-height: 100vh;
-    position: relative;
-  }
-
-
 .survey-content {
     width: 100%;
     max-width: 1200px;
   }
+
+  .main-content {
+    background-image: url('/public/survey-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh; /* Ensure it takes the full viewport height */
+    width: 100%; /* Ensure it stretches across the entire width */
+    position: relative; /* Prevent layout issues */
+    z-index: -1; /* Optional: Send the background image to the background */
+}
