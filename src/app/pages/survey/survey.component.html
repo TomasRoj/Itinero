@@ -1,13 +1,8 @@
 <app-questionaire-navbar></app-questionaire-navbar>
 
-<div class="survey-container">
-    
-    <!-- survey.component.html -->
-    <div class="container-fluid p-0">
-        <div class="row g-0">
-        
+<div class="survey-container"> 
         <!-- Main Content -->
-        <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100 p-0">
+        <div class="d-flex justify-content-center pt-5">
             <!-- Obsah podle aktuálního kroku -->
             <div [ngSwitch]="currentStep">
             <app-step-destination *ngSwitchCase="1"></app-step-destination>
@@ -15,26 +10,24 @@
             <app-step-invite *ngSwitchCase="3"></app-step-invite>
             </div>
         </div>
-        </div>
-    </div>
-    
-    <!-- Navigační tlačítka -->
-    <div class="button-container d-flex">
-        <div class="btn-step">
-            <button class="btn btn-outline-secondary" 
-            *ngIf="currentStep > 1" 
-            (click)="prevStep()">Zpět</button>
-        </div>
-      <div></div> <!-- Placeholder pro správné zarovnání -->
-      <div class="">
-        <button class="btn btn-danger" 
-        *ngIf="currentStep < totalSteps" 
-        (click)="nextStep()">Další</button>
-      </div>
-      <div class="btn-step">
-        <button class="btn btn-success" 
-        *ngIf="currentStep === totalSteps" 
-        (click)="submitSurvey()">Odeslat</button>
-      </div>
-    </div>
+
+</div>
+
+<div class="button-container d-flex">
+  <div class="btn-step">
+      <button class="btn btn-outline-secondary" 
+      *ngIf="currentStep > 1" 
+      (click)="prevStep()">Zpět</button>
+  </div>
+  <div></div> <!-- Placeholder pro správné zarovnání -->
+<div class="">
+  <button class="btn btn-danger" 
+  *ngIf="currentStep < totalSteps" 
+  (click)="nextStep()">Další</button>
+</div>
+<div class="btn-step">
+  <button class="btn btn-success" 
+  *ngIf="currentStep === totalSteps" 
+  (click)="submitSurvey()">Odeslat</button>
+</div>
 </div>

@@ -1,31 +1,36 @@
-.button-container {
-    position: absolute;
-    bottom: 15px;
-    padding: 40px;
-    right: 0px;
-}
-
-.btn-step {
-    padding-right: 30px;
-    padding-left: 30px;
+app-questionaire-navbar {
+    
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .btn {
     padding: 15px 30px 15px 30px;
+    margin: 20px;;
 }
 
-.survey-content {
+.button-container {
     width: 100%;
-    max-width: 1200px;
-  }
+    justify-content:end;
+    padding: 20px;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10;
+}
 
-  .main-content {
-    background-image: url('/public/survey-bg.png');
+.survey-container {
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-image: url('/public/survey-bg.png') !important;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    min-height: 100vh; /* Ensure it takes the full viewport height */
-    width: 100%; /* Ensure it stretches across the entire width */
-    position: relative; /* Prevent layout issues */
-    z-index: -1; /* Optional: Send the background image to the background */
+    width: 100%; 
+    position: relative; 
+    padding-top: 20px;
+  padding-bottom: 20px;
 }
