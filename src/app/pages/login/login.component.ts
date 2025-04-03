@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { QuestionaireNavbarComponent } from '../../components/questionaire-navbar/questionaire-navbar.component';
 
 @Component({
   selector: 'app-login',
-  imports: [],
+  imports: [CommonModule, QuestionaireNavbarComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
