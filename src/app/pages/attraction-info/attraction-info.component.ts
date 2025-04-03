@@ -9,5 +9,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './attraction-info.component.scss'
 })
 export class AttractionInfoComponent {
-
+  attraction = {
+    image: 'kasna.jpg',
+    backgroundImage: 'survey-bg.png',
+    name: 'Kašna Parnas',
+  };
 }

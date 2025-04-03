@@ -1,51 +1,36 @@
-<!-- Main content area -->
 <div class="container-fluid p-0">
-    <div class="row g-0">
-      <div class="col-md-3 col-lg-2">
-        <app-sidebar></app-sidebar>
-      </div>      <!-- Main content with right-side curved red decoration -->
-      <div class="col position-relative">
-        <!-- Red curved decoration in top-right and bottom-left -->
-
-        
-        <!-- Main content container -->
-        <div class="container pt-5">
-          <!-- Attraction card -->
-          <div class="card border-light shadow-sm rounded mx-auto my-5" style="max-width: 800px;">
-            <div class="card-body p-4">
-              <div class="row">
-                <div class="col-md-8">
-                  <!-- Attraction title and location -->
-                  <h2 class="mb-2">Kašna Parnas</h2>
-                  <p class="mb-3">Brno, Česká Republika</p>
-                  
-                  <!-- Attraction details -->
-                  <div class="mb-1"><span class="text-secondary">Adresa:</span> Zelný trh, 602 00 Brno-střed</div>
-                  <div class="mb-1"><span class="text-secondary">Otevřeno:</span> Celoročně</div>
-                  <div class="mb-1"><span class="text-secondary">Vstup:</span> Zdarma</div>
-                  <div class="mb-1"><span class="text-secondary">Web:</span> https://KasnaParnas.brno</div>
-                  <div class="mb-3"><span class="text-secondary">Odhadovaná doba návštěvy:</span> 5 min</div>
-                  
-                  <!-- Attraction description -->
-                  <div class="mb-3">
-                    <span class="text-secondary">Popis:</span> Monumentální barokní kašna uprostřed Zelného trhu v Brně postavená dle návrhu předního rakouského architekta Johanna Bernharda Fischera von Erlach v letech 1690-1696.
-                  </div>
+  <div class="row g-0">
+    <div class="col-md-2 col-lg-2">
+      <app-sidebar></app-sidebar>
+    </div>
+    <div class="col position-relative" [style.background-image]="'url(' + attraction.backgroundImage + ')'" style="background-size:cover; background-position: center;">
+      <div class="container pt-5">
+        <div class="card shadow-sm rounded mx-auto my-5" style="max-width: 800px; border: 1px solid #8D99AE">
+          <div class="card-body p-4">
+            <div class="row">
+              <div class="col-md-8">
+                <h2 class="mb-2">Kašna Parnas</h2>
+                <p class="mb-3">Brno, Česká Republika</p>
+                <div class="mb-1"><span class="text-secondary">Adresa:</span> Zelný trh, 602 00 Brno-střed</div>
+                <div class="mb-1"><span class="text-secondary">Otevřeno:</span> Celoročně</div>
+                <div class="mb-1"><span class="text-secondary">Vstup:</span> Zdarma</div>
+                <div class="mb-1"><span class="text-secondary">Web:</span> https://KasnaParnas.brno</div>
+                <div class="mb-3"><span class="text-secondary">Odhadovaná doba návštěvy:</span> 5 min</div>
+                <div class="mb-3">
+                  <span class="text-secondary">Popis:</span> Monumentální barokní kašna uprostřed Zelného trhu v Brně postavená dle návrhu předního rakouského architekta Johanna Bernharda Fischera von Erlach v letech 1690-1696.
                 </div>
-                
-                <!-- Attraction image -->
-                <div class="col-md-4">
-                  <img src="../../../../public/brno.jpg" class="img-fluid rounded" alt="Kašna Parnas">
-                </div>
+              </div>
+              <div class="col-md-4">
+                <img [src]="attraction.image" class="img-fluid rounded" alt="Kašna Parnas">
               </div>
             </div>
           </div>
-          
-          <!-- Action buttons -->
-          <div class="d-flex justify-content-end mt-3 mb-5" style="max-width: 800px; margin: 0 auto;">
-            <button class="btn btn-outline-secondary me-2">Zpět</button>
-            <button class="btn btn-danger">Nový výlet</button>
-          </div>
+        </div>
+        <div class="d-flex justify-content-end mt-3 mb-5" style="max-width: 800px; margin: 0 auto;">
+          <a href="/attractions" style="text-decoration: none; color: inherit"><button class="btn btn-outline-secondary me-2">Zpět</button></a>
+          <button class="btn btn-danger">Nový výlet</button>
         </div>
       </div>
     </div>
   </div>
+</div>
