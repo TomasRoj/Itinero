@@ -10,7 +10,7 @@
         <div class="dashboard-content p-4">
           <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
             <h1 class="mb-0">Dobré odpoledne, {{ username }}</h1>
-            <button class="btn btn-danger rounded-pill px-4">Nový výlet</button>
+            <a href="/survey"><button class="btn btn-danger rounded-pill px-4">Nový výlet</button></a>
           </div>
           
           <p class="text-muted mb-4">Zde jsou vaše aktuální výlety:</p>
@@ -42,7 +42,7 @@
 
             <div class="col-lg-4 mb-4">
               <div class="h-100 d-flex justify-content-center align-items-center" 
-                   style="cursor: pointer;" (click)="'#'">
+                   style="cursor: pointer;" [routerLink]="['/survey']">
                 <div class="text-center p-5">
                   <i class="bi bi-plus-circle"></i>
                 </div>
