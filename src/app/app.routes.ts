@@ -8,6 +8,8 @@ import { SurveyComponent } from './pages/survey/survey.component';
 import { InspirationAttractionsComponent } from './pages/inspiration-attractions/inspiration-attractions.component';
 import { InspirationDestinationsComponent } from './pages/inspiration-destinations/inspiration-destinations.component';
 import { JoinGroupComponent } from './pages/join-group/join-group.component';
+import { TripItineraryComponent } from './pages/trip-itinerary/trip-itinerary.component';
+import { AddExpenseComponent } from './pages/add-expense/add-expense.component';
 
 
 export const routes: Routes = [
@@ -21,6 +23,8 @@ export const routes: Routes = [
     { path: 'destinations', component: InspirationDestinationsComponent},
     { path: 'join-group', component: JoinGroupComponent},
     { path: 'attractioninfo', component: AttractionInfoComponent},
+    { path: 'trip-itinerary', component: TripItineraryComponent},
+    { path: 'add-expense', component: AddExpenseComponent},
 
 ];
     

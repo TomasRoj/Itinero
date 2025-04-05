@@ -1,0 +1,186 @@
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <!-- Sidebar Component -->
+        <div class="col-md-3 col-lg-2">
+            <app-itinerary-sidebar></app-itinerary-sidebar>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10 ps-0 d-flex p-5">
+            <div class="dashboard-content p-4 w-100 d-flex flex-column justify-content-center">
+
+                <div class="d-flex justify-content-between align-items-center pb-4">
+                    <h1 class="mb-0">Správa výletu</h1>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <!-- Tabs Container -->
+                        <div class="tabs-container mb-3">
+                            <div class="tab" [ngClass]="{'active': activeTab === 'destinace'}"
+                                (click)="setActiveTab('destinace')">
+                                Destinace
+                            </div>
+                            <div class="tab" [ngClass]="{'active': activeTab === 'rozvrzeni'}"
+                                (click)="setActiveTab('rozvrzeni')">
+                                Rozvržení dnů
+                            </div>
+                            <div class="tab" [ngClass]="{'active': activeTab === 'clenove'}"
+                                (click)="setActiveTab('clenove')">
+                                Členové výletu
+                            </div>
+                            <div class="tab" [ngClass]="{'active': activeTab === 'finance'}"
+                                (click)="setActiveTab('finance')">
+                                Finance
+                            </div>
+                        </div>
+
+                        <div class="divider mb-4"></div>
+
+                    </div>
+
+                    <div *ngIf="activeTab === 'destinace'" class="tab-content">
+                        <!-- Form fields -->
+                        <div class="form-container">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Název výletu">
+                                </div>
+                                <div class="form-group dropdown">
+                                    <input type="text" class="form-control" placeholder="Název destinace">
+                                    <i class="dropdown-icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group textarea-group">
+                                    <textarea class="form-control" placeholder="Popis" rows="4"></textarea>
+                                </div>
+                                <div class="form-group dropdown-group">
+                                    <div class="form-group dropdown">
+                                        <input type="text" class="form-control" placeholder="Kdy vyrážíte">
+                                        <i class="dropdown-icon"></i>
+                                    </div>
+                                    <div class="form-group dropdown">
+                                        <input type="text" class="form-control" placeholder="Kdy se vrácíte">
+                                        <i class="dropdown-icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Rozvržení dnů Tab Content -->
+
+                    <div *ngIf="activeTab === 'rozvrzeni'" class="tab-content">
+                        <!-- Zde bude obsah pro Rozvržení dnů -->
+                        <div class="placeholder-content">
+                            <p>Obsah pro Rozvržení dnů bude zde...</p>
+                        </div>
+                    </div>
+
+                    <div *ngIf="activeTab === 'finance'" class="tab-content">
+                        <!-- Zde bude obsah pro finance-->
+                        <!-- expense-list.component.html -->
+                        <div class="expense-list-container my-4">
+                            <div class="expense-items">
+                                <!-- Dynamic expense items using *ngFor -->
+                                <div *ngFor="let expense of expenses"
+                                    class="expense-item mb-2 p-3 bg-light rounded d-flex align-items-center justify-content-between">
+                                    <div class="expense-info d-flex align-items-center">
+                                        <div [ngClass]="{'bg-success bg-opacity-100': expense.isSettled, 'bg-danger': !expense.isSettled}" class="expense-type px-4 py-2 bg-secondary bg-opacity-100 rounded text-truncate" style="min-width: 250px; max-width: 250px; text-align: center; color: white;">{{
+                                            expense.description }}</div>
+                                        <div class="ms-3">
+                                            <div class="expense-paid-by">Zaplatil: {{ expense.paidBy }}</div>
+                                            <div class="expense-date text-muted small">{{ expense.date |
+                                                date:'dd.MM.yyyy' }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="expense-actions d-flex align-items-center">
+                                        <div class="expense-amount me-3">
+                                            <span class="fw-bold">{{ expense.amount }} {{ expense.currency }}</span>
+                                        </div>
+                                        <button class="btn btn-outline-secondary btn-sm me-2"
+                                            >Info</button>
+                                        <button class="btn btn-outline-danger btn-sm ">
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Add Button -->
+                            <div class="add-expense-button text-center">
+                                <a href="/add-expense">
+                                    <button class="btn btn-light border">
+                                        <i class="bi bi-plus fs-3"></i>
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Členové výletu Tab Content -->
+                    <div *ngIf="activeTab === 'clenove'" class="tab-content">
+                        <div class="members-container">
+                            <!-- Identifikátor skupiny -->
+                            <div class="form-row">
+                                <div class="form-group group-id">
+                                    <label>Id skupiny:</label>
+                                    <span class="id-value"
+                                        style="text-decoration: underline; text-decoration-color: red;">{{ groupId
+                                        }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Akce se skupinou -->
+                            <div class="form-row actions-row">
+                                <button class="action-button" (click)="transferOwnership()">
+                                    Předat vlastnictví přes ID
+                                </button>
+                                <small class="hint-text">*Nový vlastník musí být ve skupině</small>
+                            </div>
+
+                            <div class="form-row actions-row">
+                                <button class="action-button dropdown-button" (click)="removeUser()">
+                                    Odstranit uživatele ze skupiny
+                                    <i class="dropdown-icon"></i>
+                                </button>
+                            </div>
+
+                            <div class="form-row actions-row">
+                                <button class="action-button dropdown-button" (click)="showUsedNames()">
+                                    Používaná měna
+                                    <i class="dropdown-icon"></i>
+                                </button>
+                            </div>
+
+                            <!-- Seznam členů -->
+                            <div class="divider"></div>
+
+                            <div class="members-list">
+                                <div class="member-item" *ngFor="let member of groupMembers">
+                                    <div class="member-info">
+                                        <span class="member-name">{{ member.name }}</span>
+                                        <span class="member-role">{{ member.role }}</span>
+                                    </div>
+                                    <div class="member-avatar">
+                                        <img [src]="'profile.jpg'" alt="{{ member.name }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Action buttons -->
+                    <div class="action-buttons mt-4">
+                        <button class="btn btn-outline" (click)="goBack()">Zpět</button>
+                        <button class="btn btn-primary" (click)="confirm()">Potvrdit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
