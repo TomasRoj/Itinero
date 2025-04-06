@@ -10,6 +10,7 @@ import { InspirationDestinationsComponent } from './pages/inspiration-destinatio
 import { JoinGroupComponent } from './pages/join-group/join-group.component';
 import { TripItineraryComponent } from './pages/trip-itinerary/trip-itinerary.component';
 import { AddExpenseComponent } from './pages/add-expense/add-expense.component';
+import { DayItineraryComponent } from './pages/day-itinerary/day-itinerary.component';
 
 
 export const routes: Routes = [
@@ -25,6 +26,7 @@ export const routes: Routes = [
     { path: 'attractioninfo', component: AttractionInfoComponent},
     { path: 'trip-itinerary', component: TripItineraryComponent},
     { path: 'add-expense', component: AddExpenseComponent},
+    { path: 'day-itinarary', component: DayItineraryComponent}
 
 ];
     

@@ -74,7 +74,7 @@ $sidebar-width: 250px;
   transition: background-color 0.3s;
   
   &.active {
-    background-color: white;
+    background-color: #8D99AE;
     font-weight: 500;
   }
   
@@ -164,6 +164,29 @@ textarea.form-control {
   justify-content: flex-end;
   gap: 15px;
 }
+
+.day-planning-container {
+    width: 100%;
+  }
+  
+  .activity-card {
+    transition: all 0.2s ease;
+  }
+  
+  .activity-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+  
+  .summary-card {
+    background-color: #EF233C !important;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+  
+  .summary-card:hover {
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  }
 
 .btn {
   padding: 12px 30px;

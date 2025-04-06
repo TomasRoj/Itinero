@@ -1,0 +1,116 @@
+<div class="container-fluid p-0">
+    <div class="row g-0">
+      <div class="col-md-3 col-lg-2">
+        <app-itinerary-sidebar></app-itinerary-sidebar>
+      </div>
+      <div class="col-md-9 col-lg-10">
+        <div class="content-area position-relative p-4 d-flex flex-column justify-content-center">
+          <!-- Red decorative elements -->
+          <div class="red-blob-top position-absolute top-0 end-0" style="width: 180px; height: 120px; background-color: #f03b4d; border-radius: 0 0 0 100%; z-index: -1;"></div>
+          <div class="red-blob-bottom position-absolute bottom-0 start-0" style="width: 300px; height: 250px; background-color: #f03b4d; border-radius: 0 100% 0 0; z-index: -1;"></div>
+          
+          <!-- Form content -->
+          <div class="row">
+            <h1 class="mb-3">Inspirujte se našimi atrakcemi</h1>
+
+            <div class="col-lg-7 pe-lg-5">
+              <form>
+                <!-- Start Time -->
+                <div class="mb-4">
+                  <label for="startTime" class="form-label">Čas začátku</label>
+                  <input type="text" class="form-control" id="startTime">
+                </div>
+                
+                <!-- Duration -->
+                <div class="mb-4">
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <label for="duration" class="form-label">Doba trvání</label>
+                      <input type="text" class="form-control" id="duration">
+                    </div>
+                    <div class="col-sm-6 d-flex align-items-end">
+                      <label class="mb-2 ms-2">hodin</label>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Notes -->
+                <div class="mb-5">
+                  <label for="notes" class="form-label">Poznámky k aktivitě</label>
+                  <textarea class="form-control" id="notes" rows="4"></textarea>
+                </div>
+              </form>
+            </div>
+            
+            <!-- Attractions Grid -->
+            <div class="col-lg-5">
+              <!-- Toggle buttons for attraction sources -->
+              <div class="mb-3 attraction-toggle">
+                <span class="option" [class.active]="attractionSource === 'database'" (click)="selectAttractionSource('database')">Atrakce z databáze</span>
+                <span class="separator">/</span>
+                <span class="option" [class.active]="attractionSource === 'custom'" (click)="selectAttractionSource('custom')">Vlastní atrakce</span>
+              </div>
+              
+              <div class="row g-3">
+                <!-- First row -->
+                <div class="col-6">
+                  <div class="card border h-100">
+                    <div class="card-body d-flex justify-content-center align-items-center">
+                      <span class="add-icon">+</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card border h-100">
+                    <div class="card-body d-flex justify-content-center align-items-center">
+                      <span class="add-icon">+</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Second row -->
+                <div class="col-6">
+                  <div class="card border h-100">
+                    <div class="card-body d-flex justify-content-center align-items-center">
+                      <span class="add-icon">+</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card border h-100">
+                    <div class="card-body d-flex justify-content-center align-items-center">
+                      <span class="add-icon">+</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Third row -->
+                <div class="col-6">
+                  <div class="card border h-100">
+                    <div class="card-body d-flex justify-content-center align-items-center">
+                      <span class="add-icon">+</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card border h-100">
+                    <div class="card-body d-flex justify-content-center align-items-center">
+                      <span class="add-icon">+</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Action Buttons -->
+          <div class="row mt-5 me-5">
+            <div class="col-12 d-flex justify-content-end mt-5">
+              <a href="/trip-itinerary" class="btn btn-outline-secondary px-4 me-2 " style="border-radius: 20px;">Zpět</a>
+              <a href="/trip-itinerary" class="btn px-4" style="background-color: #EF233C; border-color: #e41f36; color: white; border-radius: 20px;">Potvrdit</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

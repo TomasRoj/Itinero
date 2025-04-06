@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-registrace',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './registrace.component.html',
   styleUrl: './registrace.component.scss'
 })

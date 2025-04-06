@@ -1,46 +1,35 @@
 <div class="container-fluid p-0">
     <div class="row g-0">
-        <!-- Sidebar Component -->
         <div class="col-md-3 col-lg-2">
             <app-itinerary-sidebar></app-itinerary-sidebar>
         </div>
 
-        <!-- Main Content -->
         <div class="col-md-9 col-lg-10 ps-0 d-flex p-5">
             <div class="dashboard-content p-4 w-100 d-flex flex-column justify-content-center">
-
                 <div class="d-flex justify-content-between align-items-center pb-4">
                     <h1 class="mb-0">Správa výletu</h1>
                 </div>
 
                 <div class="row">
                     <div class="col-12">
-                        <!-- Tabs Container -->
                         <div class="tabs-container mb-3">
-                            <div class="tab" [ngClass]="{'active': activeTab === 'destinace'}"
-                                (click)="setActiveTab('destinace')">
+                            <div class="tab" [ngClass]="{'active': activeTab === 'destinace'}" (click)="setActiveTab('destinace')">
                                 Destinace
                             </div>
-                            <div class="tab" [ngClass]="{'active': activeTab === 'rozvrzeni'}"
-                                (click)="setActiveTab('rozvrzeni')">
+                            <div class="tab" [ngClass]="{'active': activeTab === 'rozvrzeni'}" (click)="setActiveTab('rozvrzeni')">
                                 Rozvržení dnů
                             </div>
-                            <div class="tab" [ngClass]="{'active': activeTab === 'clenove'}"
-                                (click)="setActiveTab('clenove')">
+                            <div class="tab" [ngClass]="{'active': activeTab === 'clenove'}" (click)="setActiveTab('clenove')">
                                 Členové výletu
                             </div>
-                            <div class="tab" [ngClass]="{'active': activeTab === 'finance'}"
-                                (click)="setActiveTab('finance')">
+                            <div class="tab" [ngClass]="{'active': activeTab === 'finance'}" (click)="setActiveTab('finance')">
                                 Finance
                             </div>
                         </div>
-
                         <div class="divider mb-4"></div>
-
                     </div>
 
                     <div *ngIf="activeTab === 'destinace'" class="tab-content">
-                        <!-- Form fields -->
                         <div class="form-container">
                             <div class="form-row">
                                 <div class="form-group">
@@ -70,49 +59,123 @@
                         </div>
                     </div>
 
-
-                    <!-- Rozvržení dnů Tab Content -->
-
                     <div *ngIf="activeTab === 'rozvrzeni'" class="tab-content">
-                        <!-- Zde bude obsah pro Rozvržení dnů -->
                         <div class="placeholder-content">
+                            <div class="day-planning-container">
+                                <div class="day-header border-bottom pb-2 mb-4">
+                                    <h3>Den 1 <span class="text-muted ms-4">10/5/25</span></h3>
+                                </div>
 
-                            <!-- OBSAH PRIDAVAT DO TOHOTO DIVU, NEMENIT JINAK ZADNOU STRUKTURU MIMO OBSAHU TOTOHOTO DIVU -->
+                                <div class="row mt-4">
+                                    <div class="col-md-6 mb-4">
+                                        <h5>Popis dne</h5>
+                                        <textarea class="form-control" rows="5"></textarea>
 
+                                        <div class="col mt-3">
+                                            <h5>Shrnutí dne</h5>
+                                            <div class="row g-3 mt-1">
+                                                <div class="col-md-4">
+                                                    <div class="summary-card bg-danger text-white p-3 text-center rounded d-flex flex-column h-100">
+                                                        <div>Počet aktivit:</div>
+                                                        <div class="fs-4 mt-1 flex-grow-1 d-flex align-items-center justify-content-center">3</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="summary-card bg-danger text-white p-3 text-center rounded d-flex flex-column h-100">
+                                                        <div>Náklady na osobu:</div>
+                                                        <div class="fs-4 mt-1 flex-grow-1 d-flex align-items-center justify-content-center">398 Kč</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="summary-card bg-danger text-white p-3 text-center rounded d-flex flex-column h-100">
+                                                        <div>Odhadovaný čas:</div>
+                                                        <div class="fs-4 mt-1 flex-grow-1 d-flex align-items-center justify-content-center">6h</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 mb-4">
+                                        <h5>Aktivity a atrakce</h5>
+
+                                        <div class="activity-card mb-3 border rounded overflow-hidden">
+                                            <div class="row align-items-center mx-0">
+                                                <div class="col-md-6 bg-light p-3">
+                                                    <div class="fw-medium">Pražský hrad</div>
+                                                    <div class="text-muted">hlavní okruh</div>
+                                                </div>
+                                                <div class="col-md-2 text-center py-2">2H</div>
+                                                <div class="col-md-2 text-center py-2">350 Kč</div>
+                                                <div class="col-md-2 text-center py-2">
+                                                    <a href="/attractioninfo" style="color: inherit; text-decoration: none;"><i class="bi bi-arrow-right"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="activity-card mb-3 border rounded overflow-hidden">
+                                            <div class="row align-items-center mx-0">
+                                                <div class="col-md-6 bg-light p-3">
+                                                    <div class="fw-medium">Pražský hrad</div>
+                                                    <div class="text-muted">hlavní okruh</div>
+                                                </div>
+                                                <div class="col-md-2 text-center py-2">2H</div>
+                                                <div class="col-md-2 text-center py-2">350 Kč</div>
+                                                <div class="col-md-2 text-center py-2">
+                                                    <a href="/attractioninfo" style="color: inherit; text-decoration: none;"><i class="bi bi-arrow-right"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="activity-card mb-3 border rounded overflow-hidden">
+                                            <div class="row align-items-center mx-0">
+                                                <div class="col-md-6 bg-light p-3">
+                                                    <div class="fw-medium">Pražský hrad</div>
+                                                    <div class="text-muted">hlavní okruh</div>
+                                                </div>
+                                                <div class="col-md-2 text-center py-2">2H</div>
+                                                <div class="col-md-2 text-center py-2">350 Kč</div>
+                                                <div class="col-md-2 text-center py-2">
+                                                    <a href="/attractioninfo" style="color: inherit; text-decoration: none;"><i class="bi bi-arrow-right"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between mt-5">
+                                            <span class="text-muted"></span>
+                                            <a href="/day-itinarary" style="text-decoration: none;"><span class="text-primary cursor-pointer">Nová aktivita</span></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div *ngIf="activeTab === 'finance'" class="tab-content">
-                        <!-- Zde bude obsah pro finance-->
-                        <!-- expense-list.component.html -->
                         <div class="expense-list-container my-4">
                             <div class="expense-items">
-                                <!-- Dynamic expense items using *ngFor -->
-                                <div *ngFor="let expense of expenses"
-                                    class="expense-item mb-2 p-3 bg-light rounded d-flex align-items-center justify-content-between">
+                                <div *ngFor="let expense of expenses" class="expense-item mb-2 p-3 bg-light rounded d-flex align-items-center justify-content-between">
                                     <div class="expense-info d-flex align-items-center">
-                                        <div [ngClass]="{'bg-success bg-opacity-100': expense.isSettled, 'bg-danger': !expense.isSettled}" class="expense-type px-4 py-2 bg-secondary bg-opacity-100 rounded text-truncate" style="min-width: 250px; max-width: 250px; text-align: center; color: white;">{{
-                                            expense.description }}</div>
+                                        <div [ngClass]="{'bg-success bg-opacity-100': expense.isSettled, 'bg-danger': !expense.isSettled}" class="expense-type px-4 py-2 bg-secondary bg-opacity-100 rounded text-truncate" style="min-width: 250px; max-width: 250px; text-align: center; color: white;">
+                                            {{ expense.description }}
+                                        </div>
                                         <div class="ms-3">
                                             <div class="expense-paid-by">Zaplatil: {{ expense.paidBy }}</div>
-                                            <div class="expense-date text-muted small">{{ expense.date |
-                                                date:'dd.MM.yyyy' }}</div>
+                                            <div class="expense-date text-muted small">{{ expense.date | date:'dd.MM.yyyy' }}</div>
                                         </div>
                                     </div>
                                     <div class="expense-actions d-flex align-items-center">
                                         <div class="expense-amount me-3">
                                             <span class="fw-bold">{{ expense.amount }} {{ expense.currency }}</span>
                                         </div>
-                                        <button class="btn btn-outline-secondary btn-sm me-2"
-                                            >Info</button>
-                                        <button class="btn btn-outline-danger btn-sm ">
+                                        <button class="btn btn-outline-secondary btn-sm me-2">Info</button>
+                                        <button class="btn btn-outline-danger btn-sm">
                                             <i class="bi bi-x"></i>
                                         </button>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Add Button -->
                             <div class="add-expense-button text-center">
                                 <a href="/add-expense">
                                     <button class="btn btn-light border">
@@ -123,20 +186,15 @@
                         </div>
                     </div>
 
-                    <!-- Členové výletu Tab Content -->
                     <div *ngIf="activeTab === 'clenove'" class="tab-content">
                         <div class="members-container">
-                            <!-- Identifikátor skupiny -->
                             <div class="form-row">
                                 <div class="form-group group-id">
                                     <label>Id skupiny:</label>
-                                    <span class="id-value"
-                                        style="text-decoration: underline; text-decoration-color: red;">{{ groupId
-                                        }}</span>
+                                    <span class="id-value" style="text-decoration: underline; text-decoration-color: red;">{{ groupId }}</span>
                                 </div>
                             </div>
 
-                            <!-- Akce se skupinou -->
                             <div class="form-row actions-row">
                                 <button class="action-button" (click)="transferOwnership()">
                                     Předat vlastnictví přes ID
@@ -158,7 +216,6 @@
                                 </button>
                             </div>
 
-                            <!-- Seznam členů -->
                             <div class="divider"></div>
 
                             <div class="members-list">
@@ -175,11 +232,9 @@
                         </div>
                     </div>
 
-
-                    <!-- Action buttons -->
-                    <div class="action-buttons mt-4">
-                        <button class="btn btn-outline" (click)="goBack()">Zpět</button>
-                        <button class="btn btn-primary" (click)="confirm()">Potvrdit</button>
+                    <div class="action-buttons mt-2">
+                        <a href="/dashboard"><button class="btn btn-outline" (click)="goBack()">Zpět</button></a>
+                        <a href="/dashboard"><button class="btn btn-primary" (click)="confirm()">Potvrdit</button></a>
                     </div>
                 </div>
             </div>
