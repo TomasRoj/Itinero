@@ -1,0 +1,94 @@
+.main-content {
+    background-color: white;
+    min-height: 100vh;
+  }
+  
+  .content-wrapper {
+    padding: 30px;
+  }
+  
+  /* Tab Styles */
+  .nav-tabs {
+    border-bottom: none;
+  }
+  
+  .nav-tabs .nav-link {
+    border: none;
+    color: #6c757d;
+    font-size: 14px;
+    padding: 15px 30px;
+    border-radius: 0;
+  }
+  
+  .nav-tabs .nav-link.active {
+    background-color: #e9ecef;
+    color: #495057;
+    border-radius: 8px 8px 0 0;
+  }
+  
+  .divider {
+    margin: 20px 0;
+    border-top: 1px solid #e9ecef;
+  }
+  
+  /* Box Styles */
+  .id-box, .action-box, .member-box {
+    background-color: #e9ecef;
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  
+  .dropdown {
+    position: relative;
+  }
+  
+  .dropdown-arrow::after {
+    content: "";
+    border-top: 5px solid #6c757d;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+  }
+  
+  .small-profile {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+  }
+  
+  .role-label {
+    font-size: 14px;
+    color: #495057;
+  }
+  
+  /* Button Styles */
+  .btn-secondary {
+    background-color: white;
+    color: #6c757d;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    padding: 8px 30px;
+  }
+  
+  .btn-primary {
+    background-color: white;
+    color: #212529;
+    border: 1px solid #212529;
+    border-radius: 8px;
+    padding: 8px 30px;
+  }
+  
+  /* Decorative Elements */
+  .red-decoration {
+    width: 250px;
+    height: 250px;
+    background-color: #e91e31;
+    border-radius: 50% 50% 0 50%;
+    position: absolute;
+    bottom: -100px;
+    left: -50px;
+    z-index: -1;
+  }

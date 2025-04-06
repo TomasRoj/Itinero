@@ -16,6 +16,6 @@ export class SidebarComponent {
     { name: 'Moje výlety', icon: 'map', href: '' },
     { name: 'Prohlížet destinace', icon: 'globe', href: '/destinations' },
     { name: 'Prohlížet atrakce', icon: 'camera', href: '/attractions' },
-    { name: 'Přátelé', icon: 'person-plus', href: '' }
+    { name: 'Přátelé', icon: 'person-plus', href: '/friends' }
   ];
 }
