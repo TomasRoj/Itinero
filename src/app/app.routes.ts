@@ -18,7 +18,7 @@ export const routes: Routes = [
     { path: '', component: DashboardComponent },
     { path: 'dashboard', component: DashboardComponent },
     { path: 'login', component: LoginComponent},
-    { path: 'register', component: RegistraceComponent},
+    { path: 'registrace', component: RegistraceComponent},
     { path: 'survey', component: SurveyComponent},
     { path: 'settings', component: SettingsComponent},
     { path: 'attractions', component: InspirationAttractionsComponent},

@@ -3,7 +3,6 @@
     width: 100%;
   }
   
-  /* Trip Card Styles */
   .card {
     border-radius: 16px;
     overflow: hidden;
@@ -23,14 +22,12 @@
     object-fit: cover;
   }
   
-  /* Button Styles */
   .btn-danger {
     background-color: #D90429;
     border-radius: 15px;
     padding: 8px 24px;
   }
   
-  /* Trip Details */
   .text-muted {
     color: #6c757d !important;
   }
@@ -43,7 +40,6 @@
     border-radius: 8px !important;
   }
   
-  /* Trip participants icon */
   .bi-people-fill {
     font-size: 2rem;
   }
@@ -52,7 +48,6 @@
     font-size: 5rem;
   }
   
-  /* Media queries for responsive design */
   @media (max-width: 768px) {
     .dashboard-content {
       padding: 1rem !important;

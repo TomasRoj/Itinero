@@ -46,7 +46,6 @@
     text-decoration: none;
   }
   
-  // Attraction source toggle
   .attraction-toggle {
     .option {
       cursor: pointer;
@@ -69,13 +68,11 @@
     }
   }
   
-  // Card hover effect
   .card:hover {
     cursor: pointer;
     border-color: #f03b4d;
   }
   
-  // Responsive adjustments
   @media (max-width: 992px) {
     .content-area {
       padding: 1rem;

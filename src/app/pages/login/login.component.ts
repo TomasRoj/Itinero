@@ -12,7 +12,6 @@ export class LoginComponent {
   password: string = '';
 
   onSubmit() {
-    // Handle login logic here
     console.log('Login attempt with:', this.email);
   }
 }

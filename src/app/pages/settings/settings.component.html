@@ -1,25 +1,21 @@
 <div class="container-fluid p-0">
     <div class="row g-0">
-      <!-- Sidebar column - already implemented as a component -->
       <div class="col-md-3 col-lg-2">
         <app-sidebar></app-sidebar>
       </div>
       
-      <!-- Main content column -->
       <div class="col-md-9 pt-5">
         <div class="container py-4 px-4">
-          <!-- Page header -->
+
           <h1 class="mb-2">Nastavení</h1>
           <p class="text-muted mb-4">Správa účtu a nastavení předvoleb</p>
           <hr>
           
-          <!-- Profile settings section -->
           <h2 class="mb-4">Nastavení profilu</h2>
           
-          <!-- Profile form -->
           <form>
             <div class="row mb-4">
-              <!-- First name field -->
+
               <div class="col-md-6 mb-3">
                 <div class="form-floating">
                   <input type="text" class="form-control bg-light" id="firstName" placeholder="Jméno">
@@ -27,7 +23,6 @@
                 </div>
               </div>
               
-              <!-- Password field -->
               <div class="col-md-6 mb-3">
                 <div class="form-floating">
                   <input type="password" class="form-control bg-light" id="password" placeholder="Heslo">
@@ -35,7 +30,6 @@
                 </div>
               </div>
               
-              <!-- Last name field -->
               <div class="col-md-6 mb-3">
                 <div class="form-floating">
                   <input type="text" class="form-control bg-light" id="lastName" placeholder="Příjmení">
@@ -43,7 +37,6 @@
                 </div>
               </div>
               
-              <!-- Currency dropdown -->
               <div class="col-md-6 mb-3">
                 <div class="form-floating">
                   <select class="form-select bg-light" id="currency">
@@ -55,7 +48,6 @@
                 </div>
               </div>
               
-              <!-- Email field -->
               <div class="col-md-8 mb-3">
                 <div class="form-floating">
                   <input type="email" class="form-control bg-light" id="email" placeholder="E-mail">
@@ -64,7 +56,6 @@
               </div>
             </div>
             
-            <!-- Profile picture section -->
             <div class="row mb-5 align-items-center">
               <div class="col-auto">
                 <img [src]="'profile.jpg'" class="rounded-circle" width="100" height="100" alt="Profile picture">
@@ -81,12 +72,10 @@
             
             <hr class="mb-4">
             
-            <!-- User ID section -->
             <div class="mb-5">
               <span class="badge bg-light text-secondary p-3 fs-6">Moje ID: F56UAB</span>
             </div>
             
-            <!-- Action buttons -->
             <div class="d-flex justify-content-end gap-3">
               <a href="/dashboard"><button type="button" class="btn btn-outline-secondary">Zahodit změny</button></a>
               <a href="/dashboard"><button type="button" class="btn btn-danger">Uložit změny</button></a>

@@ -35,7 +35,6 @@
     z-index: 1;
   }
   
-  /* Ensure layout works on all device sizes */
   @media (max-width: 991.98px) {
     .row.h-100 {
       min-height: 100vh;
@@ -46,7 +45,6 @@
     }
   }
   
-  /* Ensure the form is responsive */
   @media (max-width: 576px) {
     .login-form-container {
       width: 90%;

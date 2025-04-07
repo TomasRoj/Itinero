@@ -9,7 +9,7 @@ import { ItinerarySidebarComponent } from '../../components/itinerary-sidebar/it
   styleUrl: './trip-itinerary.component.scss'
 })
 export class TripItineraryComponent {
-  activeTab = 'destinace'; // Nastaveno jako výchozí záložka "Členi výletu"
+  activeTab = 'destinace'; // Nastaveno jako výchozí záložka "Členové výletu"
   
   // Ukázková data pro členy výletu
   groupId = 'T26BLQ';
