@@ -79,9 +79,11 @@
                                         {{ user.name }}
                                       </label>
                                     </div>
-                                    <div class="input-group" style="max-width: 150px;">
+                                    <div class="input-group" style="max-width: 350px;">
                                       <input type="number" class="form-control"  [disabled]="!user.included" min="0" max="100">
                                       <span class="input-group-text">%</span>
+                                      <input type="number" class="form-control"  [disabled]="!user.included" min="1">
+                                      <span class="input-group-text">Kč</span>
                                     </div>
                                   </div>
                                 </div>
