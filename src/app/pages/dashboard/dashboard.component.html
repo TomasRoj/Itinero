@@ -10,7 +10,7 @@
         <div class="dashboard-content p-4">
           <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
             <h1 class="mb-0">Dobré odpoledne, {{ username }}</h1>
-            <a href="/survey"><button class="btn btn-danger rounded-pill px-4">Nový výlet</button></a>
+            <a [routerLink]="'/survey'"><button class="btn btn-danger rounded-pill px-4">Nový výlet</button></a>
           </div>
           
           <p class="text-muted mb-4">Zde jsou vaše aktuální výlety:</p>
@@ -34,7 +34,7 @@
                     </div>
                     <p class="text-muted bg-light py-2 px-3 rounded small">{{ trip.dateRange }}</p>
                     <p class="small">{{ trip.description }}</p>
-                    <a href="../trip-itinerary/" style="text-decoration: none; color: inherit"><button class="btn btn-danger w-100">Spravovat</button></a>
+                    <a [routerLink]="'/trip-itinerary'" style="text-decoration: none; color: inherit"><button class="btn btn-danger w-100">Spravovat</button></a>
                   </div>
                 </div>
               </div>

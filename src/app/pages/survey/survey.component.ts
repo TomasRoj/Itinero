@@ -3,13 +3,15 @@ import { QuestionaireNavbarComponent } from "../../components/questionaire-navba
 import { StepDatesComponent } from "./steps/step-dates/step-dates.component";
 import { StepDestinationComponent } from "./steps/step-destination/step-destination.component";
 import { StepInviteComponent } from "./steps/step-invite/step-invite.component";
-import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common'
+import { RouterLink} from '@angular/router';
+
 
 @Component({
   selector: 'app-survey',
   templateUrl: './survey.component.html',
   styleUrls: ['./survey.component.scss'],
-  imports: [QuestionaireNavbarComponent, StepDatesComponent, StepDestinationComponent, StepInviteComponent, CommonModule]
+  imports: [QuestionaireNavbarComponent, RouterLink, StepDatesComponent, StepDestinationComponent, StepInviteComponent, CommonModule]
 })
 export class SurveyComponent implements OnInit {
 

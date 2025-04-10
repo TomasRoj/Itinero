@@ -26,7 +26,7 @@
   (click)="nextStep()">Další</button>
 </div>
 <div class="btn-step">
-  <a href="/trip-itinerary" style="text-decoration: none; color: inherit"><button class="btn btn-success" 
+  <a [routerLink]="'/trip-itinerary'" style="text-decoration: none; color: inherit"><button class="btn btn-success" 
   *ngIf="currentStep === totalSteps" 
   (click)="submitSurvey()">Odeslat</button></a>
 </div>

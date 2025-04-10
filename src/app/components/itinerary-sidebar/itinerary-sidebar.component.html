@@ -4,20 +4,20 @@
       <div class="dropdown flex-grow-1">
         <a class="nav-link dropdown-toggle dropdown-header" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" ngbDropdownToggle>Můj účet</a>
         <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="userDropdown">
-          <li ngbDropdownItem><a class="dropdown-item" href="">Profil</a></li>
-          <li ngbDropdownItem><a class="dropdown-item" href="/settings">Nastavení</a></li>
+          <li ngbDropdownItem><a class="dropdown-item" [routerLink]="['/dashboard']">Profil</a></li>
+          <li ngbDropdownItem><a class="dropdown-item" [routerLink]="['/settings']">Nastavení</a></li>
           <li ngbDropdownItem><hr class="dropdown-divider"></li>
-          <li ngbDropdownItem><a class="dropdown-item" href="#">Odhlásit se</a></li>
+          <li ngbDropdownItem><a class="dropdown-item" [routerLink]="['/login']">Odhlásit se</a></li>
         </ul>
       </div>
     </div>
     
     <div class="nav-items flex-grow-1">
       <div class="dash-btn">
-        <a href="/dashboard"><button class="btn btn-danger rounded-pill px-4">Dashboard</button></a>
+        <a [routerLink]="['/dashboard']"><button class="btn btn-danger rounded-pill px-4">Dashboard</button></a>
       </div>
       <div class="list-group list-group-flush border-0" *ngFor="let item of navigationItems">
-        <a [class]="'list-group-item list-group-item-action border-0 text-white '" [routerLink]="item.href" href="#">
+        <a [class]="'list-group-item list-group-item-action border-0 text-white '" [routerLink]="item.href" [routerLink]="['#']">
           <div class="text-center">{{ item.name }}</div>
         </a>
       </div>

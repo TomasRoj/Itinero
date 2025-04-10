@@ -108,7 +108,7 @@
                                                 <div class="col-md-2 text-center py-2">2H</div>
                                                 <div class="col-md-2 text-center py-2">350 Kč</div>
                                                 <div class="col-md-2 text-center py-2">
-                                                    <a href="/attractioninfo" style="color: inherit; text-decoration: none;"><i class="bi bi-arrow-right"></i></a>
+                                                    <a [routerLink]="'/attractioninfo'" style="color: inherit; text-decoration: none;"><i class="bi bi-arrow-right"></i></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -122,7 +122,7 @@
                                                 <div class="col-md-2 text-center py-2">2H</div>
                                                 <div class="col-md-2 text-center py-2">350 Kč</div>
                                                 <div class="col-md-2 text-center py-2">
-                                                    <a href="/attractioninfo" style="color: inherit; text-decoration: none;"><i class="bi bi-arrow-right"></i></a>
+                                                    <a [routerLink]="'/attractioninfo'" style="color: inherit; text-decoration: none;"><i class="bi bi-arrow-right"></i></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -136,14 +136,14 @@
                                                 <div class="col-md-2 text-center py-2">2H</div>
                                                 <div class="col-md-2 text-center py-2">350 Kč</div>
                                                 <div class="col-md-2 text-center py-2">
-                                                    <a href="/attractioninfo" style="color: inherit; text-decoration: none;"><i class="bi bi-arrow-right"></i></a>
+                                                    <a [routerLink]="'/attractioninfo'" style="color: inherit; text-decoration: none;"><i class="bi bi-arrow-right"></i></a>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="d-flex justify-content-between mt-5">
                                             <span class="text-muted"></span>
-                                            <a href="/day-itinarary" style="text-decoration: none;"><span class="text-primary cursor-pointer">Nová aktivita</span></a>
+                                            <a [routerLink]="'/day-itinarary'" style="text-decoration: none;"><span class="text-primary cursor-pointer">Nová aktivita</span></a>
                                         </div>
                                     </div>
                                 </div>
@@ -177,7 +177,7 @@
                             </div>
 
                             <div class="add-expense-button text-center">
-                                <a href="/add-expense">
+                                <a [routerLink]="'/add-expense'">
                                     <button class="btn btn-light border">
                                         <i class="bi bi-plus fs-3"></i>
                                     </button>
@@ -233,8 +233,8 @@
                     </div>
 
                     <div class="action-buttons mt-2">
-                        <a href="/dashboard"><button class="btn btn-outline" (click)="goBack()">Zpět</button></a>
-                        <a href="/dashboard"><button class="btn btn-primary" (click)="confirm()">Potvrdit</button></a>
+                        <a [routerLink]="'/dashboard'"><button class="btn btn-outline" (click)="goBack()">Zpět</button></a>
+                        <a [routerLink]="'/dashboard'"><button class="btn btn-primary" (click)="confirm()">Potvrdit</button></a>
                     </div>
                 </div>
             </div>

@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { ItinerarySidebarComponent } from '../../components/itinerary-sidebar/itinerary-sidebar.component';
 import { CommonModule } from '@angular/common';
+import { RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-add-expense',
-  imports: [ItinerarySidebarComponent, CommonModule],
+  imports: [ItinerarySidebarComponent, CommonModule, RouterLink],
   templateUrl: './add-expense.component.html',
   styleUrl: './add-expense.component.scss'
 })

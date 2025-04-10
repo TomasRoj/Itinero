@@ -39,15 +39,8 @@
               <label for="password" class="form-label text-muted">Heslo</label>
               <input type="password" class="form-control bg-light border-0 py-3" id="password" placeholder="Zadejte svoje heslo">
             </div>
-            
-            <!-- Forgot Password->
-            <div class="text-end mb-4">
-              <a href="#" class="text-muted text-decoration-none small">Zapomenuté heslo?</a>
-            </div>
-            
-            <!-- Login-->
             <div class="d-grid gap-2 mb-4">
-              <a href="/dashboard" class="btn btn-danger py-3" style="text-decoration: none;">Přihlásit se</a>            </div>
+              <a [routerLink]="'/dashboard'" class="btn btn-danger py-3" style="text-decoration: none;">Přihlásit se</a>            </div>
             
             <div class="social-login">
               <div class="d-grid gap-2 mb-3">

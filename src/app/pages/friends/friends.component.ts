@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-friends',
-  imports: [CommonModule, SidebarComponent, RouterModule],
+  imports: [CommonModule, SidebarComponent, RouterLink],
   templateUrl: './friends.component.html',
   styleUrl: './friends.component.scss'
 })

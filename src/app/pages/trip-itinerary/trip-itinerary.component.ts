@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ItinerarySidebarComponent } from '../../components/itinerary-sidebar/itinerary-sidebar.component';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-trip-itinerary',
-  imports: [CommonModule, ItinerarySidebarComponent],
+  imports: [CommonModule, ItinerarySidebarComponent, RouterLink],
   templateUrl: './trip-itinerary.component.html',
   styleUrl: './trip-itinerary.component.scss'
 })

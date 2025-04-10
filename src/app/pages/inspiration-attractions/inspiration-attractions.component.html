@@ -10,7 +10,7 @@
         <div class="dashboard-content p-4">
           <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
             <h1 class="mb-0">Inspirujte se našimi atrakcemi</h1>
-            <a href="/survey"><button class="btn btn-danger rounded-pill px-4">Nový výlet</button></a>
+            <a [routerLink]="'/survey'"><button class="btn btn-danger rounded-pill px-4">Nový výlet</button></a>
           </div>
           
           <div class="row pt-5">
@@ -30,9 +30,9 @@
                         <h5>Kdy navštívit:</h5>
                         <span class="me-2">{{ attraction.timeRecommendation }}</span>
                     </div>
-                    <a href="../attractioninfo" style="text-decoration: none; color: inherit"><button class="btn btn-light w-100">Info</button></a>
+                    <a [routerLink]="'/attractioninfo'" style="text-decoration: none; color: inherit"><button class="btn btn-light w-100">Info</button></a>
                     <br><br>
-                    <a href="/dashboard" class="button btn btn-danger w-100">Moje výlety</a>
+                    <a [routerLink]="'/dashboard'" class="button btn btn-danger w-100">Moje výlety</a>
                   </div>
                 </div>
               </div>

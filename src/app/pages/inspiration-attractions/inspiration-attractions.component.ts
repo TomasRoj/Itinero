@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { CommonModule } from '@angular/common';
+import { RouterLink} from '@angular/router';
+
 
 @Component({
   selector: 'app-inspiration-attractions',
-  imports: [SidebarComponent, CommonModule],
+  imports: [SidebarComponent, CommonModule, RouterLink],
   templateUrl: './inspiration-attractions.component.html',
   styleUrl: './inspiration-attractions.component.scss'
 })
