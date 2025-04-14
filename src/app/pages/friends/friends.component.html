@@ -1,87 +1,44 @@
-<div class="container-fluid p-0">
-  <div class="row g-0">
+<!-- HTML template for the friends list -->
+<div class="container-fluid">
+  <div class="row">
     <!-- Sidebar -->
     <div class="col-md-3 col-lg-2">
       <app-sidebar></app-sidebar>
     </div>
-    
-   
-    <div class="col-md-10 main-content">
-      <div class="content-wrapper">
-   
-        <h1 class="mb-0">Spojte se svými přáteli</h1>
-        <a [routerLink]="'/survey'"><button class="btn btn-danger rounded-pill px-4 float-end">Nový výlet</button></a>
 
-        
-        <hr class="divider">
-       
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <div class="action-box">
-              <p class="mb-0">Honza Novák</p>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="member-box d-flex justify-content-between align-items-center">
-              <p class="mb-0">Kája Horáková</p>
-              <div class="d-flex align-items-center">
-                <span class="role-label me-3">Vlastník</span>
-                <img src="assets/images/profile1.jpg" class="rounded-circle small-profile" alt="User profile">
-              </div>
-            </div>
-          </div>
-        </div>
-        
+    <!-- Main content -->
+    <div class="col-md-9 p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Spojte se se svými přáteli</h2>
+        <button class="btn btn-danger">Nový výlet</button>
+      </div>
 
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <div class="action-box dropdown">
-              <p class="mb-0">Odstranit uživatele ze skupiny</p>
-              <i class="dropdown-arrow"></i>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="member-box d-flex justify-content-between align-items-center">
-              <p class="mb-0">Honza Novák</p>
+      <!-- Friends list -->
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="list-group mb-4" *ngIf="friends.length > 0">
+            <div *ngFor="let friend of friends" class="list-group-item d-flex justify-content-between align-items-center">
               <div class="d-flex align-items-center">
-                <span class="role-label me-3">Member</span>
-                <img src="assets/images/profile2.jpg" class="rounded-circle small-profile" alt="User profile">
+                <div class="text-start me-3">
+                  <h5 class="mb-1">{{ friend.name }}</h5>
+                  <p class="mb-0 text-muted">ID: {{ friend.id }}</p>
+                </div>
+              </div>
+              <div class="d-flex align-items-center">
+                <img [src]="friend.avatar" class="rounded-circle" width="50" height="50" alt="{{ friend.name }}">
+                <button class="btn btn-outline-danger ms-3" (click)="removeFriend(friend.id)">
+                  <i class="bi bi-trash"></i> Odebrat
+                </button>
               </div>
             </div>
           </div>
-        </div>
-        
-      
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <div class="action-box dropdown">
-              <p class="mb-0">Používaná měna</p>
-              <i class="dropdown-arrow"></i>
-            </div>
+
+          <!-- No friends message -->
+          <div class="alert alert-info" *ngIf="friends.length === 0">
+            Zatím nemáte žádné přátele. Přidejte si někoho pomocí ID.
           </div>
-          <div class="col-md-6">
-            <div class="member-box d-flex justify-content-between align-items-center">
-              <p class="mb-0">Tomáš Veselý</p>
-              <div class="d-flex align-items-center">
-                <span class="role-label me-3">Member</span>
-                <img src="assets/images/profile3.jpg" class="rounded-circle small-profile" alt="User profile">
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <hr class="divider">
-        
-    
-        <div class="row mt-5">
-          <div class="col-6">
-          
-            <div class="red-decoration"></div>
-          </div>
-          <div class="col-6 d-flex justify-content-end">
-            <button class="btn btn-primary me-3">Odebrat</button>
-            <button class="btn btn-primary">Přidat</button>
-          </div>
+
+
         </div>
       </div>
     </div>
