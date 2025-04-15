@@ -29,22 +29,22 @@ export class FriendsComponent implements OnInit {
       { 
         id: 'D56LAX', 
         name: 'Honza Novák', 
-        avatar: 'assets/avatars/avatar1.png' 
+        avatar: 'profile.jpg' 
       },
       { 
         id: 'R18JFK', 
         name: 'Tomáš Veselý', 
-        avatar: 'assets/avatars/avatar2.png' 
+        avatar: 'profile.jpg' 
       },
       { 
         id: 'U44ATL', 
         name: 'Petr Šťastný', 
-        avatar: 'assets/avatars/avatar3.png' 
+        avatar: 'profile.jpg' 
       },
       { 
         id: 'S26PRG', 
         name: 'Ms. Jacksonová', 
-        avatar: 'assets/avatars/avatar4.png' 
+        avatar: 'profile.jpg' 
       }
     ];
   }

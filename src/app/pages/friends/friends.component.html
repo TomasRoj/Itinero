@@ -1,23 +1,19 @@
-<!-- HTML template for the friends list -->
-<div class="container-fluid">
-  <div class="row">
-    <!-- Sidebar -->
+<div class="container-fluid p-0">
+  <div class="row g-0">
     <div class="col-md-3 col-lg-2">
       <app-sidebar></app-sidebar>
     </div>
 
-    <!-- Main content -->
     <div class="col-md-9 p-4">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Spojte se se svými přáteli</h2>
-        <button class="btn btn-danger">Nový výlet</button>
+      <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
+        <h1 class="mb-0">Spojte se se svými přáteli</h1>
+        <a [routerLink]="'/survey'"><button class="btn btn-danger rounded-pill px-4">Nový výlet</button></a>
       </div>
 
-      <!-- Friends list -->
       <div class="row">
         <div class="col-lg-8">
-          <div class="list-group mb-4" *ngIf="friends.length > 0">
-            <div *ngFor="let friend of friends" class="list-group-item d-flex justify-content-between align-items-center">
+          <div class="list-group mb-4 mt-5" *ngIf="friends.length > 0">
+            <div *ngFor="let friend of friends" class="d-flex justify-content-between align-items-center mb-3 mt-1 p-2 px-4" style="border: 1px solid #c8cdd1; border-radius: 15px;">
               <div class="d-flex align-items-center">
                 <div class="text-start me-3">
                   <h5 class="mb-1">{{ friend.name }}</h5>
@@ -33,12 +29,16 @@
             </div>
           </div>
 
-          <!-- No friends message -->
           <div class="alert alert-info" *ngIf="friends.length === 0">
             Zatím nemáte žádné přátele. Přidejte si někoho pomocí ID.
           </div>
-
-
+        </div>
+        <div class="col-lg-4 mb-4">
+          <div class="h-100 d-flex justify-content-center align-items-center" style="cursor: pointer;" [routerLink]="['/survey']">
+            <div class="text-center p-5">
+              <i class="bi bi-plus-circle"></i>
+            </div>
+          </div>
         </div>
       </div>
     </div>
