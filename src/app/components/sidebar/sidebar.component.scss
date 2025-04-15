@@ -13,6 +13,9 @@
 .dropdown-menu{
   padding: 10%;
 }
+.dropdown-menu.dropdown-menu :hover{
+  background-color: #EDF2F4;
+}
 
 .dropdown-header {
   padding-left: 15px;
@@ -33,14 +36,10 @@
 }
 
 .list-group-item:hover{
-  background-color: #EDF2F4;
-  color: black !important;
+  background-color: #3e405a;
+  color: rgb(255, 255, 255) !important;
 }
 
-.list-group-item.active {
-  background-color: #EDF2F4 !important;
-  color: rgb(229, 22, 22);
-}
 
 .bi {
   font-size: 1.5rem;
