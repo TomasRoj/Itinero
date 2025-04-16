@@ -1,12 +1,19 @@
-import { Component } from '@angular/core';
-import { RouterLink} from '@angular/router';
+import { Component, EventEmitter, Output} from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-step-destination',
-  imports: [RouterLink],
+  imports: [FormsModule],
   templateUrl: './step-destination.component.html',
   styleUrl: './step-destination.component.scss'
 })
 export class StepDestinationComponent {
+  @Output() dataChange = new EventEmitter<{name: string}>();
+
+  destination = '';
+
+  onInputChange() {
+    this.dataChange.emit({ name: this.destination });
+  }
 
 }

@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { CommonModule } from '@angular/common';
 import { RouterLink} from '@angular/router';
+import { AttractionService, Attraction } from '../../services/attraction-service.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -11,27 +13,31 @@ import { RouterLink} from '@angular/router';
   styleUrl: './inspiration-attractions.component.scss'
 })
 export class InspirationAttractionsComponent {
-  Attractions = [
-    {
-      id: 1,
-      attraction_name: 'Petra',
-      place: 'Petra, Jordánsko',
-      image: 'petra.jpg',
-      timeRecommendation: 'Červenec - srpen'
-    },
-    {
-      id: 2,
-      attraction_name: 'St. Elmo',
-      place: 'Valetta, Malta',
-      image: 'st-elmo.jpeg',
-      timeRecommendation: 'Listopad - březen'
-    },
-    {
-      id: 3,
-      attraction_name: 'Kašna',
-      place: 'Brno, Česká republika',
-      image: 'kasna.jpg',
-      timeRecommendation: 'Ideálně nikdy'
-    }
-  ];
+  Attractions: Attraction[] = [];
+  isLoading: boolean = true;
+  errorMessage: string = '';
+  constructor(private attractionService: AttractionService, private router: Router) { }
+
+  ngOnInit(): void {
+    this.loadAttractions();
+  }
+
+  loadAttractions(): void {
+    this.isLoading = true;
+    this.attractionService.getAttractions().subscribe({
+      next: (data) => {
+        this.Attractions = data;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.errorMessage = 'Nastala chyba při načítání atrakcí: ' + error.message;
+        this.isLoading = false;
+        console.error('Chyba při načítání atrakcí:', error);
+      }
+    });
+  }
+
+  viewAttractionDetail(attractionId: number): void {
+    this.router.navigate(['/attractioninfo', attractionId]);
+  }
 }

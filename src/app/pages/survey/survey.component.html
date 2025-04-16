@@ -1,33 +1,44 @@
 <app-questionaire-navbar></app-questionaire-navbar>
 
 <div class="survey-container"> 
-       
-        <div class="d-flex justify-content-center pt-5">
-            <!-- Obsah podle aktuálního kroku -->
-            <div [ngSwitch]="currentStep">
-            <app-step-destination *ngSwitchCase="1"></app-step-destination>
-            <app-step-dates *ngSwitchCase="2"></app-step-dates>
-            <app-step-invite *ngSwitchCase="3"></app-step-invite>
-            </div>
+    <div class="d-flex justify-content-center pt-5">
+        <!-- Obsah podle aktuálního kroku -->
+        <div [ngSwitch]="currentStep">
+            <app-step-destination 
+                *ngSwitchCase="1"
+                (dataChange)="updateFormData($event)">
+            </app-step-destination>
+            
+            <app-step-dates 
+                *ngSwitchCase="2"
+                (dataChange)="updateFormData($event)">
+            </app-step-dates>
+            
+            <app-step-invite 
+                *ngSwitchCase="3"
+                (dataChange)="updateFormData($event)">
+            </app-step-invite>
         </div>
-
+    </div>
 </div>
 
 <div class="button-container d-flex">
-  <div class="btn-step">
-      <button class="btn btn-outline-secondary" 
-      *ngIf="currentStep > 1" 
-      (click)="prevStep()">Zpět</button>
-  </div>
-  <div></div> <!-- Placeholder pro správné zarovnání -->
-<div class="">
-  <button class="btn btn-danger" 
-  *ngIf="currentStep < totalSteps" 
-  (click)="nextStep()">Další</button>
-</div>
-<div class="btn-step">
-  <a [routerLink]="'/trip-itinerary'" style="text-decoration: none; color: inherit"><button class="btn btn-success" 
-  *ngIf="currentStep === totalSteps" 
-  (click)="submitSurvey()">Odeslat</button></a>
-</div>
+    <div class="btn-step">
+        <button class="btn btn-outline-secondary" 
+        *ngIf="currentStep > 1" 
+        (click)="prevStep()">Zpět</button>
+    </div>
+    <div></div> <!-- Placeholder pro správné zarovnání -->
+    <div class="">
+        <button class="btn btn-danger" 
+        *ngIf="currentStep < totalSteps" 
+        (click)="nextStep()">Další</button>
+    </div>
+    <div class="btn-step">
+        <a [routerLink]="'/trip-itinerary'" style="text-decoration: none; color: inherit">
+            <button class="btn btn-success" 
+            *ngIf="currentStep === totalSteps" 
+            (click)="submitSurvey()">Odeslat</button>
+        </a>
+    </div>
 </div>

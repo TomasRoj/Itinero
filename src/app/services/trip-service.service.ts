@@ -1,10 +1,9 @@
-// trip-service.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Trip {
-  id: number;
+  id?: number;
   name: string;
   creator_id: number;
   destination_city_id: number;

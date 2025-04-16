@@ -34,7 +34,7 @@
                     </div>
                     <p class="text-muted bg-light py-2 px-3 rounded small">{{ trip.dateRange }}</p>
                     <p class="small">{{ trip.description }}</p>
-                    <a [routerLink]="'/trip-itinerary'" style="text-decoration: none; color: inherit"><button class="btn btn-danger w-100">Spravovat</button></a>
+                    <a (click)="getItemDetails(trip.id)" style="text-decoration: none; color: inherit"><button class="btn btn-danger w-100">Spravovat</button></a>
                   </div>
                 </div>
               </div>

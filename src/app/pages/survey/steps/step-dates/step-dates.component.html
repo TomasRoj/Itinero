@@ -7,11 +7,11 @@
       
         <div class="input-group mb-3 mt-5">
           <span class="input-group-text">Od</span>
-          <input type="date" class="form-control" id="startDate" aria-label="Start date">
+          <input id="startDate" [(ngModel)]="startDate" (ngModelChange)="onDateChange()" type="date" class="form-control" id="startDate" aria-label="Start date">
         </div>
         <div class="input-group mb-3">
           <span class="input-group-text">Do</span>
-          <input type="date" class="form-control" id="endDate" aria-label="End date">
+          <input id="endDate" [(ngModel)]="endDate" (ngModelChange)="onDateChange()" type="date" class="form-control" id="endDate" aria-label="End date">
         </div>
       </div>
     </div>

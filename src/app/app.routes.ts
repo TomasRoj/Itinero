@@ -13,7 +13,6 @@ import { AddExpenseComponent } from './pages/add-expense/add-expense.component';
 import { DayItineraryComponent } from './pages/day-itinerary/day-itinerary.component';
 import { FriendsComponent } from './pages/friends/friends.component';
 
-
 export const routes: Routes = [
     { path: '', component: DashboardComponent },
     { path: 'dashboard', component: DashboardComponent },
@@ -29,6 +28,9 @@ export const routes: Routes = [
     { path: 'add-expense', component: AddExpenseComponent},
     { path: 'day-itinarary', component: DayItineraryComponent},
     { path: 'friends', component: FriendsComponent},
+
+    // Dynamic
+    { path: 'trip-itinerary/:id', component: TripItineraryComponent},
 
 ];
     

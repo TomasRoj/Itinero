@@ -2,7 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { TripService, Trip } from '../../services/trip-service.service';
 
 @Component({
@@ -10,13 +10,13 @@ import { TripService, Trip } from '../../services/trip-service.service';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
   standalone: true,
-  imports: [CommonModule, SidebarComponent, RouterModule]
+  imports: [CommonModule, SidebarComponent, RouterModule,]
 })
 export class DashboardComponent implements OnInit {
   username: string = 'Kateřino';
   trips: any[] = [];
 
-  constructor(private tripService: TripService) {}
+  constructor(private tripService: TripService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadTrips();
@@ -40,6 +40,18 @@ export class DashboardComponent implements OnInit {
       error: (error) => {
         console.error('Error fetching trips:', error);
         this.loadStaticTrips();
+      }
+    });
+  }
+
+  getItemDetails(itemId: number): void {
+    this.tripService.getTripById(itemId).subscribe({
+      next: (response) => {
+        console.log('Data získána:', response);
+        this.router.navigate(['/trip-itinerary/', itemId]);
+      },
+      error: (error) => {
+        console.error('Chyba při získávání dat:', error);
       }
     });
   }
