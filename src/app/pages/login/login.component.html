@@ -27,21 +27,21 @@
         <div class="login-form-container p-4 w-75">
           <h2 class="text-muted mb-5">Přihlášení</h2>
           
-          <form>
+          <form (ngSubmit)="onLogin()">
             <!-- Email Input -->
             <div class="mb-4">
               <label for="email" class="form-label text-muted">E-mail</label>
-              <input type="email" class="form-control bg-light border-0 py-3" id="email" placeholder="Zadejte svůj e-mail">
+              <input [(ngModel)]="email" name="email" type="email" class="form-control bg-light border-0 py-3" id="email" placeholder="Zadejte svůj e-mail">
             </div>
             
             <!-- Password Input -->
             <div class="mb-2">
               <label for="password" class="form-label text-muted">Heslo</label>
-              <input type="password" class="form-control bg-light border-0 py-3" id="password" placeholder="Zadejte svoje heslo">
+              <input [(ngModel)]="password" name="password"type="password" class="form-control bg-light border-0 py-3" id="password" placeholder="Zadejte svoje heslo">
             </div>
             <div class="d-grid gap-2 mb-4">
-              <a [routerLink]="'/dashboard'" class="btn btn-danger py-3" style="text-decoration: none;">Přihlásit se</a>            </div>
-            
+              <button type="submit" class="btn btn-danger py-3">Přihlásit se</button>
+            </div>
             <div class="social-login">
               <div class="d-grid gap-2 mb-3">
                 <button class="btn btn-outline-secondary py-2" type="button">

@@ -1,19 +1,30 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { Inject } from '@angular/core';
+import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
-import { RouterLink} from '@angular/router';
-
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, RouterLink],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  imports: [CommonModule, FormsModule],
 })
 export class LoginComponent {
-  email: string = '';
-  password: string = '';
+  email = '';
+  password = '';
 
-  onSubmit() {
-    console.log('Login attempt with:', this.email);
+  constructor(@Inject(AuthService) private auth: AuthService, private router: Router) {}
+
+  onLogin() {
+    this.auth.login(this.email, this.password).subscribe({
+      next: (res) => {
+        this.auth.setToken(res.token);
+        this.router.navigate(['/dashboard']);
+      },
+      error: () => {
+        alert('Neplatné přihlašovací údaje');
+      }
+    });
   }
 }

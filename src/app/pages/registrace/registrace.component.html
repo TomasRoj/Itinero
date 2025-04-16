@@ -26,40 +26,40 @@
         <div class="registration-form-container p-4 w-75">
           <h2 class="text-muted mt-2">Registrace</h2>
           
-          <form>
+          <form (ngSubmit)="onRegister()">
          
             <div class="row mb-3">
               <div class="col-md-6 mb-3 mb-md-0">
                 <label for="firstName" class="form-label text-muted">Jméno</label>
-                <input type="text" class="form-control bg-light border-0 py-3" id="firstName" placeholder="">
+                <input [(ngModel)]="firstName" name="firstName" type="text" class="form-control bg-light border-0 py-3" id="firstName" placeholder="">
               </div>
               <div class="col-md-6">
                 <label for="lastName" class="form-label text-muted">Příjmení</label>
-                <input type="text" class="form-control bg-light border-0 py-3" id="lastName" placeholder="">
+                <input [(ngModel)]="lastName" name="lastName" type="text" class="form-control bg-light border-0 py-3" id="lastName" placeholder="">
               </div>
             </div>
             
         
             <div class="mb-3">
               <label for="email" class="form-label text-muted">E-mail</label>
-              <input type="email" class="form-control bg-light border-0 py-3" id="email" placeholder="">
+              <input [(ngModel)]="email" type="email" name="email" class="form-control bg-light border-0 py-3" id="email" placeholder="">
             </div>
             
           
             <div class="mb-3">
               <label for="password" class="form-label text-muted">Heslo</label>
-              <input type="password" class="form-control bg-light border-0 py-3" id="password" placeholder="">
+              <input [(ngModel)]="password" type="password" name="password" class="form-control bg-light border-0 py-3" id="password" placeholder="">
             </div>
             
          
             <div class="mb-4">
               <label for="confirmPassword" class="form-label text-muted">Potvrzení hesla</label>
-              <input type="password" class="form-control bg-light border-0 py-3" id="confirmPassword" placeholder="">
+              <input [(ngModel)]="confirmPassword" name="confirmPassword" type="password" class="form-control bg-light border-0 py-3" id="confirmPassword" placeholder="">
             </div>
             
         
             <div class="d-grid gap-2 mb-4">
-              <button class="btn btn-danger py-3" [routerLink]="'/dashboard'" type="submit">Zaregistrovat se</button>
+              <button class="btn btn-danger py-3" type="submit">Zaregistrovat se</button>
             </div>
             
          
