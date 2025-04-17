@@ -4,18 +4,23 @@
     <div class="d-flex justify-content-center pt-5">
         <!-- Obsah podle aktuálního kroku -->
         <div [ngSwitch]="currentStep">
+            <app-step-name 
+            *ngSwitchCase="1"
+            (dataChange)="updateFormData($event)">
+        </app-step-name>
+
             <app-step-destination 
-                *ngSwitchCase="1"
+                *ngSwitchCase="2"
                 (dataChange)="updateFormData($event)">
             </app-step-destination>
             
             <app-step-dates 
-                *ngSwitchCase="2"
+                *ngSwitchCase="3"
                 (dataChange)="updateFormData($event)">
             </app-step-dates>
             
             <app-step-invite 
-                *ngSwitchCase="3"
+                *ngSwitchCase="4"
                 (dataChange)="updateFormData($event)">
             </app-step-invite>
         </div>

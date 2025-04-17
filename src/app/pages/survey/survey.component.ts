@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { QuestionaireNavbarComponent } from "../../components/questionaire-navbar/questionaire-navbar.component";
 import { StepDatesComponent } from "./steps/step-dates/step-dates.component";
+import { StepNameComponent } from "./steps/step-name/step-name.component";
 import { StepDestinationComponent } from "./steps/step-destination/step-destination.component";
 import { StepInviteComponent } from "./steps/step-invite/step-invite.component";
 import { CommonModule } from '@angular/common'
@@ -13,14 +14,14 @@ import { Router } from '@angular/router';
   selector: 'app-survey',
   templateUrl: './survey.component.html',
   styleUrls: ['./survey.component.scss'],
-  imports: [QuestionaireNavbarComponent, RouterLink, StepDatesComponent, StepDestinationComponent, StepInviteComponent, CommonModule]
+  imports: [QuestionaireNavbarComponent, RouterLink, StepDatesComponent, StepDestinationComponent,StepNameComponent, StepInviteComponent, CommonModule]
 })
 
 export class SurveyComponent implements OnInit {
   constructor(private tripService: TripService, private router: Router) { }
 
   currentStep = 1;
-  totalSteps = 3; // celkový počet kroků
+  totalSteps = 4; // celkový počet kroků
 
   formData = {
     name:'',
@@ -52,7 +53,7 @@ export class SurveyComponent implements OnInit {
     console.log('Odeslaná data:', this.formData);
     
     const newTrip: Trip = {
-      name: 'Vyleticek automatickej',
+      name: this.formData.name,
       is_public: true, // nebo false podle potřeby
       created_at: new Date(), // aktuální datum
       updated_at: new Date(), // aktuální datum

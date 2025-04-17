@@ -1,24 +1,30 @@
 
 .red-circle-top {
-    width: 350px;
-    height: 350px;
-    background-color: #e1052c;
-    border-radius: 50%;
-    transform: translateX(50%);
-    z-index: 0;
-  }
-  
-  .red-circle-bottom {
-    width: 380px;
-    height: 380px;
-    background-color: rgba(217, 4, 41, 0.7);
-    border-radius: 50%;
-    transform: translateY(50%);
-    z-index: 0;
-  }
-  
-  .bg-dark {
-    background-color: #1e1e2d !important;
+  width: 350px;
+  height: 350px;
+  background-color: #e1052c;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translateX(50%);
+  z-index: 1; /* was 0 */
+}
+
+.red-circle-bottom {
+  width: 380px;
+  height: 380px;
+  background-color: rgba(217, 4, 41, 0.7);
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transform: translateY(50%);
+  z-index: 1; /* was 0 */
+}
+  .container-fluid {
+    position: relative;
+    overflow: hidden;
   }
   
   .btn-danger {
@@ -34,6 +40,7 @@
   .welcome-text {
     z-index: 1;
   }
+
   
   @media (max-width: 991.98px) {
     .row.h-100 {

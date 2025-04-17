@@ -1,13 +1,12 @@
 
 <div class="container-fluid vh-100 p-0">
     <div class="row h-100 g-0">
-      
-      <div class="col-lg-5 bg-dark text-white d-flex flex-column justify-content-center position-relative h-100">
+      <div class="col-lg-5 d-flex text-white flex-column justify-content-center position-relative h-100" style="background-color: #3e405a;">
         
         <div class="logo ps-4 pt-4 position-absolute top-0 start-0">
-          <span class="display-4" style="font-size: 130px; color: #D90429;">I</span>
+          <span class="display-4" style="font-size: 130px; color: #e1052c;">I</span>
         </div>
-        
+
       
         <div class="welcome-text text-center py-5">
           <h1 class="display-5 mb-4">Vítejte zpět.</h1>
@@ -16,12 +15,9 @@
             tam, kde jste skončili.
           </p>
         </div>
-        
-      
-        <div class="red-circle-top position-absolute top-0 end-0"></div>
-        <div class="red-circle-bottom position-absolute start-0"></div>
       </div>
-      
+      <div class="red-circle-top position-absolute top-0 end-0"></div>
+      <div class="red-circle-bottom position-absolute start-0"></div>
     
       <div class="col-lg-7 z-3 bg-white d-flex align-items-center justify-content-center h-100">
         <div class="login-form-container p-4 w-75">
@@ -41,6 +37,11 @@
             </div>
             <div class="d-grid gap-2 mb-4">
               <button type="submit" class="btn btn-danger py-3">Přihlásit se</button>
+            </div>
+            <div class="text-center mb-4">
+              <a routerLink="/registrace" class="registration-link" style="text-decoration: none; color: #6c757d">
+                Nemáte účet? Zaregistrujte se
+              </a>
             </div>
             <div class="social-login">
               <div class="d-grid gap-2 mb-3">

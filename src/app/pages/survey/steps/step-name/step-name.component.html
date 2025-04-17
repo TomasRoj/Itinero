@@ -1,0 +1,14 @@
+<div class="survey-form rounded p-5 position-relative" style="z-index: 10;">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 text-center">
+        <h2 class="mb-2 fw-bold">Pojmenujte si váš výlet</h2>  
+        <div class="form-group mb-5">
+          <div class="position-relative">
+            <input [(ngModel)]="name" type="text" (ngModelChange)="onInputChange()"id="survey-destination-input" class="form-control form-control-lg border-danger border-2 rounded-pill py-3 px-4"
+              placeholder="Začněte psát, potvrďte klávesou enter..." style="border-width: 3px !important;">
+          </div>
+        </div>
+  
+      </div>
+    </div>
+  </div>
