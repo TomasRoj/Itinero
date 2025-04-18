@@ -21,7 +21,10 @@ export class InspirationAttractionsComponent {
   ngOnInit(): void {
     this.loadAttractions();
   }
-
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    target.src = '/kasna.jpg';
+  }
   loadAttractions(): void {
     this.isLoading = true;
     this.attractionService.getAttractions().subscribe({

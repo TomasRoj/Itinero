@@ -1,87 +1,110 @@
 <div class="container-fluid p-0">
-    <div class="row g-0">
-      <div class="col-md-3 col-lg-2">
-        <app-sidebar></app-sidebar>
-      </div>
-      
-      <div class="col-md-9 pt-5">
-        <div class="container py-4 px-4">
-
-          <h1 class="mb-2">Nastavení</h1>
-          <p class="text-muted mb-4">Správa účtu a nastavení předvoleb</p>
-          <hr>
+  <div class="row g-0">
+    <div class="col-md-3 col-lg-2">
+      <app-sidebar></app-sidebar>
+    </div>
+    
+    <div class="col-md-9 pt-5">
+      <div class="container py-4 px-4">
+        <h1 class="mb-2">Nastavení</h1>
+        <p class="text-muted mb-4">Správa účtu a nastavení předvoleb</p>
+        <hr>
+        
+        <h2 class="mb-4">Nastavení profilu</h2>
+        
+        <form (ngSubmit)="saveChanges()">
+          <!-- Loading state -->
+          <div *ngIf="isLoading" class="d-flex justify-content-center mb-3">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Načítání...</span>
+            </div>
+          </div>
           
-          <h2 class="mb-4">Nastavení profilu</h2>
+          <!-- Success message -->
+          <div *ngIf="saveSuccess" class="alert alert-success mb-3" role="alert">
+            Změny byly úspěšně uloženy.
+          </div>
           
-          <form>
-            <div class="row mb-4">
-
-              <div class="col-md-6 mb-3">
-                <div class="form-floating">
-                  <input type="text" class="form-control bg-light" id="firstName" placeholder="Jméno">
-                  <label for="firstName">Jméno</label>
-                </div>
-              </div>
-              
-              <div class="col-md-6 mb-3">
-                <div class="form-floating">
-                  <input type="password" class="form-control bg-light" id="password" placeholder="Heslo">
-                  <label for="password">Heslo</label>
-                </div>
-              </div>
-              
-              <div class="col-md-6 mb-3">
-                <div class="form-floating">
-                  <input type="text" class="form-control bg-light" id="lastName" placeholder="Příjmení">
-                  <label for="lastName">Příjmení</label>
-                </div>
-              </div>
-              
-              <div class="col-md-6 mb-3">
-                <div class="form-floating">
-                  <select class="form-select bg-light" id="currency">
-                    <option selected>Preferovaná měna</option>
-                    <option value="CZK">CZK</option>
-                    <option value="EUR">EUR</option>
-                    <option value="USD">USD</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div class="col-md-8 mb-3">
-                <div class="form-floating">
-                  <input type="email" class="form-control bg-light" id="email" placeholder="E-mail">
-                  <label for="email">E-mail</label>
-                </div>
+          <!-- Error message -->
+          <div *ngIf="saveError" class="alert alert-danger mb-3" role="alert">
+            {{ saveError }}
+          </div>
+          
+          <div class="row mb-4">
+            <div class="col-md-6 mb-3">
+              <div class="form-floating">
+                <input type="text" class="form-control bg-light" id="firstName" placeholder="Jméno" 
+                       [(ngModel)]="user.name" name="firstName">
+                <label for="firstName">Jméno</label>
               </div>
             </div>
             
-            <div class="row mb-5 align-items-center">
-              <div class="col-auto">
-                <img [src]="'profile.jpg'" class="rounded-circle" width="100" height="100" alt="Profile picture">
-              </div>
-              <div class="col-auto">
-                <button class="btn btn-outline-secondary btn-sm">Změnit fotku</button>
-              </div>
-              <div class="col-auto">
-                <button class="btn text-secondary btn-sm">
-                  <i class="bi bi-trash"></i>
-                </button>
+            <div class="col-md-6 mb-3">
+              <div class="form-floating">
+                <input type="password" class="form-control bg-light" id="password" placeholder="Heslo"
+                       [(ngModel)]="passwordField" name="password">
+                <label for="password">Heslo</label>
               </div>
             </div>
             
-            <hr class="mb-4">
-            
-            <div class="mb-5">
-              <span class="badge bg-light text-secondary p-3 fs-6">Moje ID: F56UAB</span>
+            <div class="col-md-6 mb-3">
+              <div class="form-floating">
+                <input type="text" class="form-control bg-light" id="lastName" placeholder="Příjmení"
+                       [(ngModel)]="user.surname" name="lastName">
+                <label for="lastName">Příjmení</label>
+              </div>
             </div>
             
-            <div class="d-flex justify-content-end gap-3">
-              <a [routerLink]="'/dashboard'"><button type="button" class="btn btn-outline-secondary">Zahodit změny</button></a>
-              <a [routerLink]="'/dashboard'"><button type="button" class="btn btn-danger">Uložit změny</button></a>
+            <div class="col-md-6 mb-3">
+              <div class="form-floating">
+                <select class="form-select bg-light" id="currency" [(ngModel)]="user.preferedcurrency" name="currency">
+                  <option value="">Preferovaná měna</option>
+                  <option value="CZK">CZK</option>
+                  <option value="EUR">EUR</option>
+                  <option value="USD">USD</option>
+                </select>
+                <label for="currency">Preferovaná měna</label>
+              </div>
             </div>
-          </form>
-        </div>
+            
+            <div class="col-md-8 mb-3">
+              <div class="form-floating">
+                <input type="email" class="form-control bg-light" id="email" placeholder="E-mail"
+                       [(ngModel)]="user.email" name="email">
+                <label for="email">E-mail</label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row mb-5 align-items-center">
+            <div class="col-auto">
+              <img [src]="user.profile_picture || '/profile.jpg'" 
+              class="rounded-circle" width="100" height="100" alt="Profile picture"
+              style="object-fit: cover; width: 100px; height: 100px;">
+            </div>
+            <div class="col-auto">
+              <label for="fileInput" class="btn btn-outline-secondary btn-sm">Změnit fotku</label>
+              <input type="file" id="fileInput" class="d-none" (change)="onFileSelected($event)" accept="image/*">
+            </div>
+            <div class="col-auto">
+              <button type="button" class="btn text-secondary btn-sm" (click)="removeProfilePicture()">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+          
+          <hr class="mb-4">
+          
+          <div class="mb-5">
+            <span class="badge bg-light text-secondary p-3 fs-6">Moje ID: {{ user.id }}</span>
+          </div>
+          
+          <div class="d-flex justify-content-end gap-3">
+            <a [routerLink]="'/dashboard'"><button type="button" class="btn btn-outline-secondary">Zahodit změny</button></a>
+            <button type="submit" class="btn btn-danger">Uložit změny</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
+</div>

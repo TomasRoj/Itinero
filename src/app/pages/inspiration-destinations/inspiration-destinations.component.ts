@@ -23,7 +23,10 @@ export class InspirationDestinationsComponent {
   ngOnInit(): void {
     this.loadDestinations();
   }
-
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    target.src = '/valetta.jpg';
+  }
   loadDestinations(): void {
     this.isLoading = true;
     this.destinationService.getDestinations().subscribe({

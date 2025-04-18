@@ -12,6 +12,7 @@ export interface Destination {
   longitude: number | null;
   created_at: Date;
   updated_at: Date;
+  photoURL: string | null;
 }
 
 @Injectable({

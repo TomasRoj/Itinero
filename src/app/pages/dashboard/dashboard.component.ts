@@ -1,9 +1,9 @@
-// dashboard.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { RouterModule, Router } from '@angular/router';
 import { TripService, Trip } from '../../services/trip-service.service';
+import { UserService } from '../../services/user-service.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,13 +13,30 @@ import { TripService, Trip } from '../../services/trip-service.service';
   imports: [CommonModule, SidebarComponent, RouterModule,]
 })
 export class DashboardComponent implements OnInit {
-  username: string = 'Kateřino';
+  username: string = '';
   trips: any[] = [];
 
-  constructor(private tripService: TripService, private router: Router) {}
+  constructor(private tripService: TripService, private router: Router, private userService: UserService) {}
 
   ngOnInit(): void {
     this.loadTrips();
+    this.userService.currentUser$.subscribe(user => {
+      if (user) {
+        this.username = user.name;
+      } else {
+        // If currentUser is not available yet, try to get it
+        this.userService.getCurrentUser().subscribe({
+          next: (user) => {
+            this.username = user.name;
+          },
+          error: (error) => {
+            console.error('Error fetching user data:', error);
+            // Fallback to a default name or handle the error as needed
+            this.username = 'User';
+          }
+        });
+      }
+    });
   }
 
   loadTrips(): void {
