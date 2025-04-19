@@ -26,7 +26,7 @@ export const routes: Routes = [
         { path: 'attractions', component: InspirationAttractionsComponent},
         { path: 'destinations', component: InspirationDestinationsComponent},
         { path: 'join-group', component: JoinGroupComponent},
-        { path: 'attractioninfo', component: AttractionInfoComponent},
+        { path: 'attractioninfo/:id', component: AttractionInfoComponent},
         { path: 'trip-itinerary', component: TripItineraryComponent},
         { path: 'add-expense', component: AddExpenseComponent},
         { path: 'day-itinarary', component: DayItineraryComponent},

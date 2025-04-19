@@ -1,5 +1,4 @@
 <div class="container-fluid p-0">
-
   <div class="row g-0">
     <div class="col-md-2 col-lg-2">
       <app-sidebar></app-sidebar>
@@ -7,23 +6,43 @@
 
     <div class="col position-relative" [style.background-image]="'url(' + attraction.backgroundImage + ')'" style="background-size:cover; background-position: center;">
       <div class="container container pt-5 d-flex flex-column align-items-center">
-        <div class="card shadow-sm rounded mx-auto my-5 align-items-center" style="max-width: 1000px; border: 1px solid #8D99AE">
+        
+        <div *ngIf="loading" class="d-flex justify-content-center my-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+
+        <div *ngIf="error" class="alert alert-danger my-5" role="alert">
+          Nepodařilo se načíst informace o atrakci. Zkuste to prosím později.
+        </div>
+
+        <div *ngIf="!loading && !error" class="card shadow-sm rounded mx-auto my-5 align-items-center" style="max-width: 1000px; border: 1px solid #8D99AE">
           <div class="card-body p-5">
             <div class="row">
               <div class="col-md-8">
-                <h2 class="mb-2">Kašna Parnas</h2>
-                <p class="mb-3">Brno, Česká Republika</p>
-                <div class="mb-1"><span class="text-secondary">Adresa:</span> Zelný trh, 602 00 Brno-střed</div>
-                <div class="mb-1"><span class="text-secondary">Otevřeno:</span> Celoročně</div>
-                <div class="mb-1"><span class="text-secondary">Vstup:</span> Zdarma</div>
-                <div class="mb-1"><span class="text-secondary">Web:</span> https://KasnaParnas.brno</div>
-                <div class="mb-3"><span class="text-secondary">Odhadovaná doba návštěvy:</span> 5 min</div>
+                <h2 class="mb-2">{{ attraction.name }}</h2>
+                <p class="mb-3">{{ attraction.city || '' }} {{ attraction.country }}</p>
+                <div class="mb-1"><span class="text-secondary">Adresa:</span> {{ attraction.address || 'Neuvedeno' }}</div>
+                <div class="mb-1"><span class="text-secondary">Otevřeno:</span> {{ attraction.opening_hours || 'Neuvedeno' }}</div>
+                <div class="mb-1"><span class="text-secondary">Vstup:</span> 
+                  <span *ngIf="attraction.entrance_fee !== null && attraction.entrance_fee > 0">
+                    {{ attraction.entrance_fee }} {{ attraction.currency_code || 'CZK' }}
+                  </span>
+                  <span *ngIf="attraction.entrance_fee === 0 || attraction.entrance_fee === null">
+                    Zdarma
+                  </span>
+                </div>
+                <div class="mb-1"><span class="text-secondary">Web:</span> {{ attraction.website || 'Neuvedeno' }}</div>
+                <div class="mb-3"><span class="text-secondary">Odhadovaná doba návštěvy:</span> 
+                  {{ attraction.estimated_visit_time ? attraction.estimated_visit_time + ' min' : 'Neuvedeno' }}
+                </div>
                 <div class="mb-3">
-                  <span class="text-secondary">Popis:</span> Monumentální barokní kašna uprostřed Zelného trhu v Brně postavená dle návrhu předního rakouského architekta Johanna Bernharda Fischera von Erlach v letech 1690-1696.
+                  <span class="text-secondary">Popis:</span> {{ attraction.description || 'Popis není k dispozici.' }}
                 </div>
               </div>
               <div class="col-md-4">
-                <img [src]="attraction.image" class="img-fluid rounded" alt="Kašna Parnas">
+                <img [src]="attraction.image" (error)="attraction.image = 'kasna.jpg'" class="img-fluid rounded" [alt]="attraction.name">
               </div>
             </div>
           </div>
@@ -33,7 +52,6 @@
           <a [routerLink]="'/attractions'" style="text-decoration: none; color: inherit"><button class="btn btn-outline-secondary me-2">Zpět</button></a>
           <a [routerLink]="'/survey'" style="text-decoration: none; color: inherit"><button class="btn btn-danger">Nový výlet</button></a>
         </div>
-
       </div>
     </div>
   </div>

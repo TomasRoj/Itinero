@@ -30,9 +30,10 @@
                         <h5>Kdy navštívit:</h5>
                         <span class="me-2">{{ attraction.estimated_visit_time }}</span>
                     </div>
-                    <a [routerLink]="'/attractioninfo'" style="text-decoration: none; color: inherit"><button class="btn btn-light w-100">Info</button></a>
+                    <button (click)="viewAttractionDetail(attraction.id)" class="btn btn-light w-100">Info</button>
                     <br><br>
                     <a [routerLink]="'/dashboard'" class="button btn btn-danger w-100">Moje výlety</a>
+
                   </div>
                 </div>
               </div>
