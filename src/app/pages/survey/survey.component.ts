@@ -24,7 +24,8 @@ export class SurveyComponent implements OnInit {
   totalSteps = 4; // celkový počet kroků
 
   formData = {
-    name:'',
+    name: '',
+    destination: '',
     startDate: '',
     endDate: '',
   }; // zde budou data z celého dotazníku
@@ -77,6 +78,18 @@ export class SurveyComponent implements OnInit {
   }
 
   updateFormData(stepData: any) {
-    this.formData = { ...this.formData, ...stepData };
+    if (stepData.name !== undefined) {
+      this.formData.name = stepData.name;
+    }
+    if (stepData.destination !== undefined) {
+      this.formData.destination = stepData.destination;
+    }
+    if (stepData.startDate !== undefined) {
+      this.formData.startDate = stepData.startDate;
+    }
+    if (stepData.endDate !== undefined) {
+      this.formData.endDate = stepData.endDate;
+    }
+
   }
 }

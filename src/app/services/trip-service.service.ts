@@ -27,6 +27,10 @@ export class TripService {
     return this.http.get<Trip[]>(this.apiUrl);
   }
 
+  getTripsByUserId(userId: number): Observable<Trip[]> {
+    return this.http.get<Trip[]>(`${this.apiUrl}/user/${userId}`);
+  }
+
   getTripById(id: number): Observable<Trip> {
     return this.http.get<Trip>(`${this.apiUrl}/${id}`);
   }

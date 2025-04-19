@@ -31,10 +31,12 @@ export class TripItineraryComponent {
           const startDate = document.getElementById('startDate') as HTMLInputElement;
           const endDate = document.getElementById('endDate') as HTMLInputElement;
           const destination = document.getElementById('destinationName') as HTMLInputElement;
+          const tripName = document.getElementById('tripName') as HTMLInputElement;
 
           startDate.placeholder = new Date(this.tripData.start_date).toDateString();
           endDate.placeholder = new Date(this.tripData.end_date).toDateString();
-          destination.placeholder = this.tripData.destination_city_id.toString(); // Zde byste měli mít mapování na název města
+          destination.placeholder = this.tripData.destination_city_id.toString();
+          tripName.placeholder = this.tripData.name.toString();
         },
         error: (error: any) => {
           console.error('Chyba při načítání dat výletu:', error);

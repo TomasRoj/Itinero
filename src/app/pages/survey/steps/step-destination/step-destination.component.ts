@@ -8,12 +8,12 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './step-destination.component.scss'
 })
 export class StepDestinationComponent {
-  @Output() dataChange = new EventEmitter<{name: string}>();
+  @Output() dataChange = new EventEmitter<{destination: string}>();
 
   destination = '';
 
   onInputChange() {
-    this.dataChange.emit({ name: this.destination });
+    this.dataChange.emit({ destination: this.destination });
   }
 
 }

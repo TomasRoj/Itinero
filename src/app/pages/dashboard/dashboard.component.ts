@@ -40,23 +40,31 @@ export class DashboardComponent implements OnInit {
   }
 
   loadTrips(): void {
-    this.tripService.getTrips().subscribe({
-      next: (data: Trip[]) => {
-        this.trips = data.map(trip => {
-          return {
-            id: trip.id,
-            destination: trip.name,
-            country: 'Country',
-            image: 'assets/images/default.jpg',
-            dateRange: this.formatDateRange(new Date(trip.start_date), new Date(trip.end_date)),
-            participants: 0,
-            description: trip.description || 'No description available'
-          };
+
+    this.userService.getCurrentUser().subscribe({
+      next: (user) => {
+        this.tripService.getTripsByUserId(user.id).subscribe({
+          next: (data: Trip[]) => {
+            this.trips = data.map(trip => {
+              return {
+                id: trip.id,
+                destination: trip.name,
+                country: 'Country',
+                image: 'assets/images/default.jpg',
+                dateRange: this.formatDateRange(new Date(trip.start_date), new Date(trip.end_date)),
+                participants: 0,
+                description: trip.description || 'No description available'
+              };
+            });
+          },
+          error: (error) => {
+            console.error('Error fetching trips:', error);
+            this.loadStaticTrips();
+          }
         });
       },
-      error: (error) => {
-        console.error('Error fetching trips:', error);
-        this.loadStaticTrips();
+      error: (err) => {
+        console.error('Nepodařilo se načíst uživatele:', err);
       }
     });
   }
