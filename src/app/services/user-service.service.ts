@@ -34,7 +34,18 @@ export class UserService {
   private loadCurrentUser(): void {
     const token = localStorage.getItem('token');
     if (token) {
-      this.getCurrentUser().subscribe();
+      this.getCurrentUser().subscribe({
+        next: (user) => {
+          this.currentUserSubject.next(user);
+        },
+        error: (error) => {
+          console.error('Error loading current user', error);
+          // If the token is invalid, remove it
+          if (error.status === 401) {
+            localStorage.removeItem('token');
+          }
+        }
+      });
     }
   }
 
