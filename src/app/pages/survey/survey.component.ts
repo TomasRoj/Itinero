@@ -9,6 +9,7 @@ import { RouterLink} from '@angular/router';
 import { TripService } from '../../services/trip-service.service';
 import { Trip } from '../../services/trip-service.service';
 import { Router } from '@angular/router';
+import { User, UserService } from '../../services/user-service.service';
 
 @Component({
   selector: 'app-survey',
@@ -18,7 +19,7 @@ import { Router } from '@angular/router';
 })
 
 export class SurveyComponent implements OnInit {
-  constructor(private tripService: TripService, private router: Router) { }
+  constructor(private tripService: TripService, private router: Router, private userService: UserService) { }
 
   currentStep = 1;
   totalSteps = 4; // celkový počet kroků
@@ -53,28 +54,34 @@ export class SurveyComponent implements OnInit {
   submitSurvey() {
     console.log('Odeslaná data:', this.formData);
     
-    const newTrip: Trip = {
-      name: this.formData.name,
-      is_public: true, // nebo false podle potřeby
-      created_at: new Date(), // aktuální datum
-      updated_at: new Date(), // aktuální datum
-      start_date: new Date(this.formData.startDate),
-      end_date: new Date(this.formData.endDate),
-      destination_city_id: 1, // change this
-      creator_id: 1, // change this
-    };
-  
-    // Volání POST metody
-    this.tripService.createTrip(newTrip).subscribe({
-      next: (response) => {
-        console.log('Trip byl úspěšně vytvořen:', response);
-        this.router.navigate(['/trip-itinerary']);
+    this.userService.getCurrentUser().subscribe({
+      next: (currentUser) => {
+        const newTrip: Trip = {
+          name: this.formData.name,
+          is_public: true, 
+          created_at: new Date(), // aktuální datum
+          updated_at: new Date(), // aktuální datum
+          start_date: new Date(this.formData.startDate),
+          end_date: new Date(this.formData.endDate),
+          destination_city_id: 1, // change this
+          creator_id: currentUser.id 
+        };
+
+        // Volání POST metody
+        this.tripService.createTrip(newTrip).subscribe({
+          next: (response) => {
+            console.log('Trip byl úspěšně vytvořen:', response);
+            this.router.navigate(['/trip-itinerary']);
+          },
+          error: (error) => {
+            console.error('Chyba při vytváření tripu:', error);
+          }
+        });
       },
-      error: (error) => {
-        console.error('Chyba při vytváření tripu:', error);
+      error: (err) => {
+        console.error('Nepodařilo se načíst uživatele:', err);
       }
     });
-
   }
 
   updateFormData(stepData: any) {
