@@ -32,17 +32,74 @@ export class TripItineraryComponent {
           const endDate = document.getElementById('endDate') as HTMLInputElement;
           const destination = document.getElementById('destinationName') as HTMLInputElement;
           const tripName = document.getElementById('tripName') as HTMLInputElement;
+          const description = document.getElementById('descriptionField') as HTMLInputElement;
 
           startDate.placeholder = new Date(this.tripData.start_date).toDateString();
           endDate.placeholder = new Date(this.tripData.end_date).toDateString();
           destination.placeholder = this.tripData.destination_city_id.toString();
           tripName.placeholder = this.tripData.name.toString();
+          description.placeholder = this.tripData.description.toString();
         },
         error: (error: any) => {
           console.error('Chyba při načítání dat výletu:', error);
         }
       });
     });
+  }
+
+
+  updateTripData() {
+    
+    const startDate = document.getElementById('startDate') as HTMLInputElement;
+    const endDate = document.getElementById('endDate') as HTMLInputElement;
+    const destination = document.getElementById('destinationName') as HTMLInputElement;
+    const tripName = document.getElementById('tripName') as HTMLInputElement;
+    const description = document.getElementById('descriptionField') as HTMLInputElement;
+    
+    const updatedTrip: Trip = {
+      id: this.tripData.id,
+      name: tripName.value,
+      destination_city_id:this.tripData.destination_city_id, // toto zmenit ppozdeji aby se menilo misto podle ID + naseptavac
+      start_date: new Date(startDate.value),
+      end_date: new Date(endDate.value),
+      creator_id: this.tripData.creator_id,
+      is_public: this.tripData.is_public,
+      created_at: this.tripData.created_at,
+      updated_at: new Date(), // aktualizované datum
+      description: description.value
+    };
+
+    interface Trip {
+      id?: number;
+      name: string;
+      creator_id: number;
+      destination_city_id: number;
+      start_date: Date;
+      end_date: Date;
+      description?: string;
+      is_public: boolean;
+      created_at: Date;
+      updated_at: Date;
+    }
+
+    this.route.params.subscribe(params => {
+      const tripId = +params['id'];
+      
+
+      this.tripService.updateTrip(tripId, updatedTrip).subscribe({
+        next: (response) => {
+          console.log('Trip updated successfully:', response);
+          console.log('Aktualizovaná data výletu:', updatedTrip);
+
+          // dodelat nejakej element kam se zobrazi succes hlaska, ze data byla updated
+
+        },
+        error: (error) => {
+          console.error('Error updating trip:', error);
+        }
+      });
+    });
+
   }
 
 
@@ -105,10 +162,6 @@ export class TripItineraryComponent {
 
   goBack(): void {
     console.log('Zpět');
-  }
-
-  confirm(): void {
-    console.log('Potvrzeno');
   }
 
   addExpense(): void {
