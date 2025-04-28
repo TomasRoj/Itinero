@@ -196,24 +196,39 @@
                             </div>
 
                             <div class="form-row actions-row">
-                                <button class="action-button" (click)="transferOwnership()">
-                                    Předat vlastnictví přes ID
-                                </button>
+                                <input type="text" class="form-control" id="tripName" 
+                                       placeholder="Předat vlastnictví přes ID" 
+                                       (input)="transferOwnership()">
                                 <small class="hint-text">*Nový vlastník musí být ve skupině</small>
                             </div>
-
                             <div class="form-row actions-row">
-                                <button class="action-button dropdown-button" (click)="removeUser()">
-                                    Odstranit uživatele ze skupiny
-                                    <i class="dropdown-icon"></i>
-                                </button>
+                                <div class="dropdown">
+                                    <button class="action-button dropdown-button" (click)="toggleDropdown('removeUserDropdown')">
+                                        Odstranit uživatele ze skupiny
+                                        <i class="dropdown-icon"></i>
+                                    </button>
+                                    <div class="dropdown-menu" [ngClass]="{'show': isDropdownOpen('removeUserDropdown')}">
+                                        <div class="dropdown-header">Select Currency</div>
+                                        <a class="dropdown-item" href="#" (click)="removeUser('1')">EUR</a>
+                                        <a class="dropdown-item" href="#" (click)="removeUser('2')">USD</a>
+                                        <a class="dropdown-item" href="#" (click)="removeUser('3')">CZK</a>
+                                    </div>
+                                </div>
                             </div>
-
+                            
                             <div class="form-row actions-row">
-                                <button class="action-button dropdown-button" (click)="showUsedNames()">
-                                    Používaná měna
-                                    <i class="dropdown-icon"></i>
-                                </button>
+                                <div class="dropdown">
+                                    <button class="action-button dropdown-button" (click)="toggleDropdown('currencyDropdown')">
+                                        Používaná měna
+                                        <i class="dropdown-icon"></i>
+                                    </button>
+                                    <div class="dropdown-menu" [ngClass]="{'show': isDropdownOpen('currencyDropdown')}">
+                                        <div class="dropdown-header">Select Currency</div>
+                                        <a class="dropdown-item" href="#" (click)="showUsedCurrency('EUR')">EUR</a>
+                                        <a class="dropdown-item" href="#" (click)="showUsedCurrency('USD')">USD</a>
+                                        <a class="dropdown-item" href="#" (click)="showUsedCurrency('CZK')">CZK</a>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="divider"></div>

@@ -136,21 +136,6 @@ textarea.form-control {
   min-height: 120px;
 }
 
-.dropdown {
-  position: relative;
-  
-  .dropdown-icon {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 10px;
-    height: 10px;
-    border-left: 2px solid #888;
-    border-bottom: 2px solid #888;
-    transform: translateY(-70%) rotate(-45deg);
-  }
-}
 
 .action-buttons {
   display: flex;
@@ -343,6 +328,59 @@ textarea.form-control {
 
 .tab-content {
   min-height: 300px;
+}
+
+.dropdown {
+  width: 100%;
+}
+.dropdown-menu {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  width: 100%;
+  padding: 10%;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.dropdown-menu.dropdown-menu:hover {
+  background-color: #EDF2F4;
+}
+
+.dropdown-header {
+  padding-left: 15px;
+  font-weight: bold;
+  padding-bottom: 10px;
+}
+
+.dropdown-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  text-decoration: none;
+  color: #333;
+  display: block;
+}
+
+.dropdown-item:hover {
+  background-color: #EDF2F4;
+}
+
+.dropdown .dropdown-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.dropdown .dropdown-button .dropdown-icon {
+  margin-left: 8px;
+}
+
+/* Show the dropdown menu when active */
+.dropdown-menu.show {
+  display: block;
 }
 
 @media (max-width: 992px) {

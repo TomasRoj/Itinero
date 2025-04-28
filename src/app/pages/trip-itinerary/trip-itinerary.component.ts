@@ -152,19 +152,34 @@ export class TripItineraryComponent {
     console.log('Předat vlastnictví');
   }
 
-  removeUser(): void {
-    console.log('Odstranit uživatele');
+  removeUser(id: any) {
+    console.log('Removing user for currency:', id);
+    // Add your logic for removing a user
   }
-
-  showUsedNames(): void {
-    console.log('Zobrazit používaná jména');
-  }
-
   goBack(): void {
     console.log('Zpět');
   }
 
   addExpense(): void {
     console.log('Přidat výdaj');
+  }
+
+  openDropdowns = new Set<string>();
+
+  toggleDropdown(dropdownName: string) {
+    if (this.openDropdowns.has(dropdownName)) {
+      this.openDropdowns.delete(dropdownName);
+    } else {
+      this.openDropdowns.add(dropdownName);
+    }
+  }
+
+  isDropdownOpen(dropdownName: string): boolean {
+    return this.openDropdowns.has(dropdownName);
+  }
+
+
+  showUsedCurrency(currency: string) {
+    console.log('Showing used names for currency:', currency);
   }
 }
