@@ -6,6 +6,7 @@ export interface TripMember {
   joined_at: Date;
 }
 
+
 export class TripMembersService {
   private baseUrl: string;
   
@@ -36,8 +37,11 @@ export class TripMembersService {
     return response.json();
   }
 
-  async create(member: Omit<TripMember, 'id'>): Promise<TripMember> {
-    const response = await fetch(this.baseUrl, {
+  async addMemberToTrip(
+    tripId: number, 
+    member: Omit<TripMember, 'id' | 'trip_id' | 'joined_at'> & { joined_at?: string }
+  ): Promise<TripMember> {
+    const response = await fetch(`${this.baseUrl}/${tripId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -46,7 +50,10 @@ export class TripMembersService {
     });
     
     if (!response.ok) {
-      throw new Error(`Failed to create trip member: ${response.statusText}`);
+      if (response.status === 404) {
+        throw new Error(`Trip with ID ${tripId} not found`);
+      }
+      throw new Error(`Failed to add member to trip: ${response.statusText}`);
     }
     
     return response.json();
