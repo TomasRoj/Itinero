@@ -46,14 +46,28 @@
                                     <textarea class="form-control" id="descriptionField" placeholder="Popis" rows="4"></textarea>
                                 </div>
                                 <div class="form-group dropdown-group">
-                                    <div class="form-group dropdown">
-                                        <input type="text" class="form-control" id="startDate" placeholder="Kdy vyrážíte" readonly>
+                                    <button class="action-button dropdown-button" (click)="toggleDropdown('departureDropdown')">
+                                        Kdy vyrážíte
                                         <i class="dropdown-icon"></i>
+                                    </button>
+                                    <div class="dropdown-menu" [ngClass]="{'show': isDropdownOpen('departureDropdown')}">
+                                        <div class="input-group ">
+                                            <span class="input-group-text">Od</span>
+                                            <input id="startDate" [(ngModel)]="startDate" (ngModelChange)="onDateChange()" type="date" class="form-control" id="startDate" aria-label="Start date">
+                                          </div>
                                     </div>
-                                    <div class="form-group dropdown">
-                                        <input type="text" class="form-control" id="endDate" placeholder="Kdy se vrácíte">
+
+                                    <button class="action-button dropdown-button" (click)="toggleDropdown('arrivalDropdown')">
+                                        Kdy se vracíte
                                         <i class="dropdown-icon"></i>
+                                    </button>
+                                    <div class="dropdown-menu" [ngClass]="{'show': isDropdownOpen('arrivalDropdown')}">
+                                        <div class="input-group">
+                                            <span class="input-group-text">Do</span>
+                                            <input id="endDate" [(ngModel)]="endDate" (ngModelChange)="onDateChange()" type="date" class="form-control" id="endDate" aria-label="End date">
+                                          </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>

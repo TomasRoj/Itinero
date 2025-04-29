@@ -1,18 +1,51 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ItinerarySidebarComponent } from '../../components/itinerary-sidebar/itinerary-sidebar.component';
 import {RouterLink, ActivatedRoute } from '@angular/router';
 import { Trip, TripService } from '../../services/trip-service.service';
+import { Component, Output, EventEmitter, HostListener} from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-trip-itinerary',
-  imports: [CommonModule, ItinerarySidebarComponent, RouterLink],
+  imports: [CommonModule, ItinerarySidebarComponent, RouterLink, FormsModule],
   templateUrl: './trip-itinerary.component.html',
   styleUrl: './trip-itinerary.component.scss'
 })
 export class TripItineraryComponent {
 
   tripData: any = null;
+
+  // Data
+  @Output() changedDates = new EventEmitter<{startDate: string, endDate: string}>();
+  startDate: string = '';
+  endDate: string = '';
+
+  // Zmena dat
+  onDateChange() {
+    this.changedDates.emit({ startDate: this.startDate, endDate: this.endDate });
+    console.log('Změna data:', this.startDate, this.endDate);
+  }
+
+  openDropdown: string | null = null;
+
+  toggleDropdown(dropdownId: string): void {
+    this.openDropdown = this.openDropdown === dropdownId ? null : dropdownId;
+  }
+
+  isDropdownOpen(dropdownId: string): boolean {
+    return this.openDropdown === dropdownId;
+  }
+
+  // Zavře dropdown, když klikneš mimo
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+
+    // Zavři dropdown, pokud klik není uvnitř dropdownu ani tlačítka
+    if (!target.closest('.dropdown-menu') && !target.closest('.dropdown-button')) {
+      this.openDropdown = null;
+    }
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -50,23 +83,21 @@ export class TripItineraryComponent {
 
   updateTripData() {
     
-    const startDate = document.getElementById('startDate') as HTMLInputElement;
-    const endDate = document.getElementById('endDate') as HTMLInputElement;
     const destination = document.getElementById('destinationName') as HTMLInputElement;
     const tripName = document.getElementById('tripName') as HTMLInputElement;
     const description = document.getElementById('descriptionField') as HTMLInputElement;
-    
+
     const updatedTrip: Trip = {
       id: this.tripData.id,
-      name: tripName.value,
+      name: tripName.value || this.tripData.name,
       destination_city_id:this.tripData.destination_city_id, // toto zmenit ppozdeji aby se menilo misto podle ID + naseptavac
-      start_date: new Date(startDate.value),
-      end_date: new Date(endDate.value),
+      start_date: this.startDate ? new Date(this.startDate) : this.tripData.start_date,
+      end_date: this.endDate ? new Date(this.endDate) : this.tripData.end_date,      
       creator_id: this.tripData.creator_id,
       is_public: this.tripData.is_public,
       created_at: this.tripData.created_at,
-      updated_at: new Date(), // aktualizované datum
-      description: description.value
+      updated_at: new Date(),
+      description: description.value || this.tripData.description,
     };
 
     interface Trip {
@@ -163,21 +194,6 @@ export class TripItineraryComponent {
   addExpense(): void {
     console.log('Přidat výdaj');
   }
-
-  openDropdowns = new Set<string>();
-
-  toggleDropdown(dropdownName: string) {
-    if (this.openDropdowns.has(dropdownName)) {
-      this.openDropdowns.delete(dropdownName);
-    } else {
-      this.openDropdowns.add(dropdownName);
-    }
-  }
-
-  isDropdownOpen(dropdownName: string): boolean {
-    return this.openDropdowns.has(dropdownName);
-  }
-
 
   showUsedCurrency(currency: string) {
     console.log('Showing used names for currency:', currency);
