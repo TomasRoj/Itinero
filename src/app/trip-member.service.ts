@@ -1,136 +1,43 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 export interface TripMember {
-  id: number;
-  trip_id: number;
-  user_id: number;
-  role: string;
-  joined_at: Date;
+  id?: number;
+  tripId: number;
+  userId: number;
+  role?: string;
+  joinedAt?: Date;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 
-export class TripMembersService {
-  private baseUrl: string = 'http://localhost:5253/TripMembers';
+export class TripMemberService {
+  private apiUrl = 'http://localhost:5253/api/TripMembers';
+
+  constructor(private http: HttpClient) {}
+
+  addTripMember(tripId: number, userId: number): Observable<any> {
+    const now = new Date().toISOString();
   
-  /*
-  constructor(baseUrl: string = '/api') {
-    this.baseUrl = `${baseUrl}/TripMembers`;
-  } */
+    const payload = {
+      trip_id: tripId,
+      user_id: userId,
+      role: 'member', // výchozí hodnota
+      joined_at: now
+    };
+  
+    return this.http.post(this.apiUrl, payload);
+  }
+  
 
-  async getAll(): Promise<TripMember[]> {
-    const response = await fetch(this.baseUrl);
-    
-    if (!response.ok) {
-      throw new Error(`Failed to get trip members: ${response.statusText}`);
-    }
-    
-    return response.json();
+  getTripMembers(): Observable<TripMember[]> {
+    return this.http.get<TripMember[]>(this.apiUrl);
   }
 
-  async get(id: number): Promise<TripMember> {
-    const response = await fetch(`${this.baseUrl}/${id}`);
-    
-    if (!response.ok) {
-      if (response.status === 404) {
-        throw new Error(`Trip member with ID ${id} not found`);
-      }
-      throw new Error(`Failed to get trip member: ${response.statusText}`);
-    }
-    
-    return response.json();
-  }
-
-  async addMemberToTrip(
-    tripId: number, 
-    member: Omit<TripMember, 'id' | 'trip_id' | 'joined_at'> & { joined_at?: string }
-  ): Promise<TripMember> {
-    const response = await fetch(`${this.baseUrl}/${tripId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(member)
-    });
-    
-    if (!response.ok) {
-      if (response.status === 404) {
-        throw new Error(`Trip with ID ${tripId} not found`);
-      }
-      throw new Error(`Failed to add member to trip: ${response.statusText}`);
-    }
-    
-    return response.json();
-  }
-
-  async update(id: number, member: TripMember): Promise<void> {
-    if (id !== member.id) {
-      throw new Error('Trip member ID mismatch');
-    }
-    
-    const response = await fetch(`${this.baseUrl}/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(member)
-    });
-    
-    if (!response.ok) {
-      if (response.status === 404) {
-        throw new Error(`Trip member with ID ${id} not found`);
-      } else if (response.status === 400) {
-        throw new Error('Invalid trip member data');
-      }
-      throw new Error(`Failed to update trip member: ${response.statusText}`);
-    }
-  }
-
-  async delete(id: number): Promise<void> {
-    const response = await fetch(`${this.baseUrl}/${id}`, {
-      method: 'DELETE'
-    });
-    
-    if (!response.ok) {
-      if (response.status === 404) {
-        throw new Error(`Trip member with ID ${id} not found`);
-      }
-      throw new Error(`Failed to delete trip member: ${response.statusText}`);
-    }
+  deleteTripMember(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
-
-// Example usage:
-/*
-// Create an instance of the service
-const tripMembersService = new TripMembersService();
-
-// Get all trip members
-tripMembersService.getAll()
-  .then(members => console.log(members))
-  .catch(error => console.error(error));
-
-// Get a specific trip member
-tripMembersService.get(1)
-  .then(member => console.log(member))
-  .catch(error => console.error(error));
-
-// Create a new trip member
-const newMember = { name: 'John Doe', email: 'john@example.com' };
-tripMembersService.create(newMember)
-  .then(createdMember => console.log(createdMember))
-  .catch(error => console.error(error));
-
-// Update a trip member
-const updatedMember = { id: 1, name: 'Jane Doe', email: 'jane@example.com' };
-tripMembersService.update(1, updatedMember)
-  .then(() => console.log('Trip member updated successfully'))
-  .catch(error => console.error(error));
-
-// Delete a trip member
-tripMembersService.delete(1)
-  .then(() => console.log('Trip member deleted successfully'))
-  .catch(error => console.error(error));
-*/
