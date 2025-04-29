@@ -338,23 +338,18 @@ textarea.form-control {
   background-color: white;
   border: 1px solid #ddd;
   width: 100%;
-  padding: 10%;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   z-index: 1000;
 }
 
-.dropdown-menu.dropdown-menu:hover {
-  background-color: #EDF2F4;
-}
-
 .dropdown-header {
-  padding-left: 15px;
+  padding-left: 10px;
   font-weight: bold;
   padding-bottom: 10px;
 }
 
 .dropdown-item {
-  padding: 8px 12px;
+  padding: 8px 12px;  
   cursor: pointer;
   text-decoration: none;
   color: #333;
@@ -370,7 +365,7 @@ textarea.form-control {
   align-items: center;
   padding: 10px 15px;
   background-color: #f8f9fa;
-  border: 1px solid #ddd;
+
   cursor: pointer;
 }
 
