@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Trip} from './services/trip-service.service';  
 
 export interface TripMember {
   id?: number;
@@ -40,4 +41,9 @@ export class TripMemberService {
   deleteTripMember(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  getTripsForMember(userId: number): Observable<Trip[]> {
+    return this.http.get<Trip[]>(`${this.apiUrl}/for-member/${userId}`);
+  }  
+
 }

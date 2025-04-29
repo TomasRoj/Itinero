@@ -4,6 +4,8 @@ import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { RouterModule, Router } from '@angular/router';
 import { TripService, Trip } from '../../services/trip-service.service';
 import { UserService } from '../../services/user-service.service';
+import { forkJoin } from 'rxjs';
+import { TripMemberService } from '../../trip-member.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,7 +18,7 @@ export class DashboardComponent implements OnInit {
   username: string = '';
   trips: any[] = [];
 
-  constructor(private tripService: TripService, private router: Router, private userService: UserService) {}
+  constructor(private tripService: TripService, private router: Router, private userService: UserService, private TripMemberService: TripMemberService) {}
 
   ngOnInit(): void {
     this.loadTrips();
@@ -40,25 +42,32 @@ export class DashboardComponent implements OnInit {
   }
 
   loadTrips(): void {
-
     this.userService.getCurrentUser().subscribe({
       next: (user) => {
-        this.tripService.getTripsByUserId(user.id).subscribe({
-          next: (data: Trip[]) => {
-            this.trips = data.map(trip => {
-              return {
-                id: trip.id,
-                destination: trip.name,
-                country: 'Country',
-                image: 'assets/images/default.jpg',
-                dateRange: this.formatDateRange(new Date(trip.start_date), new Date(trip.end_date)),
-                participants: 0,
-                description: trip.description || 'No description available'
-              };
-            });
+        const createdTrips$ = this.tripService.getTripsByUserId(user.id);
+        const memberTrips$ = this.TripMemberService.getTripsForMember(user.id);
+  
+        forkJoin([createdTrips$, memberTrips$]).subscribe({
+          next: ([createdTrips, memberTrips]) => {
+            const allTrips = [...createdTrips, ...memberTrips];
+  
+            // Odstranění duplikátů podle ID
+            const uniqueTrips = allTrips.filter(
+              (trip, index, self) => index === self.findIndex(t => t.id === trip.id)
+            );
+  
+            this.trips = uniqueTrips.map(trip => ({
+              id: trip.id,
+              destination: trip.name,
+              country: 'Country',
+              image: 'assets/images/default.jpg',
+              dateRange: this.formatDateRange(new Date(trip.start_date), new Date(trip.end_date)),
+              participants: 0,
+              description: trip.description || 'No description available'
+            }));
           },
-          error: (error) => {
-            console.error('Error fetching trips:', error);
+          error: (err) => {
+            console.error('Chyba při načítání výletů:', err);
             this.loadStaticTrips();
           }
         });
@@ -68,6 +77,7 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
+  
 
   getItemDetails(itemId: number): void {
     this.tripService.getTripById(itemId).subscribe({
