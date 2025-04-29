@@ -1,3 +1,5 @@
+import { Injectable } from '@angular/core';
+
 export interface TripMember {
   id: number;
   trip_id: number;
@@ -6,13 +8,17 @@ export interface TripMember {
   joined_at: Date;
 }
 
+@Injectable({
+  providedIn: 'root'
+})
 
 export class TripMembersService {
-  private baseUrl: string;
+  private baseUrl: string = 'http://localhost:5253/TripMembers';
   
+  /*
   constructor(baseUrl: string = '/api') {
     this.baseUrl = `${baseUrl}/TripMembers`;
-  }
+  } */
 
   async getAll(): Promise<TripMember[]> {
     const response = await fetch(this.baseUrl);
