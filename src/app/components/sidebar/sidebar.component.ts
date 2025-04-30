@@ -12,7 +12,7 @@ import { RouterLink} from '@angular/router';
 export class SidebarComponent {
   navigationItems = [
     { name: 'Dashboard', icon: 'speedometer2', href: '/dashboard' },
-    { name: 'Připojení do skupiny', icon: 'people', href: '/join-group' },
+    { name: 'Připojení do výletu', icon: 'people', href: '/join-group' },
     { name: 'Moje výlety', icon: 'map', href: '' },
     { name: 'Prohlížet destinace', icon: 'globe', href: '/destinations' },
     { name: 'Prohlížet atrakce', icon: 'camera', href: '/attractions' },

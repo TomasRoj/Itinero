@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Trip} from './services/trip-service.service';  
+import { Trip} from './trip-service.service';  
 
 export interface TripMember {
   id?: number;

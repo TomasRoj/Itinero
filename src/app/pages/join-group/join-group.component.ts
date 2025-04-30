@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { QuestionaireNavbarComponent } from "../../components/questionaire-navbar/questionaire-navbar.component";
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { TripMemberService } from '../../trip-member.service';
+import { TripMemberService } from '../../services/trip-member.service';
 import { UserService } from '../../services/user-service.service';
 
 @Component({
