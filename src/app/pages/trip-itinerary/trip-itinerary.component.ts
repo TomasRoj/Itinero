@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ItinerarySidebarComponent } from '../../components/itinerary-sidebar/itinerary-sidebar.component';
+import { TripMemberService, TripMember } from '../../trip-member.service';
 import {RouterLink, ActivatedRoute } from '@angular/router';
 import { Trip, TripService } from '../../services/trip-service.service';
 import { Component, Output, EventEmitter, HostListener} from '@angular/core';
@@ -50,6 +51,8 @@ export class TripItineraryComponent {
   constructor(
     private route: ActivatedRoute,
     private tripService: TripService,
+    private tripMemberService: TripMemberService
+
   ) { }
 
   ngOnInit(): void {
@@ -73,6 +76,7 @@ export class TripItineraryComponent {
           tripName.placeholder = this.tripData.name.toString();
           description.placeholder = this.tripData.description.toString();
         },
+        
         error: (error: any) => {
           console.error('Chyba při načítání dat výletu:', error);
         }
@@ -80,6 +84,7 @@ export class TripItineraryComponent {
     });
   }
 
+  
 
   updateTripData() {
     
@@ -199,3 +204,11 @@ export class TripItineraryComponent {
     console.log('Showing used names for currency:', currency);
   }
 }
+/*this.tripMemberService.getMembersByTripId(tripId).subscribe({
+  next: (members: TripMember[]) => {
+    this.groupMembers = members;
+  },
+  error: (error: any) => {
+    console.error('Chyba při načítání členů výletu:', error);
+  }
+});*/ 
