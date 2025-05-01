@@ -46,14 +46,28 @@
                                     <textarea class="form-control" id="descriptionField" placeholder="Popis" rows="4"></textarea>
                                 </div>
                                 <div class="form-group dropdown-group">
-                                    <div class="form-group dropdown">
-                                        <input type="text" class="form-control" id="startDate" placeholder="Kdy vyrážíte" readonly>
+                                    <button class="action-button dropdown-button" (click)="toggleDropdown('departureDropdown')">
+                                        Kdy vyrážíte
                                         <i class="dropdown-icon"></i>
+                                    </button>
+                                    <div class="dropdown-menu" [ngClass]="{'show': isDropdownOpen('departureDropdown')}">
+                                        <div class="input-group ">
+                                            <span class="input-group-text">Od</span>
+                                            <input id="startDate" [(ngModel)]="startDate" (ngModelChange)="onDateChange()" type="date" class="form-control" id="startDate" aria-label="Start date">
+                                          </div>
                                     </div>
-                                    <div class="form-group dropdown">
-                                        <input type="text" class="form-control" id="endDate" placeholder="Kdy se vrácíte">
+
+                                    <button class="action-button dropdown-button" (click)="toggleDropdown('arrivalDropdown')">
+                                        Kdy se vracíte
                                         <i class="dropdown-icon"></i>
+                                    </button>
+                                    <div class="dropdown-menu" [ngClass]="{'show': isDropdownOpen('arrivalDropdown')}">
+                                        <div class="input-group">
+                                            <span class="input-group-text">Do</span>
+                                            <input id="endDate" [(ngModel)]="endDate" (ngModelChange)="onDateChange()" type="date" class="form-control" id="endDate" aria-label="End date">
+                                          </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -153,212 +167,38 @@
 
                     <div *ngIf="activeTab === 'finance'" class="tab-content">
                         <div class="expense-list-container my-4">
-                            <!-- Expense Summary -->
-                            <div class="expenses-summary mb-4 p-3 bg-light rounded">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <h5>Celkové výdaje</h5>
-                                        <h3>{{ getTotalExpenses() }} CZK</h3>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="d-flex justify-content-end">
-                                            <button class="btn btn-outline-primary me-2">
-                                                <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export CSV
-                                            </button>
-                                            <button class="btn btn-primary" (click)="openAddExpenseModal()">
-                                                <i class="bi bi-plus me-1"></i> Přidat výdaj
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    
-                            <!-- Loading State -->
-                            <div *ngIf="isLoading" class="text-center py-5">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                            </div>
-                    
-                            <!-- No Expenses State -->
-                            <div *ngIf="!isLoading && expenses.length === 0" class="text-center py-5">
-                                <div class="mb-3">
-                                    <i class="bi bi-cash-stack fs-1 text-muted"></i>
-                                </div>
-                                <h4>Žádné výdaje</h4>
-                                <p class="text-muted">Zatím nebyly přidány žádné výdaje pro tento výlet.</p>
-                                <button class="btn btn-primary mt-2" (click)="openAddExpenseModal()">
-                                    <i class="bi bi-plus me-1"></i> Přidat výdaj
-                                </button>
-                            </div>
-                    
-                            <!-- Expense List -->
-                            <div *ngIf="!isLoading && expenses.length > 0" class="expense-items">
+                            <div class="expense-items">
                                 <div *ngFor="let expense of expenses" class="expense-item mb-2 p-3 bg-light rounded d-flex align-items-center justify-content-between">
                                     <div class="expense-info d-flex align-items-center">
-                                        <div [ngClass]="{'bg-success': isExpenseSettled(expense.id!), 'bg-primary': !isExpenseSettled(expense.id!)}" 
-                                             class="expense-type px-4 py-2 rounded text-truncate text-white" 
-                                             style="min-width: 250px; max-width: 250px; text-align: center;">
-                                            {{ expense.name }}
+                                        <div [ngClass]="{'bg-success bg-opacity-100': expense.isSettled, 'bg-danger': !expense.isSettled}" class="expense-type px-4 py-2 bg-secondary bg-opacity-100 rounded text-truncate" style="min-width: 250px; max-width: 250px; text-align: center; color: white;">
+                                            {{ expense.description }}
                                         </div>
                                         <div class="ms-3">
-                                            <div class="expense-paid-by">Zaplatil: {{ getUserName(expense.paidByUserId) }}</div>
-                                            <div class="expense-description text-muted small">{{ expense.description }}</div>
+                                            <div class="expense-paid-by">Zaplatil: {{ expense.paidBy }}</div>
                                             <div class="expense-date text-muted small">{{ expense.date | date:'dd.MM.yyyy' }}</div>
                                         </div>
                                     </div>
                                     <div class="expense-actions d-flex align-items-center">
                                         <div class="expense-amount me-3">
-                                            <span class="fw-bold">{{ expense.amount }} {{ expense.currencyCode }}</span>
+                                            <span class="fw-bold">{{ expense.amount }} {{ expense.currency }}</span>
                                         </div>
-                                        <button class="btn btn-outline-secondary btn-sm me-2" (click)="viewExpenseDetails(expense.id!)">
-                                            <i class="bi bi-info-circle me-1"></i> Info
-                                        </button>
-                                        <button class="btn btn-outline-danger btn-sm" (click)="deleteExpense(expense.id!)">
-                                            <i class="bi bi-trash"></i>
+                                        <button class="btn btn-outline-secondary btn-sm me-2">Info</button>
+                                        <button class="btn btn-outline-danger btn-sm">
+                                            <i class="bi bi-x"></i>
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Add Expense Modal -->
-                    <div class="modal" [ngClass]="{'d-block': showAddExpenseModal, 'd-none': !showAddExpenseModal}" tabindex="-1">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Přidat nový výdaj</h5>
-                                    <button type="button" class="btn-close" (click)="closeAddExpenseModal()"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form>
-                                        <!-- Basic Info -->
-                                        <div class="mb-3">
-                                            <label for="expenseName" class="form-label">Název výdaje *</label>
-                                            <input type="text" class="form-control" id="expenseName" [(ngModel)]="newExpense.name" name="expenseName" required>
-                                        </div>
-                                        
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label for="expenseAmount" class="form-label">Částka *</label>
-                                                    <input type="number" class="form-control" id="expenseAmount" [(ngModel)]="newExpense.amount" name="expenseAmount" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label for="expenseCurrency" class="form-label">Měna</label>
-                                                    <select class="form-control" id="expenseCurrency" [(ngModel)]="newExpense.currencyCode" name="expenseCurrency">
-                                                        <option value="CZK">CZK</option>
-                                                        <option value="EUR">EUR</option>
-                                                        <option value="USD">USD</option>
-                                                        <option value="GBP">GBP</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label for="expenseDate" class="form-label">Datum</label>
-                                                    <input type="date" class="form-control" id="expenseDate" 
-                                                        [ngModel]="newExpense.date | date:'yyyy-MM-dd'" 
-                                                        (ngModelChange)="newExpense.date = $event"
-                                                        name="expenseDate">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label for="expenseCategory" class="form-label">Kategorie</label>
-                                                    <select class="form-control" id="expenseCategory" [(ngModel)]="newExpense.categoryId" name="expenseCategory">
-                                                        <option [value]="null">-- Vyberte kategorii --</option>
-                                                        <option *ngFor="let category of expenseCategories" [value]="category.id">{{ category.name }}</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="expensePaidBy" class="form-label">Zaplatil</label>
-                                            <select class="form-control" id="expensePaidBy" [(ngModel)]="newExpense.paidByUserId" name="expensePaidBy">
-                                                <option *ngFor="let member of groupMembers" [value]="member.id">{{ member.name }}</option>
-                                            </select>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="expenseDescription" class="form-label">Popis</label>
-                                            <textarea class="form-control" id="expenseDescription" rows="2" [(ngModel)]="newExpense.description" name="expenseDescription"></textarea>
-                                        </div>
-                                        
-                                        <!-- Split Options -->
-                                        <div class="card mt-4 mb-3">
-                                            <div class="card-header">
-                                                <h5 class="mb-0">Rozdělit mezi členy</h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="mb-3">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio" id="splitEqual" [(ngModel)]="splitEqual" [value]="true" name="splitType">
-                                                        <label class="form-check-label" for="splitEqual">
-                                                            Rozdělit rovnoměrně
-                                                        </label>
-                                                    </div>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio" id="splitCustom" [(ngModel)]="splitEqual" [value]="false" name="splitType">
-                                                        <label class="form-check-label" for="splitCustom">
-                                                            Vlastní rozdělení
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div *ngIf="splitEqual">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Vyberte členy</label>
-                                                        <div class="user-selection">
-                                                            <div *ngFor="let member of groupMembers" class="form-check">
-                                                                <input class="form-check-input" type="checkbox" 
-                                                                       [id]="'user' + member.id" 
-                                                                       [checked]="selectedUsers.includes(member.id)"
-                                                                       (change)="selectedUsers.includes(member.id) ? 
-                                                                                selectedUsers.splice(selectedUsers.indexOf(member.id), 1) : 
-                                                                                selectedUsers.push(member.id)">
-                                                                <label class="form-check-label" [for]="'user' + member.id">
-                                                                    {{ member.name }}
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                        <div *ngIf="selectedUsers.length > 0" class="mt-2 text-muted">
-                                                            <small>Každý člen zaplatí: {{ newExpense.amount / selectedUsers.length | number:'1.2-2' }} {{ newExpense.currencyCode }}</small>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div *ngIf="!splitEqual">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Částky pro jednotlivé členy</label>
-                                                        <div *ngFor="let member of groupMembers" class="input-group mb-2">
-                                                            <span class="input-group-text">{{ member.name }}</span>
-                                                            <input type="number" class="form-control" 
-                                                                   [id]="'userAmount' + member.id"
-                                                                   [(ngModel)]="customSplits[member.id]" name="customSplit{{member.id}}">
-                                                            <span class="input-group-text">{{ newExpense.currencyCode }}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" (click)="closeAddExpenseModal()">Zrušit</button>
-                                    <button type="button" class="btn btn-primary" (click)="addExpense()">Uložit výdaj</button>
-                                </div>
+
+                            <div class="add-expense-button text-center">
+                                <a [routerLink]="'/add-expense'">
+                                    <button class="btn btn-light border">
+                                        <i class="bi bi-plus fs-3"></i>
+                                    </button>
+                                </a>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-backdrop fade show" *ngIf="showAddExpenseModal"></div>
 
                     <div *ngIf="activeTab === 'clenove'" class="tab-content">
                         <div class="members-container">
@@ -408,15 +248,15 @@
 
                             <div class="members-list">
                                 <div class="member-item" *ngFor="let member of groupMembers">
-                                  <div class="member-info">
-                                    <span class="member-name">Uživatel #{{ member.user_id }}</span>
-                                    <span class="member-role">{{ member.role }}</span>
-                                  </div>
-                                  <div class="member-avatar">
-                                    <img [src]="'profile.jpg'" alt="Avatar">
-                                  </div>
+                                    <div class="member-info">
+                                        <span class="member-name">{{ member.name }}</span>
+                                        <span class="member-role">{{ member.role }}</span>
+                                    </div>
+                                    <div class="member-avatar">
+                                        <img [src]="'profile.jpg'" alt="{{ member.name }}">
+                                    </div>
                                 </div>
-                              </div>                              
+                            </div>
                         </div>
                     </div>
 
