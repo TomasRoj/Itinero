@@ -1,9 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { ItinerarySidebarComponent } from '../../components/itinerary-sidebar/itinerary-sidebar.component';
-import {RouterLink, ActivatedRoute } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { Trip, TripService } from '../../services/trip-service.service';
-import { Component, Output, EventEmitter, HostListener} from '@angular/core';
+import { TripMember, TripMemberService } from '../../services/trip-member.service';
+import { User, UserService } from '../../services/user-service.service';
+import { Component, Output, EventEmitter, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-trip-itinerary',
@@ -15,12 +18,10 @@ export class TripItineraryComponent {
 
   tripData: any = null;
 
-  // Data
   @Output() changedDates = new EventEmitter<{startDate: string, endDate: string}>();
   startDate: string = '';
   endDate: string = '';
 
-  // Zmena dat
   onDateChange() {
     this.changedDates.emit({ startDate: this.startDate, endDate: this.endDate });
     console.log('Změna data:', this.startDate, this.endDate);
@@ -36,12 +37,10 @@ export class TripItineraryComponent {
     return this.openDropdown === dropdownId;
   }
 
-  // Zavře dropdown, když klikneš mimo
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
 
-    // Zavři dropdown, pokud klik není uvnitř dropdownu ani tlačítka
     if (!target.closest('.dropdown-menu') && !target.closest('.dropdown-button')) {
       this.openDropdown = null;
     }
@@ -50,6 +49,9 @@ export class TripItineraryComponent {
   constructor(
     private route: ActivatedRoute,
     private tripService: TripService,
+    private tripMemberService: TripMemberService,
+    private userService: UserService,
+    private http: HttpClient
   ) { }
 
   ngOnInit(): void {
@@ -72,6 +74,8 @@ export class TripItineraryComponent {
           destination.placeholder = this.tripData.destination_city_id.toString();
           tripName.placeholder = this.tripData.name.toString();
           description.placeholder = this.tripData.description.toString();
+
+          this.loadTripMembers(tripId);
         },
         error: (error: any) => {
           console.error('Chyba při načítání dat výletu:', error);
@@ -79,7 +83,44 @@ export class TripItineraryComponent {
       });
     });
   }
+  loadTripMembers(tripId: number): void {
+    this.tripMemberService.getMembersByTripId(tripId).subscribe({
+      next: (members: TripMember[]) => {
+        console.log('Members loaded:', members);
 
+        this.groupMembers = [];
+        
+        members.forEach(member => {
+          this.http.get<User>(`http://localhost:5253/api/Users/${member.user_id}`).subscribe({
+            next: (user) => {
+              const isCreator = this.tripData && this.tripData.creator_id === user.id;
+              this.groupMembers.push({
+                id: member.id || 0,
+                name: `${user.name} ${user.surname}`,
+                role: isCreator ? 'Vlastník' : (member.role || 'Member'),
+                avatar: user.profile_picture || 'assets/avatars/user1.jpg',
+                userId: user.id,
+                email: user.email
+              });
+            },
+            error: (err) => {
+              console.error(`Error loading user ${member.user_id}:`, err);
+              this.groupMembers.push({
+                id: member.id || 0,
+                name: `User ID: ${member.user_id}`,
+                role: member.role || 'Member',
+                avatar: 'assets/avatars/user1.jpg',
+                userId: member.user_id
+              });
+            }
+          });
+        });
+      },
+      error: (error) => {
+        console.error('Error loading trip members:', error);
+      }
+    });
+  }
 
   updateTripData() {
     
@@ -132,19 +173,11 @@ export class TripItineraryComponent {
     });
 
   }
-
-
-  // Staticke data
-  activeTab = 'destinace'; // Nastaveno jako výchozí záložka "Členové výletu"
+  activeTab = 'destinace'; 
   
-  // Ukázková data pro členy výletu
-  groupId = 'T26BLQ';
-  groupMembers = [
-    { name: 'Kája Horáková', role: 'Vlastník', avatar: 'assets/avatars/user1.jpg' },
-    { name: 'Honza Novák', role: 'Member', avatar: 'assets/avatars/user2.jpg' },
-    { name: 'Tomáš Veselý', role: 'Member', avatar: 'assets/avatars/user3.jpg' }
-  ];
-  
+  groupId = 'd516';
+  newOwnerId: string = '';
+  groupMembers: {id: number, name: string, role: string, avatar: string, userId: number, email?: string}[] = [];
   expenses = [
     {
       id: 1,
@@ -179,14 +212,67 @@ export class TripItineraryComponent {
     this.activeTab = tab;
   }
 
-  transferOwnership(): void {
-    console.log('Předat vlastnictví');
+  removeUser(memberId: number) {
+    console.log('Removing user with member ID:', memberId);
+    
+    if (!memberId) {
+      console.error('Invalid member ID');
+      return;
+    }
+    
+    this.tripMemberService.deleteTripMember(memberId).subscribe({
+      next: () => {
+        console.log('Member removed successfully');
+        // Refresh the members list
+        if (this.tripData && this.tripData.id) {
+          this.loadTripMembers(this.tripData.id);
+        }
+      },
+      error: (error) => {
+        console.error('Error removing member:', error);
+      }
+    });
   }
 
-  removeUser(id: any) {
-    console.log('Removing user for currency:', id);
-    // Add your logic for removing a user
+  transferOwnership(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    this.newOwnerId = inputElement.value;
+    console.log('New owner ID:', this.newOwnerId);
+    
+    if (!this.newOwnerId || !this.tripData || !this.tripData.id) {
+      return;
+    }
+    
+    const userId = parseInt(this.newOwnerId);
+    const isUserMember = this.groupMembers.some(member => member.userId === userId);
+    
+    if (!isUserMember) {
+      alert('Uživatel musí být členem výletu pro převod vlastnictví.');
+      return;
+    }
+    
+    const updatedTrip: Trip = {
+      ...this.tripData,
+      creator_id: userId,
+      updated_at: new Date()
+    };
+    
+    this.tripService.updateTrip(this.tripData.id, updatedTrip).subscribe({
+      next: (response) => {
+        console.log('Ownership transferred successfully:', response);
+        alert('Vlastnictví výletu bylo úspěšně převedeno.');
+        
+        this.tripData = response;
+        
+        this.loadTripMembers(this.tripData.id);
+      },
+      error: (error) => {
+        console.error('Error transferring ownership:', error);
+        alert('Chyba při převodu vlastnictví výletu.');
+      }
+    });
   }
+
   goBack(): void {
     console.log('Zpět');
   }

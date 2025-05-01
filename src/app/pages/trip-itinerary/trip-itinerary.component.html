@@ -165,8 +165,23 @@
                         </div>
                     </div>
 
+
                     <div *ngIf="activeTab === 'finance'" class="tab-content">
-                        <div class="expense-list-container my-4">
+                    <div class="form-row actions-row">
+                            <div class="dropdown">
+                                <button class="action-button dropdown-button" (click)="toggleDropdown('currencyDropdown')">
+                                    Používaná měna
+                                    <i class="dropdown-icon"></i>
+                                </button>
+                                <div class="dropdown-menu" [ngClass]="{'show': isDropdownOpen('currencyDropdown')}">
+                                    <div class="dropdown-header">Select Currency</div>
+                                    <a class="dropdown-item" href="#" (click)="showUsedCurrency('EUR')">EUR</a>
+                                    <a class="dropdown-item" href="#" (click)="showUsedCurrency('USD')">USD</a>
+                                    <a class="dropdown-item" href="#" (click)="showUsedCurrency('CZK')">CZK</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="expense-list-container my-3">
                             <div class="expense-items">
                                 <div *ngFor="let expense of expenses" class="expense-item mb-2 p-3 bg-light rounded d-flex align-items-center justify-content-between">
                                     <div class="expense-info d-flex align-items-center">
@@ -202,17 +217,11 @@
 
                     <div *ngIf="activeTab === 'clenove'" class="tab-content">
                         <div class="members-container">
-                            <div class="form-row">
-                                <div class="form-group group-id">
-                                    <label>Id skupiny:</label>
-                                    <span class="id-value" style="text-decoration: underline; text-decoration-color: red;">{{ groupId }}</span>
-                                </div>
-                            </div>
-
                             <div class="form-row actions-row">
-                                <input type="text" class="form-control" id="tripName" 
+                                <input type="text" class="form-control" id="newOwnerId" 
                                        placeholder="Předat vlastnictví přes ID" 
-                                       (input)="transferOwnership()">
+                                       [(ngModel)]="newOwnerId"
+                                       (input)="transferOwnership($event)">
                                 <small class="hint-text">*Nový vlastník musí být ve skupině</small>
                             </div>
                             <div class="form-row actions-row">
@@ -222,41 +231,27 @@
                                         <i class="dropdown-icon"></i>
                                     </button>
                                     <div class="dropdown-menu" [ngClass]="{'show': isDropdownOpen('removeUserDropdown')}">
-                                        <a class="dropdown-item" href="#" (click)="removeUser('1')">Kaja</a>
-                                        <a class="dropdown-item" href="#" (click)="removeUser('2')">Mara</a>
-                                        <a class="dropdown-item" href="#" (click)="removeUser('3')">Jaja</a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row actions-row">
-                                <div class="dropdown">
-                                    <button class="action-button dropdown-button" (click)="toggleDropdown('currencyDropdown')">
-                                        Používaná měna
-                                        <i class="dropdown-icon"></i>
-                                    </button>
-                                    <div class="dropdown-menu" [ngClass]="{'show': isDropdownOpen('currencyDropdown')}">
-                                        <div class="dropdown-header">Select Currency</div>
-                                        <a class="dropdown-item" href="#" (click)="showUsedCurrency('EUR')">EUR</a>
-                                        <a class="dropdown-item" href="#" (click)="showUsedCurrency('USD')">USD</a>
-                                        <a class="dropdown-item" href="#" (click)="showUsedCurrency('CZK')">CZK</a>
-                                    </div>
+                                        <a class="dropdown-item" href="#" *ngFor="let member of groupMembers" 
+                                           (click)="$event.preventDefault(); removeUser(member.id)">
+                                          {{ member.name }}
+                                        </a>
+                                      </div>
                                 </div>
                             </div>
 
                             <div class="divider"></div>
 
                             <div class="members-list">
-                                <div class="member-item" *ngFor="let member of groupMembers">
-                                    <div class="member-info">
-                                        <span class="member-name">{{ member.name }}</span>
-                                        <span class="member-role">{{ member.role }}</span>
-                                    </div>
-                                    <div class="member-avatar">
-                                        <img [src]="'profile.jpg'" alt="{{ member.name }}">
-                                    </div>
+                                <div class="member-item bg-light p-2 mb-3" style="border-radius: 10px;" *ngFor="let member of groupMembers">
+                                  <div class="member-info">
+                                    <span class="member-name" *ngIf="member.email">{{ member.name }} |  {{ member.email }}</span>
+                                    <span class="member-role">{{ member.role }}</span>
+                                  </div>
+                                  <div class="member-avatar">
+                                    <img [src]="member.avatar" alt="{{ member.name }}" onerror="this.src='profile.jpg'">
+                                  </div>
                                 </div>
-                            </div>
+                              </div>
                         </div>
                     </div>
 
