@@ -408,15 +408,15 @@
 
                             <div class="members-list">
                                 <div class="member-item" *ngFor="let member of groupMembers">
-                                    <div class="member-info">
-                                        <span class="member-name">{{ member.name }}</span>
-                                        <span class="member-role">{{ member.role }}</span>
-                                    </div>
-                                    <div class="member-avatar">
-                                        <img [src]="'profile.jpg'" alt="{{ member.name }}">
-                                    </div>
+                                  <div class="member-info">
+                                    <span class="member-name">Uživatel #{{ member.user_id }}</span>
+                                    <span class="member-role">{{ member.role }}</span>
+                                  </div>
+                                  <div class="member-avatar">
+                                    <img [src]="'profile.jpg'" alt="Avatar">
+                                  </div>
                                 </div>
-                            </div>
+                              </div>                              
                         </div>
                     </div>
 

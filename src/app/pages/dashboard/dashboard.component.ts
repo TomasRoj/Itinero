@@ -5,7 +5,7 @@ import { RouterModule, Router } from '@angular/router';
 import { TripService, Trip } from '../../services/trip-service.service';
 import { UserService } from '../../services/user-service.service';
 import { forkJoin } from 'rxjs';
-import { TripMemberService } from '../../trip-member.service';
+import { TripMemberService } from '../../services/trip-member.service';
 
 @Component({
   selector: 'app-dashboard',

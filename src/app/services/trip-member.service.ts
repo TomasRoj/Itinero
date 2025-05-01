@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Trip} from './services/trip-service.service';  
+import { Trip} from './trip-service.service';  
 
 export interface TripMember {
   id?: number;
-  tripId: number;
-  userId: number;
+  trip_id: number;
+  user_id: number;
   role?: string;
-  joinedAt?: Date;
+  joined_at?: Date;
 }
 
 @Injectable({
@@ -45,5 +45,8 @@ export class TripMemberService {
   getTripsForMember(userId: number): Observable<Trip[]> {
     return this.http.get<Trip[]>(`${this.apiUrl}/for-member/${userId}`);
   }  
+  getMembersByTripId(tripId: number): Observable<TripMember[]> {
+    return this.http.get<TripMember[]>(`${this.apiUrl}/for-trip/${tripId}`);
+  }
 
 }
