@@ -42,6 +42,10 @@ export class TripMemberService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
+  updateMemberRole(memberId: number, updatedFields: Partial<TripMember>): Observable<any> {
+    return this.http.put(`${this.apiUrl}/updateRole/${memberId}`, updatedFields);
+  }
+
   getTripsForMember(userId: number): Observable<Trip[]> {
     return this.http.get<Trip[]>(`${this.apiUrl}/for-member/${userId}`);
   }  

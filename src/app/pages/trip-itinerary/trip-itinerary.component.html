@@ -223,11 +223,19 @@
                         <div class="members-container">
                             <div class="form-row actions-row">
                                 <input type="text" class="form-control" id="newOwnerId" 
-                                       placeholder="Předat vlastnictví přes ID" 
-                                       [(ngModel)]="newOwnerId"
-                                       (input)="transferOwnership($event)">
+                                    placeholder="Předat vlastnictví skupiny přes ID" 
+                                    [(ngModel)]="newOwnerId"
+                                    (keyup.enter)="transferOwnership()">
                                 <small class="hint-text">*Nový vlastník musí být ve skupině</small>
                             </div>
+
+                            <div class="form-row actions-row">
+                                <input type="text" class="form-control" id="userIdInput" 
+                                       placeholder="Přidat uživatele přes ID" 
+                                       [(ngModel)]="typedUserId"
+                                       (keyup.enter)="addUser(typedUserId)">
+                              </div>
+
                             <div class="form-row actions-row">
                                 <div class="dropdown">
                                     <button class="action-button dropdown-button" (click)="toggleDropdown('removeUserDropdown')">
@@ -242,7 +250,6 @@
                                       </div>
                                 </div>
                             </div>
-
                             <div class="divider"></div>
 
                             <div class="members-list">
