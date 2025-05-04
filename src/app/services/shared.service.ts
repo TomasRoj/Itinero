@@ -15,12 +15,10 @@ export class SharedService {
 
   constructor() {}
 
-  // Method to update the active tab
   setActiveTab(tab: string): void {
     this.activeTabSubject.next(tab);
   }
   
-  // Method to update the selected day
   selectDay(dayNumber: number): void {
     this.selectedDay.next(dayNumber);
   }

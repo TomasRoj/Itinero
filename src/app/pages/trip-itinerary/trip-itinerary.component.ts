@@ -8,16 +8,13 @@ import { Component, Output, EventEmitter, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { SharedService } from '../../services/shared.service';
+import { HttpParams } from '@angular/common/http';
 
-// New interfaces for itinerary data
 interface ItineraryDay {
   id: number;
   trip_id: number;
-  day_number: number;
   description?: string;
-  date?: string;
-  created_at: Date;
-  updated_at: Date;
+  date: Date;
 }
 
 interface ItineraryItem {
@@ -45,9 +42,10 @@ export class TripItineraryComponent {
   itineraryDays: ItineraryDay[] = [];
   currentDayItems: ItineraryItem[] = [];
   currentDayData: ItineraryDay | null = null;
-  isLoading: boolean = false;
-  
-  // Form fields for new item
+
+  private isCreatingDays = false;
+  dayDescription: string = '';
+
   newItem: {
     name: string;
     description: string;
@@ -111,6 +109,9 @@ export class TripItineraryComponent {
         this.activeTab = tab;
       });
 
+      
+      this.loadItineraryDays(tripId);
+
       this.tripService.getTripById(tripId).subscribe({
         next: (response: Trip) => {
           this.tripData = response;
@@ -130,7 +131,6 @@ export class TripItineraryComponent {
           this.sharedService.dayCount.next(dayCount);
 
           this.loadTripMembers(tripId);
-          this.loadItineraryDays(tripId);
         },
         error: (error: any) => {
           console.error('Chyba při načítání dat výletu:', error);
@@ -138,7 +138,6 @@ export class TripItineraryComponent {
       });
     });
     
-    // Subscribe to day selection events from sidebar
     this.sharedService.selectedDay.subscribe(dayNumber => {
       if (dayNumber && this.tripData) {
         this.changeActiveDay(dayNumber);
@@ -147,139 +146,111 @@ export class TripItineraryComponent {
   }
 
   loadItineraryDays(tripId: number): void {
-    this.isLoading = true;
-    
-    // Získáme všechny dny itineráře
-    this.http.get<ItineraryDay[]>(`${this.apiBaseUrl}/Itinerary/days`).subscribe({
+    const params = new HttpParams().set('tripId', String(tripId))
+  
+    this.http.get<ItineraryDay[]>(`${this.apiBaseUrl}/Itinerary/days`, { params }).subscribe({
       next: (days) => {
-        console.log('Všechny načtené dny:', days);
-        
-        // Filtrujeme dny pro tento konkrétní výlet podle trip_id
-        this.itineraryDays = days.filter(day => day.trip_id === tripId);
-        console.log('Filtrované dny pro výlet ID', tripId, ':', this.itineraryDays);
-        
-        // Pokud neexistují žádné dny, vytvoříme je
+        console.log('Načtené dny z API:', days);
+        this.itineraryDays = days
+        .filter(day => day.trip_id === tripId)
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  
         if (this.itineraryDays.length === 0) {
           console.log('Vytvářím nové dny pro výlet');
           this.createInitialDays(tripId);
         } else {
-          // Výchozí načtení prvního dne
           this.changeActiveDay(1);
-          
-          // Aktualizujeme SharedService s počtem dnů pro sidebar
           const dayCount = this.itineraryDays.length;
           this.sharedService.dayCount.next(dayCount);
-          
-          // Nastavíme tripId v SharedService, pokud ho používáme
           if (this.sharedService.tripId) {
             this.sharedService.tripId.next(tripId);
           }
         }
-        this.isLoading = false;
       },
       error: (error) => {
         console.error('Chyba při načítání dnů itineráře:', error);
-        this.isLoading = false;
       }
     });
-  }
+  }  
   
-  // Aktualizujeme také metodu createInitialDays, aby správně vypočítala dny
-  createInitialDays(tripId: number): void {
+
+async createInitialDays(tripId: number): Promise<void> {
+  if (this.isCreatingDays) return;
+  this.isCreatingDays = true;
+
+  try {
+
+    if (!this.tripData) {
+      console.error('Trip data nejsou dostupná.');
+      this.isCreatingDays = false;
+      return;
+    }
     const startDate = new Date(this.tripData.start_date);
     const endDate = new Date(this.tripData.end_date);
     const dayCount = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) + 1;
-    
-    console.log(`Vytvářím ${dayCount} dnů pro výlet od ${startDate.toISOString()} do ${endDate.toISOString()}`);
-    
+
     const createDayPromises = [];
-    
     for (let i = 1; i <= dayCount; i++) {
-      // Vypočítáme datum pro tento den přidáním (i-1) dnů k počátečnímu datu
       const currentDayDate = new Date(startDate);
       currentDayDate.setDate(startDate.getDate() + (i - 1));
-      
-      // Formátujeme datum jako řetězec (YYYY-MM-DD)
       const formattedDate = currentDayDate.toISOString().split('T')[0];
-      
+
       const dayData = {
         trip_id: tripId,
         day_number: i,
         description: `Den ${i} výletu ${this.tripData.name} (${formattedDate})`,
         date: formattedDate
       };
-      
-      console.log(`Vytvářím den ${i} s datem ${formattedDate}`);
-      
-      const promise = this.http.post<ItineraryDay>(`${this.apiBaseUrl}/Itinerary/day`, dayData).toPromise();
-      createDayPromises.push(promise);
+      createDayPromises.push(
+        this.http.post<ItineraryDay>(`${this.apiBaseUrl}/Itinerary/day`, dayData).toPromise()
+      );
     }
-    
-    Promise.all(createDayPromises)
-      .then(createdDays => {
-        const validDays = createdDays.filter(Boolean) as ItineraryDay[];
-        console.log('Úspěšně vytvořené dny:', validDays);
-        this.itineraryDays = validDays;
-        
-        // Aktualizujeme SharedService s počtem dnů
-        this.sharedService.dayCount.next(dayCount);
-        
-        // Nastavíme výchozí aktivní den
-        this.changeActiveDay(1);
-      })
-      .catch(error => {
-        console.error('Chyba při vytváření dnů itineráře:', error);
-      });
-  }
-  
-  changeActiveDay(dayNumber: number): void {
-    this.activeDay = dayNumber;
-  
-    
-    // Find the corresponding date for the selected day number
-    const selectedDate = this.itineraryDays[dayNumber - 1]?.date;
-    console.log('Vybraný den:', selectedDate);
+    await Promise.all(createDayPromises);
 
-
-    if (selectedDate) {
-      // Find the day data where the date matches the selected date
-      const day = this.itineraryDays.find(d => d.date === selectedDate);
-      
-      if (day) {
-        this.currentDayData = day;
-        this.loadDayItems(day.id);
-  
-        // Update the SharedService with the selected day
-        this.sharedService.selectedDay.next(dayNumber);
-      } else {
-        console.error(`Day with date ${selectedDate} not found in itinerary`);
-        this.currentDayData = null;
-        this.currentDayItems = [];
-      } 
-    } else {
-      console.error(`No day found for day number ${dayNumber}`);
-      this.currentDayData = null;
-      this.currentDayItems = [];
-    } 
+    this.isCreatingDays = false;
+    this.loadItineraryDays(tripId);
+  } catch (error) {
+    console.error('Chyba při vytváření dnů itineráře:', error);
+    this.isCreatingDays = false;
   }
+}  
+  
+changeActiveDay(dayNumber: number): void {
+  this.activeDay = dayNumber;
+
+  // Ověření, že den existuje
+  const selectedDay = this.itineraryDays[dayNumber - 1];
+  if (selectedDay) {
+    this.currentDayData = selectedDay;
+    this.dayDescription = selectedDay.description || '';
+    this.loadDayItems(selectedDay.id);
+  } else {
+    this.currentDayData = null;
+    this.currentDayItems = [];
+    this.dayDescription = '';
+  }
+
+  // Debug výpisy
+  console.log('Aktivní den:', this.activeDay);
+  console.log('Počet dní:', this.itineraryDays.length);
+
+  if (selectedDay) {
+    console.log('Date aktivniho dne:', selectedDay.date);
+  }
+}
 
   loadDayItems(dayId: number): void {
-    return; 
-    this.isLoading = true;
     
-    // Get all items for this day
+    /*
     this.http.get<ItineraryItem[]>(`${this.apiBaseUrl}/Itinerary/items`).subscribe({
       next: (items) => {
-        // Filter items for this specific day
         this.currentDayItems = items.filter(item => item.day_id === dayId);
-        this.isLoading = false;
       },
       error: (error) => {
         console.error('Error loading day items:', error);
-        this.isLoading = false;
       }
-    }); 
-  }
+    }); */
+  } 
 
   addNewItem(): void {
     if (!this.currentDayData) {
@@ -325,7 +296,6 @@ export class TripItineraryComponent {
       next: (updatedItem) => {
         console.log('Item updated successfully:', updatedItem);
         
-        // Update the item in the current items array
         const index = this.currentDayItems.findIndex(i => i.id === updatedItem.id);
         if (index !== -1) {
           this.currentDayItems[index] = updatedItem;
@@ -352,28 +322,24 @@ export class TripItineraryComponent {
   }
 
   updateDayDescription(): void {
-    if (!this.currentDayData) {
-      return;
-    }
-    
+    if (!this.currentDayData) return;
+  
+    this.currentDayData.description = this.dayDescription;
+  
     this.http.put<ItineraryDay>(
-      `${this.apiBaseUrl}/Itinerary/day/${this.currentDayData.id}`, 
+      `${this.apiBaseUrl}/Itinerary/day/${this.currentDayData.id}`,
       this.currentDayData
     ).subscribe({
       next: (updatedDay) => {
-        console.log('Day description updated successfully:', updatedDay);
-        
-        // Update the day in the days array
-        const index = this.itineraryDays.findIndex(d => d.id === updatedDay.id);
-        if (index !== -1) {
-          this.itineraryDays[index] = updatedDay;
-        }
+        const idx = this.itineraryDays.findIndex(d => d.id === updatedDay.id);
+        if (idx !== -1) this.itineraryDays[idx] = updatedDay;
       },
-      error: (error) => {
-        console.error('Error updating day description:', error);
+      error: (err) => {
+        console.error('Chyba při ukládání popisu dne:', err);
       }
     });
   }
+  
 
   loadTripMembers(tripId: number): void {
     this.tripMemberService.getMembersByTripId(tripId).subscribe({
@@ -421,7 +387,7 @@ export class TripItineraryComponent {
     const updatedTrip: Trip = {
       id: this.tripData.id,
       name: tripName.value || this.tripData.name,
-      destination_city_id: this.tripData.destination_city_id, // to be modified to change place by ID + autocomplete
+      destination_city_id: this.tripData.destination_city_id, 
       start_date: this.startDate ? new Date(this.startDate) : this.tripData.start_date,
       end_date: this.endDate ? new Date(this.endDate) : this.tripData.end_date,
       creator_id: this.tripData.creator_id,
@@ -529,6 +495,7 @@ export class TripItineraryComponent {
       }
     });
   }
+  
   transferOwnership(): void { //Nefunguje: Cannot read properties of null (reading 'value')
     console.log('New owner ID:', this.newOwnerId);
       const userId = parseInt(this.newOwnerId, 10);
@@ -561,6 +528,7 @@ export class TripItineraryComponent {
       });
     }
   }
+    
 
   goBack(): void {
     console.log('Zpět');

@@ -16,20 +16,18 @@ export class ItinerarySidebarComponent implements OnInit {
   
   constructor(private sharedService: SharedService) {}
   
-  @Input() activeDay: number = 1;  // Defaultně je první den aktivní
-  @Output() daySelected = new EventEmitter<number>(); // Emitujeme den, na který bylo kliknuto
+  @Input() activeDay: number = 1; 
+  @Output() daySelected = new EventEmitter<number>(); 
   
   ngOnInit() {
-    // Sledujeme počet dní z hlavní komponenty
     this.sharedService.dayCount.subscribe(dayCount => {
       this.navigationItems = Array.from({ length: dayCount }, (_, i) => ({
         name: `Den ${i + 1}`,
-        href: '#',  // Používáme '#' místo plné URL, protože jen měníme záložku, ne stránku
+        href: '#', 
         dayNumber: i + 1
       }));
     });
     
-    // Sledujeme změny aktivního dne z hlavní komponenty
     this.sharedService.selectedDay.subscribe(dayNumber => {
       if (dayNumber) {
         this.activeDay = dayNumber;
@@ -40,10 +38,8 @@ export class ItinerarySidebarComponent implements OnInit {
   selectDay(day: number): void {
     this.activeDay = day;
     
-    // Emitujeme událost pro rodičovskou komponentu
     this.daySelected.emit(day);
     
-    // Aktualizujeme vybraný den v shared service pro ostatní komponenty
     this.sharedService.selectedDay.next(day);
     this.sharedService.setActiveTab('rozvrzeni');
 

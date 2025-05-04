@@ -87,7 +87,7 @@
                                 <div class="row mt-4">
                                     <div class="col-md-6 mb-4">
                                         <h5>Popis dne</h5>
-                                        <textarea class="form-control" rows="5"></textarea>
+                                        <textarea class="form-control" rows="5" [(ngModel)]="dayDescription" (blur)="updateDayDescription()"></textarea>
 
                                         <div class="col mt-3">
                                             <h5>Shrnutí dne</h5>
