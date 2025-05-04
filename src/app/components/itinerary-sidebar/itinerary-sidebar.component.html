@@ -17,7 +17,8 @@
         <a [routerLink]="['/dashboard']"><button class="btn btn-danger rounded-pill px-4">Dashboard</button></a>
       </div>
       <div class="list-group list-group-flush border-0" *ngFor="let item of navigationItems">
-        <a [class]="'list-group-item list-group-item-action border-0 text-white '" [routerLink]="item.href" [routerLink]="['#']">
+        <a [class]="'list-group-item list-group-item-action border-0 text-white '"
+        (click)="selectDay(item.dayNumber)" [class.active]="activeDay === item.dayNumber">
           <div class="text-center">{{ item.name }}</div>
         </a>
       </div>

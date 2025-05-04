@@ -1,7 +1,10 @@
 <div class="container-fluid p-0">
     <div class="row g-0">
         <div class="col-md-3 col-lg-2">
-            <app-itinerary-sidebar></app-itinerary-sidebar>
+            <app-itinerary-sidebar 
+            [activeDay]="activeDay"
+            (daySelected)="changeActiveDay($event)">
+            </app-itinerary-sidebar>
         </div>
 
         <div class="col-md-9 col-lg-10 ps-0 d-flex p-5">
@@ -12,22 +15,23 @@
 
                 <div class="row">
                     <div class="col-12">
-                        <div class="tabs-container mb-3">
-                            <div class="tab" [ngClass]="{'active': activeTab === 'destinace'}" (click)="setActiveTab('destinace')">
-                                Destinace
-                            </div>
-                            <div class="tab" [ngClass]="{'active': activeTab === 'rozvrzeni'}" (click)="setActiveTab('rozvrzeni')">
-                                Rozvržení dnů
-                            </div>
-                            <div class="tab" [ngClass]="{'active': activeTab === 'clenove'}" (click)="setActiveTab('clenove')">
-                                Členové výletu
-                            </div>
-                            <div class="tab" [ngClass]="{'active': activeTab === 'finance'}" (click)="setActiveTab('finance')">
-                                Finance
-                            </div>
+                      <div class="tabs-container mb-3">
+                        <div class="tab" [ngClass]="{'active': activeTab === 'destinace'}" (click)="setActiveTab('destinace')">
+                          Destinace
                         </div>
-                        <div class="divider mb-4"></div>
+                        <div class="tab" [ngClass]="{'active': activeTab === 'rozvrzeni'}" (click)="setActiveTab('rozvrzeni')">
+                          Rozvržení dnů
+                        </div>
+                        <div class="tab" [ngClass]="{'active': activeTab === 'clenove'}" (click)="setActiveTab('clenove')">
+                          Členové výletu
+                        </div>
+                        <div class="tab" [ngClass]="{'active': activeTab === 'finance'}" (click)="setActiveTab('finance')">
+                          Finance
+                        </div>
+                      </div>
+                      <div class="divider mb-4"></div>
                     </div>
+                  
 
                     <div *ngIf="activeTab === 'destinace'" class="tab-content">
                         <div class="form-container">
