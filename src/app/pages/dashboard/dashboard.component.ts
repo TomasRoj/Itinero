@@ -4,8 +4,9 @@ import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { RouterModule, Router } from '@angular/router';
 import { TripService, Trip } from '../../services/trip-service.service';
 import { UserService } from '../../services/user-service.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { TripMemberService } from '../../services/trip-member.service';
+import { switchMap, map, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dashboard',
@@ -26,14 +27,12 @@ export class DashboardComponent implements OnInit {
       if (user) {
         this.username = user.name;
       } else {
-        // If currentUser is not available yet, try to get it
         this.userService.getCurrentUser().subscribe({
           next: (user) => {
             this.username = user.name;
           },
           error: (error) => {
             console.error('Error fetching user data:', error);
-            // Fallback to a default name or handle the error as needed
             this.username = 'User';
           }
         });
@@ -46,25 +45,41 @@ export class DashboardComponent implements OnInit {
       next: (user) => {
         const createdTrips$ = this.tripService.getTripsByUserId(user.id);
         const memberTrips$ = this.TripMemberService.getTripsForMember(user.id);
-  
+        
         forkJoin([createdTrips$, memberTrips$]).subscribe({
           next: ([createdTrips, memberTrips]) => {
             const allTrips = [...createdTrips, ...memberTrips];
-  
-            // Odstranění duplikátů podle ID
+            
             const uniqueTrips = allTrips.filter(
               (trip, index, self) => index === self.findIndex(t => t.id === trip.id)
             );
-  
-            this.trips = uniqueTrips.map(trip => ({
-              id: trip.id,
-              destination: trip.name,
-              country: 'Country',
-              image: 'assets/images/default.jpg',
-              dateRange: this.formatDateRange(new Date(trip.start_date), new Date(trip.end_date)),
-              participants: 0,
-              description: trip.description || 'No description available'
-            }));
+            
+            const tripsWithMemberCounts$ = uniqueTrips.map(trip => {
+              if (!trip.id) {
+                console.error('Trip without ID found:', trip);
+                return of([trip, 0] as [Trip, number]);
+              }
+              
+              return this.TripMemberService.getMembersByTripId(trip.id).pipe(
+                map(members => [trip, members.length] as [Trip, number]),
+                catchError(error => {
+                  console.error(`Error fetching members for trip ${trip.id}:`, error);
+                  return of([trip, 0] as [Trip, number]);
+                })
+              );
+            });
+            
+            forkJoin(tripsWithMemberCounts$).subscribe(tripsWithCounts => {
+              this.trips = tripsWithCounts.map(([trip, memberCount]) => ({
+                id: trip.id,
+                destination: trip.name,
+                country: 'Country',
+                image: 'assets/images/default.jpg',
+                dateRange: this.formatDateRange(new Date(trip.start_date), new Date(trip.end_date)),
+                participants: memberCount,
+                description: trip.description || 'No description available'
+              }));
+            });
           },
           error: (err) => {
             console.error('Chyba při načítání výletů:', err);
@@ -77,6 +92,7 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
+
   
 
   getItemDetails(itemId: number): void {
