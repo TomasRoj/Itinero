@@ -11,6 +11,15 @@ import { SharedService } from '../../services/shared.service';
 import { HttpParams } from '@angular/common/http';
 import { Expense, ExpenseCategory, ExpenseSplit, ExpenseService } from '../../services/finance-service.service';
 
+interface DisplayExpense {
+  id: number;
+  description: string;
+  paidByUserId: number;
+  date: Date;
+  amount: number;
+  currency: string;
+  isSettled: boolean;
+}
 
 interface ItineraryDay {
   id: number;
@@ -153,7 +162,7 @@ export class TripItineraryComponent {
     this.loadingExpenses = true;
     this.expenses = [];
     
-    this.http.get<any[]>(`http://localhost:5253/api/expenses/trip/${tripId}`).subscribe({
+    this.expenseService.getExpensesByTripId(tripId).subscribe({
       next: (expensesData) => {
         console.log('Raw expenses data:', expensesData);
         
@@ -163,56 +172,34 @@ export class TripItineraryComponent {
           return;
         }
         
-        const expenseProcessingPromises = expensesData.map(expense => {
-          return new Promise<void>((resolve) => {
-            this.http.get<User>(`http://localhost:5253/api/Users/${expense.paidByUserId}`).subscribe({
-              next: (payer) => {
-                const isSettled = Math.random() > 0.5;
-                
-                this.expenses.push({
-                  id: expense.id,
-                  description: expense.name || expense.description || 'Unnamed Expense',
-                  paidBy: payer.name || `User ID: ${expense.paidByUserId}`,
-                  date: expense.date,
-                  amount: expense.amount,
-                  currency: expense.currencyCode,
-                  isSettled: isSettled
-                });
-                resolve();
-              },
-              error: (error) => {
-                console.error(`Error loading payer for expense ${expense.id}:`, error);
-                // Still add expense even if payer fails to load
-                this.expenses.push({
-                  id: expense.id,
-                  description: expense.name || expense.description || 'Unnamed Expense',
-                  paidBy: `User ID: ${expense.paidByUserId}`,
-                  date: expense.date,
-                  amount: expense.amount,
-                  currency: expense.currencyCode,
-                  isSettled: false
-                });
-                resolve();
-              }
-            });
-          });
+        this.expenses = expensesData.map(expense => {
+          const isSettled = Math.random() > 0.5;
+          
+          return {
+            id: expense.id,
+            description: expense.name || expense.description || 'Unnamed Expense',
+            paidByUserId: expense.paidByUserId,
+            date: expense.date,
+            amount: expense.amount,
+            currency: expense.currencyCode,
+            isSettled: isSettled
+          };
         });
-  
-        Promise.all(expenseProcessingPromises).then(() => {
-          console.log('All expenses processed:', this.expenses);
-          this.loadingExpenses = false;
-        });
+        
+        console.log('Processed expenses:', this.expenses);
+        this.loadingExpenses = false;
       },
       error: (error) => {
         console.error('Error loading expenses:', error);
         this.loadingExpenses = false;
         
+        // Fallback data if there's an error
         if (this.expenses.length === 0) {
           this.expenses = [
             {
               id: 1,
               description: 'Dinner at Restaurant',
-              paidBy: 'John Doe',
+              paidByUserId: 1,
               date: new Date(),
               amount: 120,
               currency: 'CZK',
@@ -221,7 +208,7 @@ export class TripItineraryComponent {
             {
               id: 2,
               description: 'Hotel Reservation',
-              paidBy: 'Jane Smith',
+              paidByUserId: 2,
               date: new Date(),
               amount: 2500,
               currency: 'CZK',
@@ -232,7 +219,6 @@ export class TripItineraryComponent {
       }
     });
   }
-
   loadItineraryDays(tripId: number): void {
     const params = new HttpParams().set('tripId', String(tripId))
   

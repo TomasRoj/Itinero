@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map, catchError, of } from 'rxjs';
 
 export interface Expense {
-  id?: number;
+  id: number;
   name: string;
   tripId: number;
   categoryId?: number;
@@ -79,31 +79,5 @@ export class ExpenseService {
 
   deleteExpense(id: number): Observable<void> {
     return this.http.delete<void>(`${this.expensesUrl}/${id}`);
-  }
-
-  // Expense splits methods
-  getSplitsByExpenseId(expenseId: number): Observable<ExpenseSplit[]> {
-    return this.http.get<ExpenseSplit[]>(`${this.splitsUrl}/expense/${expenseId}`);
-  }
-
-  getSplitsByTripId(tripId: number): Observable<ExpenseSplit[]> {
-    return this.http.get<ExpenseSplit[]>(`${this.splitsUrl}/trip/${tripId}`);
-  }
-
-  createExpenseSplit(split: ExpenseSplit): Observable<ExpenseSplit> {
-    return this.http.post<ExpenseSplit>(this.splitsUrl, split);
-  }
-
-  updateExpenseSplit(id: number, split: ExpenseSplit): Observable<void> {
-    return this.http.put<void>(`${this.splitsUrl}/${id}`, split);
-  }
-
-  deleteExpenseSplit(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.splitsUrl}/${id}`);
-  }
-
-  // Expense categories methods
-  getAllCategories(): Observable<ExpenseCategory[]> {
-    return this.http.get<ExpenseCategory[]>(this.categoriesUrl);
   }
 }
