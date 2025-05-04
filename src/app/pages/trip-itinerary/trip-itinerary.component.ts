@@ -7,6 +7,7 @@ import { User, UserService } from '../../services/user-service.service';
 import { Component, Output, EventEmitter, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { SharedService } from '../../services/shared.service';
 
 @Component({
   selector: 'app-trip-itinerary',
@@ -51,13 +52,15 @@ export class TripItineraryComponent {
     private tripService: TripService,
     private tripMemberService: TripMemberService,
     private userService: UserService,
-    private http: HttpClient
+    private http: HttpClient,
+    private sharedService: SharedService
   ) { }
 
   ngOnInit(): void {
     // Získání ID z URL parametru
     this.route.params.subscribe(params => {
       const tripId = +params['id']; // Konverze na číslo
+      let dayCount: number = 0;
       
       // Načtení dat podle ID
       this.tripService.getTripById(tripId).subscribe({
@@ -74,6 +77,10 @@ export class TripItineraryComponent {
           destination.placeholder = this.tripData.destination_city_id.toString();
           tripName.placeholder = this.tripData.name.toString();
           description.placeholder = this.tripData.description.toString();
+
+          dayCount = Math.floor((new Date(this.tripData.end_date).getTime() - new Date(this.tripData.start_date).getTime()) / (1000 * 3600 * 24)) + 1;
+          console.log('Počet dní:', dayCount);
+          this.sharedService.dayCount.next(dayCount);
 
           this.loadTripMembers(tripId);
         },
