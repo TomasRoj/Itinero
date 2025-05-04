@@ -173,24 +173,39 @@
                     <div *ngIf="activeTab === 'finance'" class="tab-content">
                         <div class="expense-list-container my-3">
                             <div class="expense-items">
-                                <div *ngFor="let expense of expenses" class="expense-item mb-2 p-3 bg-light rounded d-flex align-items-center justify-content-between">
-                                    <div class="expense-info d-flex align-items-center">
-                                        <div [ngClass]="{'bg-success bg-opacity-100': expense.isSettled, 'bg-danger': !expense.isSettled}" class="expense-type px-4 py-2 bg-secondary bg-opacity-100 rounded text-truncate" style="min-width: 250px; max-width: 250px; text-align: center; color: white;">
-                                            {{ expense.description }}
+                                <div *ngIf="loadingExpenses" class="text-center p-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                      <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Načítání výdajů...</p>
+                                  </div>
+                                  
+                                  <div *ngIf="!loadingExpenses && expenses.length === 0" class="text-center p-4">
+                                    <p>Žádné výdaje nenalezeny pro tento výlet.</p>
+                                  </div>
+                                  
+                                  <div *ngIf="!loadingExpenses && expenses.length > 0" class="expense-items">
+                                    <div *ngFor="let expense of expenses" class="expense-item mb-2 p-3 bg-light rounded d-flex align-items-center justify-content-between">
+                                      <div class="expense-info d-flex align-items-center">
+                                        <div [ngClass]="{'bg-success': expense.isSettled, 'bg-danger': !expense.isSettled}" 
+                                             class="expense-type px-4 py-2 bg-opacity-100 rounded text-truncate"
+                                             style="min-width: 250px; max-width: 250px; text-align: center; color: white;">
+                                          {{ expense.description }}
                                         </div>
                                         <div class="ms-3">
-                                            <div class="expense-paid-by">Zaplatil: {{ expense.paidBy }}</div>
-                                            <div class="expense-date text-muted small">{{ expense.date | date:'dd.MM.yyyy' }}</div>
+                                          <div class="expense-paid-by">Zaplatil: {{ expense.paidBy }}</div>
+                                          <div class="expense-date text-muted small">{{ expense.date | date:'dd.MM.yyyy' }}</div>
                                         </div>
-                                    </div>
-                                    <div class="expense-actions d-flex align-items-center">
+                                      </div>
+                                      <div class="expense-actions d-flex align-items-center">
                                         <div class="expense-amount me-3">
-                                            <span class="fw-bold">{{ expense.amount }} {{ expense.currency }}</span>
+                                          <span class="fw-bold">{{ expense.amount }} {{ expense.currency }}</span>
                                         </div>
-                                        <button class="btn btn-outline-secondary btn-sm me-2">Info</button>
-                                        <button class="btn btn-outline-danger btn-sm">
-                                            <i class="bi bi-x"></i>
+                                        <!--<button class="btn btn-outline-secondary btn-sm me-2" (click)="showExpenseDetails(expense.id)">Info</button>  případně přidat potom-->
+                                        <button class="btn btn-outline-danger btn-sm" (click)="deleteExpense(expense.id)">
+                                          <i class="bi bi-x"></i>
                                         </button>
+                                      </div>
                                     </div>
                                 </div>
                             </div>

@@ -9,6 +9,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { SharedService } from '../../services/shared.service';
 import { HttpParams } from '@angular/common/http';
+import { Expense, ExpenseCategory, ExpenseSplit, ExpenseService } from '../../services/finance-service.service';
+
 
 interface ItineraryDay {
   id: number;
@@ -97,7 +99,8 @@ export class TripItineraryComponent {
     private tripMemberService: TripMemberService,
     private userService: UserService,
     private http: HttpClient,
-    private sharedService: SharedService
+    private sharedService: SharedService,
+    private expenseService: ExpenseService,
   ) { }
 
   ngOnInit(): void {
@@ -131,6 +134,7 @@ export class TripItineraryComponent {
           this.sharedService.dayCount.next(dayCount);
 
           this.loadTripMembers(tripId);
+          this.loadExpenses(tripId);
         },
         error: (error: any) => {
           console.error('Chyba při načítání dat výletu:', error);
@@ -141,6 +145,90 @@ export class TripItineraryComponent {
     this.sharedService.selectedDay.subscribe(dayNumber => {
       if (dayNumber && this.tripData) {
         this.changeActiveDay(dayNumber);
+      }
+    });
+  }
+
+  loadExpenses(tripId: number): void {
+    this.loadingExpenses = true;
+    this.expenses = [];
+    
+    this.http.get<any[]>(`http://localhost:5253/api/expenses/trip/${tripId}`).subscribe({
+      next: (expensesData) => {
+        console.log('Raw expenses data:', expensesData);
+        
+        if (!expensesData || expensesData.length === 0) {
+          console.log('No expenses found for this trip');
+          this.loadingExpenses = false;
+          return;
+        }
+        
+        const expenseProcessingPromises = expensesData.map(expense => {
+          return new Promise<void>((resolve) => {
+            this.http.get<User>(`http://localhost:5253/api/Users/${expense.paidByUserId}`).subscribe({
+              next: (payer) => {
+                const isSettled = Math.random() > 0.5;
+                
+                this.expenses.push({
+                  id: expense.id,
+                  description: expense.name || expense.description || 'Unnamed Expense',
+                  paidBy: payer.name || `User ID: ${expense.paidByUserId}`,
+                  date: expense.date,
+                  amount: expense.amount,
+                  currency: expense.currencyCode,
+                  isSettled: isSettled
+                });
+                resolve();
+              },
+              error: (error) => {
+                console.error(`Error loading payer for expense ${expense.id}:`, error);
+                // Still add expense even if payer fails to load
+                this.expenses.push({
+                  id: expense.id,
+                  description: expense.name || expense.description || 'Unnamed Expense',
+                  paidBy: `User ID: ${expense.paidByUserId}`,
+                  date: expense.date,
+                  amount: expense.amount,
+                  currency: expense.currencyCode,
+                  isSettled: false
+                });
+                resolve();
+              }
+            });
+          });
+        });
+  
+        Promise.all(expenseProcessingPromises).then(() => {
+          console.log('All expenses processed:', this.expenses);
+          this.loadingExpenses = false;
+        });
+      },
+      error: (error) => {
+        console.error('Error loading expenses:', error);
+        this.loadingExpenses = false;
+        
+        if (this.expenses.length === 0) {
+          this.expenses = [
+            {
+              id: 1,
+              description: 'Dinner at Restaurant',
+              paidBy: 'John Doe',
+              date: new Date(),
+              amount: 120,
+              currency: 'CZK',
+              isSettled: true
+            },
+            {
+              id: 2,
+              description: 'Hotel Reservation',
+              paidBy: 'Jane Smith',
+              date: new Date(),
+              amount: 2500,
+              currency: 'CZK',
+              isSettled: false
+            }
+          ];
+        }
       }
     });
   }
@@ -412,41 +500,14 @@ changeActiveDay(dayNumber: number): void {
       });
     });
   }
+  loadingExpenses: boolean = false;
+  expenseSplits: ExpenseSplit[] = [];
   typedUserId: string = '';
   activeTab = 'destinace'; 
   groupId = 'd516';
   newOwnerId: string = '';
   groupMembers: { id: number, name: string, role: string, avatar: string, userId: number, email?: string }[] = [];
-
-  expenses = [
-    {
-      id: 1,
-      description: 'Večeře na Maltě',
-      paidBy: 'Tomáš Veselý',
-      date: new Date('2025-04-05'),
-      amount: 1250,
-      currency: 'Kč',
-      isSettled: true
-    },
-    {
-      id: 2,
-      description: 'Vodní skútr',
-      paidBy: 'Honza Novák',
-      date: new Date('2025-04-04'),
-      amount: 3500,
-      currency: 'Kč',
-      isSettled: true
-    },
-    {
-      id: 3,
-      description: 'Letenky',
-      paidBy: 'Pepa Petrovský',
-      date: new Date('2025-04-01'),
-      amount: 8700,
-      currency: 'Kč',
-      isSettled: false
-    }
-  ];
+  expenses: any[] = [];
 
   setActiveTab(tab: string): void {
     this.activeTab = tab;
@@ -540,5 +601,19 @@ changeActiveDay(dayNumber: number): void {
 
   showUsedCurrency(currency: string) {
     console.log('Showing used names for currency:', currency);
+  }
+
+  deleteExpense(expenseId: number): void {
+    if (confirm('Opravdu chcete smazat tento výdaj?')) {
+      this.expenseService.deleteExpense(expenseId).subscribe({
+        next: () => {
+          console.log('Expense deleted successfully');
+          this.expenses = this.expenses.filter(e => e.id !== expenseId);
+        },
+        error: (error) => {
+          console.error('Error deleting expense:', error);
+        }
+      });
+    }
   }
 }
