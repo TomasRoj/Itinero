@@ -180,8 +180,8 @@ export class TripItineraryComponent {
     });
 
   }
+  typedUserId: string = '';
   activeTab = 'destinace'; 
-  
   groupId = 'd516';
   newOwnerId: string = '';
   groupMembers: {id: number, name: string, role: string, avatar: string, userId: number, email?: string}[] = [];
@@ -219,6 +219,28 @@ export class TripItineraryComponent {
     this.activeTab = tab;
   }
 
+
+  addUser(userId: string): void {
+    console.log('Adding user with ID:', userId);
+  
+    if (!userId || !this.tripData?.id) {
+      console.error('Invalid user ID or trip data');
+      return;
+    }
+  
+    this.tripMemberService.addTripMember(this.tripData.id, Number(userId)).subscribe({
+      next: () => {
+        console.log('Member added successfully');
+        this.loadTripMembers(this.tripData.id);
+        this.typedUserId = ''; // Clear input field after success
+      },
+      error: (error) => {
+        console.error('Error adding member:', error);
+      }
+    });
+  }
+  
+
   removeUser(memberId: number) {
     console.log('Removing user with member ID:', memberId);
     
@@ -240,44 +262,37 @@ export class TripItineraryComponent {
       }
     });
   }
-
-  transferOwnership(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-    this.newOwnerId = inputElement.value;
+  transferOwnership(): void { //Nefunguje: Cannot read properties of null (reading 'value')
     console.log('New owner ID:', this.newOwnerId);
-    
-    if (!this.newOwnerId || !this.tripData || !this.tripData.id) {
+      const userId = parseInt(this.newOwnerId, 10);
+  
+    if (isNaN(userId)) {
+      alert('Zadejte platné číslo ID.');
       return;
     }
-    
-    const userId = parseInt(this.newOwnerId);
-    const isUserMember = this.groupMembers.some(member => member.userId === userId);
-    
+  
+    const isUserMember = this.groupMembers.some(member => member.id === userId);
+  
     if (!isUserMember) {
       alert('Uživatel musí být členem výletu pro převod vlastnictví.');
       return;
     }
-    
-    const updatedTrip: Trip = {
-      ...this.tripData,
-      creator_id: userId,
-      updated_at: new Date()
-    };
-    
-    this.tripService.updateTrip(this.tripData.id, updatedTrip).subscribe({
-      next: (response) => {
-        console.log('Ownership transferred successfully:', response);
-        alert('Vlastnictví výletu bylo úspěšně převedeno.');
-        
-        this.tripData = response;
-        
-        this.loadTripMembers(this.tripData.id);
-      },
-      error: (error) => {
-        console.error('Error transferring ownership:', error);
-        alert('Chyba při převodu vlastnictví výletu.');
-      }
-    });
+  
+    const matchingMember = this.groupMembers.find(m => m.id === userId);
+  
+    if (matchingMember) {
+      this.tripMemberService.updateMemberRole(matchingMember.id, { role: 'owner' }).subscribe({
+        next: () => {
+          console.log('Role updated to owner');
+          alert('Vlastnictví výletu bylo úspěšně převedeno.');
+          this.loadTripMembers(this.tripData.id);
+        },
+        error: (error) => {
+          console.error('Error updating member role:', error);
+          alert('Chyba při převodu vlastnictví výletu.');
+        }
+      });
+    }
   }
 
   goBack(): void {
