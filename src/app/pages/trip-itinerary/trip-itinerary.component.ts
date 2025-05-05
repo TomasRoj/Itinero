@@ -47,6 +47,27 @@ interface ItineraryItem {
   styleUrl: './trip-itinerary.component.scss'
 })
 export class TripItineraryComponent {
+  placeholders: {
+    startDate: string;
+    endDate: string;
+    destination: string;
+    tripName: string;
+    description: string;
+  } = {
+    startDate: '',
+    endDate: '',
+    destination: '',
+    tripName: '',
+    description: ''
+  };
+
+  tripForm = {
+    startDate: '',
+    endDate: '',
+    destination: '',
+    tripName: '',
+    description: ''
+  };
 
   tripData: any = null;
   activeDay: number = 1;
@@ -120,28 +141,28 @@ export class TripItineraryComponent {
       this.sharedService.activeTab$.subscribe(tab => {
         this.activeTab = tab;
       });
-
-      
+     
       this.loadItineraryDays(tripId);
 
       this.tripService.getTripById(tripId).subscribe({
         next: (response: Trip) => {
           this.tripData = response;
-          const startDate = document.getElementById('startDate') as HTMLInputElement;
-          const endDate = document.getElementById('endDate') as HTMLInputElement;
-          const destination = document.getElementById('destinationName') as HTMLInputElement;
-          const tripName = document.getElementById('tripName') as HTMLInputElement;
-          const description = document.getElementById('descriptionField') as HTMLInputElement;
-
-          startDate.placeholder = new Date(this.tripData.start_date).toDateString();
-          endDate.placeholder = new Date(this.tripData.end_date).toDateString();
-          destination.placeholder = this.tripData.destination_city_id.toString();
-          tripName.placeholder = this.tripData.name.toString();
-          description.placeholder = this.tripData.description.toString();
-
-          dayCount = Math.floor((new Date(this.tripData.end_date).getTime() - new Date(this.tripData.start_date).getTime()) / (1000 * 3600 * 24)) + 1;
+          
+          this.placeholders = {
+            startDate: new Date(this.tripData.start_date).toDateString(),
+            endDate: new Date(this.tripData.end_date).toDateString(),
+            destination: this.tripData.destination_city_id.toString(),
+            tripName: this.tripData.name.toString(),
+            description: this.tripData.description.toString()
+          };
+          
+          let dayCount = 0;
+          dayCount = Math.floor(
+            (new Date(this.tripData.end_date).getTime() - new Date(this.tripData.start_date).getTime()) / 
+            (1000 * 3600 * 24)
+          ) + 1;
           this.sharedService.dayCount.next(dayCount);
-
+          
           this.loadTripMembers(tripId);
           this.loadExpenses(tripId);
         },
@@ -452,38 +473,45 @@ changeActiveDay(dayNumber: number): void {
   }
 
   updateTripData() {
-    const destination = document.getElementById('destinationName') as HTMLInputElement;
-    const tripName = document.getElementById('tripName') as HTMLInputElement;
-    const description = document.getElementById('descriptionField') as HTMLInputElement;
-
     const updatedTrip: Trip = {
       id: this.tripData.id,
-      name: tripName.value || this.tripData.name,
+      name: this.tripForm.tripName || this.tripData.name,
       destination_city_id: this.tripData.destination_city_id, 
-      start_date: this.startDate ? new Date(this.startDate) : this.tripData.start_date,
-      end_date: this.endDate ? new Date(this.endDate) : this.tripData.end_date,
+      start_date: this.tripForm.startDate ? new Date(this.tripForm.startDate) : this.tripData.start_date,
+      end_date: this.tripForm.endDate ? new Date(this.tripForm.endDate) : this.tripData.end_date,
       creator_id: this.tripData.creator_id,
       is_public: this.tripData.is_public,
       created_at: this.tripData.created_at,
       updated_at: new Date(),
-      description: description.value || this.tripData.description,
+      description: this.tripForm.description || this.tripData.description,
     };
-
-    this.route.params.subscribe(params => {
-      const tripId = +params['id'];
-
-      this.tripService.updateTrip(tripId, updatedTrip).subscribe({
-        next: (response) => {
-          console.log('Trip updated successfully:', response);
-          console.log('Updated trip data:', updatedTrip);
-
-        },
-        error: (error) => {
-          console.error('Error updating trip:', error);
-        }
-      });
+  
+    const tripId = this.route.snapshot.params['id'];
+  
+    this.tripService.updateTrip(tripId, updatedTrip).subscribe({
+      next: (response) => {
+        console.log('Trip updated successfully:', response);
+        console.log('Updated trip data:', updatedTrip);
+        
+        this.tripData = { ...updatedTrip };
+        this.updatePlaceholders();
+      },
+      error: (error) => {
+        console.error('Error updating trip:', error);
+      }
     });
   }
+  
+  updatePlaceholders() {
+    this.placeholders = {
+      startDate: new Date(this.tripData.start_date).toDateString(),
+      endDate: new Date(this.tripData.end_date).toDateString(),
+      destination: this.tripData.destination_city_id.toString(),
+      tripName: this.tripData.name.toString(),
+      description: this.tripData.description.toString()
+    };
+  }
+
   loadingExpenses: boolean = false;
   expenseSplits: ExpenseSplit[] = [];
   typedUserId: string = '';
