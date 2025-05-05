@@ -587,12 +587,12 @@ changeActiveDay(dayNumber: number): void {
     console.log('Showing used names for currency:', currency);
   }
 
-  deleteExpense(expenseId: number): void {
+  deleteExpense(expense_id: number): void {
     if (confirm('Opravdu chcete smazat tento výdaj?')) {
-      this.expenseService.deleteExpense(expenseId).subscribe({
+      this.expenseService.deleteExpense(expense_id).subscribe({
         next: () => {
           console.log('Expense deleted successfully');
-          this.expenses = this.expenses.filter(e => e.id !== expenseId);
+          this.expenses = this.expenses.filter(e => e.expense_id !== expense_id);
         },
         error: (error) => {
           console.error('Error deleting expense:', error);

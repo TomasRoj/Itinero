@@ -24,7 +24,7 @@ export interface ExpenseCategory {
 
 export interface ExpenseSplit {
   id?: number;
-  expenseId: number;
+  expense_id: number;
   userId: number;
   amount: number;
   isSettled: boolean;
