@@ -25,11 +25,11 @@ export interface ExpenseCategory {
 export interface ExpenseSplit {
   id?: number;
   expense_id: number;
-  userId: number;
+  user_Id: number;
   amount: number;
-  isSettled: boolean;
-  settledAt?: Date;
-  tripId: number;
+  is_settled: boolean;
+  settled_At?: Date;
+  trip_Id: number;
 }
 
 export interface User {

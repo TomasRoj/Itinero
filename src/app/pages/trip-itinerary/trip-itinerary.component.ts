@@ -593,6 +593,7 @@ changeActiveDay(dayNumber: number): void {
         next: () => {
           console.log('Expense deleted successfully');
           this.expenses = this.expenses.filter(e => e.expense_id !== expense_id);
+          this.loadExpenses(this.tripData.id);
         },
         error: (error) => {
           console.error('Error deleting expense:', error);
