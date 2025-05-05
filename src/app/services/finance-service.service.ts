@@ -6,7 +6,7 @@ export interface Expense {
   id: number;
   name: string;
   tripId: number;
-  categoryId?: number;
+  category_Id?: number;
   paidByUserId: number;
   amount: number;
   currencyCode: string;

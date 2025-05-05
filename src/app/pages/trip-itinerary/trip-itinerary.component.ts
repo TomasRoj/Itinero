@@ -193,7 +193,6 @@ export class TripItineraryComponent {
         console.error('Error loading expenses:', error);
         this.loadingExpenses = false;
         
-        // Fallback data if there's an error
         if (this.expenses.length === 0) {
           this.expenses = [
             {
@@ -350,7 +349,6 @@ changeActiveDay(dayNumber: number): void {
       next: (createdItem) => {
         this.currentDayItems.push(createdItem);
         
-        // Reset form
         this.newItem = {
           name: '',
           description: '',
@@ -512,7 +510,7 @@ changeActiveDay(dayNumber: number): void {
       next: () => {
         console.log('Member added successfully');
         this.loadTripMembers(this.tripData.id);
-        this.typedUserId = ''; // Clear input field after success
+        this.typedUserId = '';
       },
       error: (error) => {
         console.error('Error adding member:', error);
