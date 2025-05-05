@@ -173,7 +173,7 @@ export class TripItineraryComponent {
         }
         
         this.expenses = expensesData.map(expense => {
-          const isSettled = Math.random() > 0.5;
+          const isSettled = Math.random() > 0.5; // jen pro testovani
           
           return {
             id: expense.id,
@@ -181,7 +181,7 @@ export class TripItineraryComponent {
             paidByUserId: expense.paidByUserId,
             date: expense.date,
             amount: expense.amount,
-            currency: expense.currencyCode,
+            currency: expense.currency_Code,
             isSettled: isSettled
           };
         });

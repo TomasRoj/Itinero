@@ -9,7 +9,7 @@ export interface Expense {
   category_Id?: number;
   paidByUserId: number;
   amount: number;
-  currencyCode: string;
+  currency_Code: string;
   description: string;
   date: Date;
   receiptImage?: string;
