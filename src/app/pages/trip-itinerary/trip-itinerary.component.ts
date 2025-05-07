@@ -568,6 +568,11 @@ changeActiveDay(dayNumber: number): void {
       }
     });
   }
+
+  leaveTrip() : void {
+    //todo
+    return;
+  }
   
   transferOwnership(): void { //Nefunguje: Cannot read properties of null (reading 'value')
     console.log('New owner ID:', this.newOwnerId);

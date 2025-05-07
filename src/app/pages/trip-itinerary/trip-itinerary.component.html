@@ -265,12 +265,18 @@
                               </div>
                         </div>
                         <div class="form-row actions-row">
-                          <input type="text" class="form-control" id="newOwnerId" 
+                          <h3>Nebezpečná zóna</h3>
+                        </div>
+                        <div class="form-row actions-row">
+                          <input type="text" class="form-control" id="newOwnerId" style="border: 1px solid red" 
                               placeholder="Předat vlastnictví skupiny přes ID" 
                               [(ngModel)]="newOwnerId"
                               (keyup.enter)="transferOwnership()">
                           <small class="hint-text">*Nový vlastník musí být ve skupině</small>
                       </div>
+                      <div class="form-row actions-row">
+                        <a [routerLink]="'/dashboard'"><button class="btn btn-warning mx-2" style="border-radius: 10px" (click)="leaveTrip()">Odejít ze skupiny</button></a>
+                    </div>
                     </div>
                     <div class="action-buttons mt-2 w-100 d-flex justify-content-center">
                       <a [routerLink]="'/dashboard'"><button class="btn btn-outline" (click)="goBack()">Zpět</button></a>
