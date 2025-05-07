@@ -10,6 +10,8 @@ import { HttpClient } from '@angular/common/http';
 import { SharedService } from '../../services/shared.service';
 import { HttpParams } from '@angular/common/http';
 import { Expense, ExpenseCategory, ExpenseSplit, ExpenseService } from '../../services/finance-service.service';
+import { Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 
 interface DisplayExpense {
   id: number;
@@ -131,6 +133,7 @@ export class TripItineraryComponent {
     private http: HttpClient,
     private sharedService: SharedService,
     private expenseService: ExpenseService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -569,10 +572,112 @@ changeActiveDay(dayNumber: number): void {
     });
   }
 
-  leaveTrip() : void {
-    //todo
-    return;
+  leaveTrip(): void {
+    console.log('Leaving trip with ID:', this.tripData.id);
+    
+    // Import necessary modules at the top of your file
+    // import { HttpClient } from '@angular/common/http';
+    // import { forkJoin } from 'rxjs';
+    
+    // First get the current user ID
+    this.userService.currentUser$.subscribe(user => {
+      if (user) {
+        this.processLeaveTrip(user.id);
+      } else {
+        this.userService.getCurrentUser().subscribe({
+          next: (user) => {
+            if (user) {
+              this.processLeaveTrip(user.id);
+            } else {
+              console.error('No user found');
+            }
+          },
+          error: (error) => {
+            console.error('Error fetching user data:', error);
+          }
+        });
+      }
+    });
   }
+  
+  private processLeaveTrip(currentUserId: number): void {
+    const tripId = this.tripData.id;
+  
+    this.tripMemberService.getTripMembers().subscribe({
+      next: (members) => {
+        const userMembership = members.find(
+          member => member.trip_id === tripId && member.user_id === currentUserId
+        );
+  
+        if (!userMembership) {
+          console.error('User is not a member of this trip');
+          return;
+        }
+  
+        const isCreator = userMembership.role === 'owner';
+  
+        this.tripMemberService.deleteTripMember(userMembership.id).subscribe({
+          next: () => {
+            if (isCreator) {
+              this.http.get<any[]>(`${this.apiBaseUrl}/Itinerary/days?tripId=${tripId}`).subscribe({
+                next: (tripDays) => {
+                  const deleteRequests = tripDays.map(day =>
+                    this.http.delete(`${this.apiBaseUrl}/Itinerary/day/${day.id}`)
+                  );
+  
+                  if (deleteRequests.length > 0) {
+                    forkJoin(deleteRequests).subscribe({
+                      next: () => {
+                        console.log('All itinerary days deleted successfully');
+                        this.tripService.deleteTrip(tripId).subscribe({
+                          next: () => {
+                            console.log('Trip deleted successfully');
+                            this.tripData = null;
+                            this.router.navigate(['/dahboard']);
+                          },
+                          error: (error) => {
+                            console.error('Error deleting trip:', error);
+                          }
+                        });
+                      },
+                      error: (error) => {
+                        console.error('Error deleting itinerary days:', error);
+                      }
+                    });
+                  } else {
+                    this.tripService.deleteTrip(tripId).subscribe({
+                      next: () => {
+                        console.log('Trip deleted successfully');
+                        this.tripData = null;
+                        this.router.navigate(['/dashboard']);
+                      },
+                      error: (error) => {
+                        console.error('Error deleting trip:', error);
+                      }
+                    });
+                  }
+                },
+                error: (error) => {
+                  console.error('Error fetching itinerary days:', error);
+                }
+              });
+            } else {
+              console.log('Successfully left the trip');
+              this.tripData = null;
+              this.router.navigate(['/dashboard']);
+            }
+          },
+          error: (error) => {
+            console.error('Error removing member:', error);
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error fetching trip members:', error);
+      }
+    });
+  }
+  
   
   transferOwnership(): void { //Nefunguje: Cannot read properties of null (reading 'value')
     console.log('New owner ID:', this.newOwnerId);

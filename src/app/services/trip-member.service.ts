@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Trip} from './trip-service.service';  
 
 export interface TripMember {
-  id?: number;
+  id: number;
   trip_id: number;
   user_id: number;
   role?: string;
