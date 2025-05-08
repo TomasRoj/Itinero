@@ -23,7 +23,6 @@ export class DestinationTabComponent {
   ) { }
 
   tripData: any = null;
-  private apiBaseUrl = 'http://localhost:5253/api';
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {

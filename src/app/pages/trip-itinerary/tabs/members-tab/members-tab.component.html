@@ -1,0 +1,52 @@
+<div class="col-md-9 col-lg-10 ps-0 d-flex p-5">
+    <div class="tab-content">
+        <div class="members-container">
+            <div class="form-row actions-row">
+                <input type="text" class="form-control" id="userIdInput" placeholder="Přidat uživatele přes ID"
+                    [(ngModel)]="typedUserId" (keyup.enter)="addUser(typedUserId)">
+            </div>
+
+            <div class="form-row actions-row">
+                <div class="dropdown">
+                    <button class="action-button dropdown-button" (click)="toggleDropdown('removeUserDropdown')">
+                        Odstranit uživatele ze skupiny
+                        <i class="dropdown-icon"></i>
+                    </button>
+                    <div class="dropdown-menu" [ngClass]="{'show': isDropdownOpen('removeUserDropdown')}">
+                        <a class="dropdown-item" href="#" *ngFor="let member of groupMembers"
+                            (click)="$event.preventDefault(); removeUser(member.id)">
+                            {{ member.name }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="divider"></div>
+
+            <div class="members-list">
+                <div class="member-item bg-light p-2 mb-3" style="border-radius: 10px;"
+                    *ngFor="let member of groupMembers">
+                    <div class="member-info">
+                        <span class="member-name" *ngIf="member.email">{{ member.name }} | {{ member.email }}</span>
+                        <span class="member-role">{{ member.role }}</span>
+                    </div>
+                    <div class="member-avatar">
+                        <img [src]="member.avatar" alt="{{ member.name }}" onerror="this.src='profile.jpg'">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row actions-row">
+            <h3>Nebezpečná zóna</h3>
+        </div>
+        <div class="form-row actions-row">
+            <input type="text" class="form-control" id="newOwnerId" style="border: 1px solid red"
+                placeholder="Předat vlastnictví skupiny přes ID" [(ngModel)]="newOwnerId"
+                (keyup.enter)="transferOwnership()">
+            <small class="hint-text">*Nový vlastník musí být ve skupině</small>
+        </div>
+        <div class="form-row actions-row">
+            <a [routerLink]="'/dashboard'"><button class="btn btn-warning mx-2" style="border-radius: 10px"
+                    (click)="leaveTrip()">Odejít ze skupiny</button></a>
+        </div>
+    </div>
+</div>
