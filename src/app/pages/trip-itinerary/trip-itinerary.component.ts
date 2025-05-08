@@ -14,16 +14,7 @@ import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { DestinationTabComponent } from './tabs/destination-tab/destination-tab.component';
 import { MembersTabComponent } from './tabs/members-tab/members-tab.component';
-
-interface DisplayExpense {
-  id: number;
-  description: string;
-  paidByUserId: number;
-  date: Date;
-  amount: number;
-  currency: string;
-  isSettled: boolean;
-}
+import { FinanceTabComponent } from "./tabs/finance-tab/finance-tab.component";
 
 interface ItineraryDay {
   id: number;
@@ -37,7 +28,7 @@ interface ItineraryItem {
   day_id: number;
   name: string;
   description?: string;
-  start_time?: string; 
+  start_time?: string;
   end_time?: string;
   location?: string;
   created_at: Date;
@@ -46,7 +37,7 @@ interface ItineraryItem {
 
 @Component({
   selector: 'app-trip-itinerary',
-  imports: [CommonModule, ItinerarySidebarComponent, RouterLink, FormsModule, DestinationTabComponent, MembersTabComponent],
+  imports: [CommonModule, ItinerarySidebarComponent, RouterLink, FormsModule, DestinationTabComponent, MembersTabComponent, FinanceTabComponent],
   templateUrl: './trip-itinerary.component.html',
   styleUrl: './trip-itinerary.component.scss'
 })
@@ -58,12 +49,12 @@ export class TripItineraryComponent {
     tripName: string;
     description: string;
   } = {
-    startDate: '',
-    endDate: '',
-    destination: '',
-    tripName: '',
-    description: ''
-  };
+      startDate: '',
+      endDate: '',
+      destination: '',
+      tripName: '',
+      description: ''
+    };
 
   tripForm = {
     startDate: '',
@@ -89,12 +80,12 @@ export class TripItineraryComponent {
     end_time: string;
     location: string;
   } = {
-    name: '',
-    description: '',
-    start_time: '',
-    end_time: '',
-    location: ''
-  };
+      name: '',
+      description: '',
+      start_time: '',
+      end_time: '',
+      location: ''
+    };
 
   // API base URL
   private apiBaseUrl = 'http://localhost:5253/api';
@@ -118,28 +109,27 @@ export class TripItineraryComponent {
       this.sharedService.activeTab$.subscribe(tab => {
         this.activeTab = tab;
       });
-     
+
       this.loadItineraryDays(tripId);
 
       this.tripService.getTripById(tripId).subscribe({
         next: (response: Trip) => {
           this.tripData = response;
-          
+
           let dayCount = 0;
           dayCount = Math.floor(
-            (new Date(this.tripData.end_date).getTime() - new Date(this.tripData.start_date).getTime()) / 
+            (new Date(this.tripData.end_date).getTime() - new Date(this.tripData.start_date).getTime()) /
             (1000 * 3600 * 24)
           ) + 1;
           this.sharedService.dayCount.next(dayCount);
-          
-          this.loadExpenses(tripId);
+
         },
         error: (error: any) => {
           console.error('Chyba při načítání dat výletu:', error);
         }
       });
     });
-    
+
     this.sharedService.selectedDay.subscribe(dayNumber => {
       if (dayNumber && this.tripData) {
         this.changeActiveDay(dayNumber);
@@ -147,76 +137,16 @@ export class TripItineraryComponent {
     });
   }
 
-  loadExpenses(tripId: number): void {
-    this.loadingExpenses = true;
-    this.expenses = [];
-    
-    this.expenseService.getExpensesByTripId(tripId).subscribe({
-      next: (expensesData) => {
-        console.log('Raw expenses data:', expensesData);
-        
-        if (!expensesData || expensesData.length === 0) {
-          console.log('No expenses found for this trip');
-          this.loadingExpenses = false;
-          return;
-        }
-        
-        this.expenses = expensesData.map(expense => {
-          const isSettled = Math.random() > 0.5; // jen pro testovani
-          
-          return {
-            id: expense.id,
-            description: expense.name || expense.description || 'Unnamed Expense',
-            paidByUserId: expense.paidByUserId,
-            date: expense.date,
-            amount: expense.amount,
-            currency: expense.currency_Code,
-            isSettled: isSettled
-          };
-        });
-        
-        console.log('Processed expenses:', this.expenses);
-        this.loadingExpenses = false;
-      },
-      error: (error) => {
-        console.error('Error loading expenses:', error);
-        this.loadingExpenses = false;
-        
-        if (this.expenses.length === 0) {
-          this.expenses = [
-            {
-              id: 1,
-              description: 'Dinner at Restaurant',
-              paidByUserId: 1,
-              date: new Date(),
-              amount: 120,
-              currency: 'CZK',
-              isSettled: true
-            },
-            {
-              id: 2,
-              description: 'Hotel Reservation',
-              paidByUserId: 2,
-              date: new Date(),
-              amount: 2500,
-              currency: 'CZK',
-              isSettled: false
-            }
-          ];
-        }
-      }
-    });
-  }
   loadItineraryDays(tripId: number): void {
     const params = new HttpParams().set('tripId', String(tripId))
-  
+
     this.http.get<ItineraryDay[]>(`${this.apiBaseUrl}/Itinerary/days`, { params }).subscribe({
       next: (days) => {
         console.log('Načtené dny z API:', days);
         this.itineraryDays = days
-        .filter(day => day.trip_id === tripId)
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  
+          .filter(day => day.trip_id === tripId)
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
         if (this.itineraryDays.length === 0) {
           console.log('Vytvářím nové dny pro výlet');
           this.createInitialDays(tripId);
@@ -233,76 +163,76 @@ export class TripItineraryComponent {
         console.error('Chyba při načítání dnů itineráře:', error);
       }
     });
-  }  
-  
+  }
 
-async createInitialDays(tripId: number): Promise<void> {
-  if (this.isCreatingDays) return;
-  this.isCreatingDays = true;
 
-  try {
+  async createInitialDays(tripId: number): Promise<void> {
+    if (this.isCreatingDays) return;
+    this.isCreatingDays = true;
 
-    if (!this.tripData) {
-      console.error('Trip data nejsou dostupná.');
+    try {
+
+      if (!this.tripData) {
+        console.error('Trip data nejsou dostupná.');
+        this.isCreatingDays = false;
+        return;
+      }
+      const startDate = new Date(this.tripData.start_date);
+      const endDate = new Date(this.tripData.end_date);
+      const dayCount = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) + 1;
+
+      const createDayPromises = [];
+      for (let i = 1; i <= dayCount; i++) {
+        const currentDayDate = new Date(startDate);
+        currentDayDate.setDate(startDate.getDate() + (i - 1));
+        const formattedDate = currentDayDate.toISOString().split('T')[0];
+
+        const dayData = {
+          trip_id: tripId,
+          day_number: i,
+          description: `Den ${i} výletu ${this.tripData.name} (${formattedDate})`,
+          date: formattedDate
+        };
+        createDayPromises.push(
+          this.http.post<ItineraryDay>(`${this.apiBaseUrl}/Itinerary/day`, dayData).toPromise()
+        );
+      }
+      await Promise.all(createDayPromises);
+
       this.isCreatingDays = false;
-      return;
+      this.loadItineraryDays(tripId);
+    } catch (error) {
+      console.error('Chyba při vytváření dnů itineráře:', error);
+      this.isCreatingDays = false;
     }
-    const startDate = new Date(this.tripData.start_date);
-    const endDate = new Date(this.tripData.end_date);
-    const dayCount = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) + 1;
+  }
 
-    const createDayPromises = [];
-    for (let i = 1; i <= dayCount; i++) {
-      const currentDayDate = new Date(startDate);
-      currentDayDate.setDate(startDate.getDate() + (i - 1));
-      const formattedDate = currentDayDate.toISOString().split('T')[0];
+  changeActiveDay(dayNumber: number): void {
+    this.activeDay = dayNumber;
 
-      const dayData = {
-        trip_id: tripId,
-        day_number: i,
-        description: `Den ${i} výletu ${this.tripData.name} (${formattedDate})`,
-        date: formattedDate
-      };
-      createDayPromises.push(
-        this.http.post<ItineraryDay>(`${this.apiBaseUrl}/Itinerary/day`, dayData).toPromise()
-      );
+    // Ověření, že den existuje
+    const selectedDay = this.itineraryDays[dayNumber - 1];
+    if (selectedDay) {
+      this.currentDayData = selectedDay;
+      this.dayDescription = selectedDay.description || '';
+      this.loadDayItems(selectedDay.id);
+    } else {
+      this.currentDayData = null;
+      this.currentDayItems = [];
+      this.dayDescription = '';
     }
-    await Promise.all(createDayPromises);
 
-    this.isCreatingDays = false;
-    this.loadItineraryDays(tripId);
-  } catch (error) {
-    console.error('Chyba při vytváření dnů itineráře:', error);
-    this.isCreatingDays = false;
+    // Debug výpisy
+    console.log('Aktivní den:', this.activeDay);
+    console.log('Počet dní:', this.itineraryDays.length);
+
+    if (selectedDay) {
+      console.log('Date aktivniho dne:', selectedDay.date);
+    }
   }
-}  
-  
-changeActiveDay(dayNumber: number): void {
-  this.activeDay = dayNumber;
-
-  // Ověření, že den existuje
-  const selectedDay = this.itineraryDays[dayNumber - 1];
-  if (selectedDay) {
-    this.currentDayData = selectedDay;
-    this.dayDescription = selectedDay.description || '';
-    this.loadDayItems(selectedDay.id);
-  } else {
-    this.currentDayData = null;
-    this.currentDayItems = [];
-    this.dayDescription = '';
-  }
-
-  // Debug výpisy
-  console.log('Aktivní den:', this.activeDay);
-  console.log('Počet dní:', this.itineraryDays.length);
-
-  if (selectedDay) {
-    console.log('Date aktivniho dne:', selectedDay.date);
-  }
-}
 
   loadDayItems(dayId: number): void {
-    
+
     /*
     this.http.get<ItineraryItem[]>(`${this.apiBaseUrl}/Itinerary/items`).subscribe({
       next: (items) => {
@@ -312,19 +242,19 @@ changeActiveDay(dayNumber: number): void {
         console.error('Error loading day items:', error);
       }
     }); */
-  } 
+  }
 
   addNewItem(): void {
     if (!this.currentDayData) {
       console.error('No active day selected');
       return;
     }
-    
+
     if (!this.newItem.name.trim()) {
       alert('Please enter a name for the item');
       return;
     }
-    
+
     const newItemData = {
       day_id: this.currentDayData.id,
       name: this.newItem.name,
@@ -333,11 +263,11 @@ changeActiveDay(dayNumber: number): void {
       end_time: this.newItem.end_time,
       location: this.newItem.location
     };
-    
+
     this.http.post<ItineraryItem>(`${this.apiBaseUrl}/Itinerary/item`, newItemData).subscribe({
       next: (createdItem) => {
         this.currentDayItems.push(createdItem);
-        
+
         this.newItem = {
           name: '',
           description: '',
@@ -356,7 +286,7 @@ changeActiveDay(dayNumber: number): void {
     this.http.put<ItineraryItem>(`${this.apiBaseUrl}/Itinerary/item/${item.id}`, item).subscribe({
       next: (updatedItem) => {
         console.log('Item updated successfully:', updatedItem);
-        
+
         const index = this.currentDayItems.findIndex(i => i.id === updatedItem.id);
         if (index !== -1) {
           this.currentDayItems[index] = updatedItem;
@@ -384,9 +314,9 @@ changeActiveDay(dayNumber: number): void {
 
   updateDayDescription(): void {
     if (!this.currentDayData) return;
-  
+
     this.currentDayData.description = this.dayDescription;
-  
+
     this.http.put<ItineraryDay>(
       `${this.apiBaseUrl}/Itinerary/day/${this.currentDayData.id}`,
       this.currentDayData
@@ -404,7 +334,7 @@ changeActiveDay(dayNumber: number): void {
   loadingExpenses: boolean = false;
   expenseSplits: ExpenseSplit[] = [];
   typedUserId: string = '';
-  activeTab = 'destinace'; 
+  activeTab = 'destinace';
   groupId = 'd516';
   newOwnerId: string = '';
   expenses: any[] = [];
@@ -417,18 +347,4 @@ changeActiveDay(dayNumber: number): void {
     console.log('Showing used names for currency:', currency);
   }
 
-  deleteExpense(expense_id: number): void {
-    if (confirm('Opravdu chcete smazat tento výdaj?')) {
-      this.expenseService.deleteExpense(expense_id).subscribe({
-        next: () => {
-          console.log('Expense deleted successfully');
-          this.expenses = this.expenses.filter(e => e.expense_id !== expense_id);
-          this.loadExpenses(this.tripData.id);
-        },
-        error: (error) => {
-          console.error('Error deleting expense:', error);
-        }
-      });
-    }
-  }
 }
