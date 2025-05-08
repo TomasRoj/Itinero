@@ -1,0 +1,153 @@
+$primary-color: #ed2e3a;
+$dark-blue: #2d2d45;
+$light-gray: #f2f4f5;
+$border-radius: 8px;
+
+/* Only keeping CSS classes used in your HTML */
+
+.form-container {
+  margin-bottom: 30px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.form-group {
+  flex: 1;
+  
+  &.textarea-group {
+    flex: 2;
+  }
+  
+  &.dropdown-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.form-control {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  background-color: $light-gray;
+  border-radius: $border-radius;
+  font-size: 16px;
+  
+  &::placeholder {
+    color: #888;
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba($dark-blue, 0.3);
+  }
+}
+
+textarea.form-control {
+  resize: none;
+  min-height: 120px;
+}
+
+.btn {
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  
+  &.btn-primary {
+    background-color: $primary-color;
+    color: white;
+    
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+}
+
+.action-button {
+  width: 100%;
+  padding: 12px 15px;
+  background-color: $light-gray;
+  border: none;
+  border-radius: $border-radius;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  
+  &:hover {
+    background-color: darken($light-gray, 5%);
+  }
+  
+  &.dropdown-button {
+    padding-right: 30px;
+  }
+  
+  .dropdown-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    border-left: 2px solid #888;
+    border-bottom: 2px solid #888;
+    transform: translateY(-70%) rotate(-45deg);
+  }
+}
+
+.tab-content {
+  min-height: 300px;
+}
+
+.dropdown {
+  width: 100%;
+}
+
+.dropdown-menu {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  width: 100%;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+.dropdown-menu.show {
+  display: block;
+}
+
+.mx-2 {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 100%;
+}
+
+.input-group-text {
+  display: flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  text-align: center;
+  white-space: nowrap;
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem 0 0 0.25rem;
+}

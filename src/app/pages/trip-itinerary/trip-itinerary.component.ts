@@ -12,6 +12,7 @@ import { HttpParams } from '@angular/common/http';
 import { Expense, ExpenseCategory, ExpenseSplit, ExpenseService } from '../../services/finance-service.service';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
+import { DestinationTabComponent } from './tabs/destination-tab/destination-tab.component';
 
 interface DisplayExpense {
   id: number;
@@ -44,7 +45,7 @@ interface ItineraryItem {
 
 @Component({
   selector: 'app-trip-itinerary',
-  imports: [CommonModule, ItinerarySidebarComponent, RouterLink, FormsModule],
+  imports: [CommonModule, ItinerarySidebarComponent, RouterLink, FormsModule, DestinationTabComponent],
   templateUrl: './trip-itinerary.component.html',
   styleUrl: './trip-itinerary.component.scss'
 })
@@ -97,34 +98,6 @@ export class TripItineraryComponent {
   // API base URL
   private apiBaseUrl = 'http://localhost:5253/api';
 
-  @Output() changedDates = new EventEmitter<{startDate: string, endDate: string}>();
-  startDate: string = '';
-  endDate: string = '';
-
-  onDateChange() {
-    this.changedDates.emit({ startDate: this.startDate, endDate: this.endDate });
-    console.log('Změna data:', this.startDate, this.endDate);
-  }
-
-  openDropdown: string | null = null;
-
-  toggleDropdown(dropdownId: string): void {
-    this.openDropdown = this.openDropdown === dropdownId ? null : dropdownId;
-  }
-
-  isDropdownOpen(dropdownId: string): boolean {
-    return this.openDropdown === dropdownId;
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    const target = event.target as HTMLElement;
-
-    if (!target.closest('.dropdown-menu') && !target.closest('.dropdown-button')) {
-      this.openDropdown = null;
-    }
-  }
-
   constructor(
     private route: ActivatedRoute,
     private tripService: TripService,
@@ -150,14 +123,6 @@ export class TripItineraryComponent {
       this.tripService.getTripById(tripId).subscribe({
         next: (response: Trip) => {
           this.tripData = response;
-          
-          this.placeholders = {
-            startDate: new Date(this.tripData.start_date).toDateString(),
-            endDate: new Date(this.tripData.end_date).toDateString(),
-            destination: this.tripData.destination_city_id.toString(),
-            tripName: this.tripData.name.toString(),
-            description: this.tripData.description.toString()
-          };
           
           let dayCount = 0;
           dayCount = Math.floor(
@@ -475,45 +440,6 @@ changeActiveDay(dayNumber: number): void {
     });
   }
 
-  updateTripData() {
-    const updatedTrip: Trip = {
-      id: this.tripData.id,
-      name: this.tripForm.tripName || this.tripData.name,
-      destination_city_id: this.tripData.destination_city_id, 
-      start_date: this.tripForm.startDate ? new Date(this.tripForm.startDate) : this.tripData.start_date,
-      end_date: this.tripForm.endDate ? new Date(this.tripForm.endDate) : this.tripData.end_date,
-      creator_id: this.tripData.creator_id,
-      is_public: this.tripData.is_public,
-      created_at: this.tripData.created_at,
-      updated_at: new Date(),
-      description: this.tripForm.description || this.tripData.description,
-    };
-  
-    const tripId = this.route.snapshot.params['id'];
-  
-    this.tripService.updateTrip(tripId, updatedTrip).subscribe({
-      next: (response) => {
-        console.log('Trip updated successfully:', response);
-        console.log('Updated trip data:', updatedTrip);
-        
-        this.tripData = { ...updatedTrip };
-        this.updatePlaceholders();
-      },
-      error: (error) => {
-        console.error('Error updating trip:', error);
-      }
-    });
-  }
-  
-  updatePlaceholders() {
-    this.placeholders = {
-      startDate: new Date(this.tripData.start_date).toDateString(),
-      endDate: new Date(this.tripData.end_date).toDateString(),
-      destination: this.tripData.destination_city_id.toString(),
-      tripName: this.tripData.name.toString(),
-      description: this.tripData.description.toString()
-    };
-  }
 
   loadingExpenses: boolean = false;
   expenseSplits: ExpenseSplit[] = [];
