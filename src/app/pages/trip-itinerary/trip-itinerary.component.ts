@@ -2,19 +2,19 @@ import { CommonModule } from '@angular/common';
 import { ItinerarySidebarComponent } from '../../components/itinerary-sidebar/itinerary-sidebar.component';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { Trip, TripService } from '../../services/trip-service.service';
-import { TripMember, TripMemberService } from '../../services/trip-member.service';
-import { User, UserService } from '../../services/user-service.service';
-import { Component, Output, EventEmitter, HostListener } from '@angular/core';
+import { TripMemberService } from '../../services/trip-member.service';
+import { UserService } from '../../services/user-service.service';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { SharedService } from '../../services/shared.service';
 import { HttpParams } from '@angular/common/http';
-import { Expense, ExpenseCategory, ExpenseSplit, ExpenseService } from '../../services/finance-service.service';
+import { ExpenseSplit, ExpenseService } from '../../services/finance-service.service';
 import { Router } from '@angular/router';
-import { forkJoin } from 'rxjs';
 import { DestinationTabComponent } from './tabs/destination-tab/destination-tab.component';
 import { MembersTabComponent } from './tabs/members-tab/members-tab.component';
 import { FinanceTabComponent } from "./tabs/finance-tab/finance-tab.component";
+import { DaysTabComponent } from "./tabs/days-tab/days-tab.component";
 
 interface ItineraryDay {
   id: number;
@@ -37,7 +37,7 @@ interface ItineraryItem {
 
 @Component({
   selector: 'app-trip-itinerary',
-  imports: [CommonModule, ItinerarySidebarComponent, RouterLink, FormsModule, DestinationTabComponent, MembersTabComponent, FinanceTabComponent],
+  imports: [CommonModule, ItinerarySidebarComponent, RouterLink, FormsModule, DestinationTabComponent, MembersTabComponent, FinanceTabComponent, DaysTabComponent],
   templateUrl: './trip-itinerary.component.html',
   styleUrl: './trip-itinerary.component.scss'
 })
@@ -244,6 +244,7 @@ export class TripItineraryComponent {
     }); */
   }
 
+  /*
   addNewItem(): void {
     if (!this.currentDayData) {
       console.error('No active day selected');
@@ -280,8 +281,9 @@ export class TripItineraryComponent {
         console.error('Error adding new item:', error);
       }
     });
-  }
+  } */
 
+  /*
   updateItem(item: ItineraryItem): void {
     this.http.put<ItineraryItem>(`${this.apiBaseUrl}/Itinerary/item/${item.id}`, item).subscribe({
       next: (updatedItem) => {
@@ -310,26 +312,7 @@ export class TripItineraryComponent {
         }
       });
     }
-  }
-
-  updateDayDescription(): void {
-    if (!this.currentDayData) return;
-
-    this.currentDayData.description = this.dayDescription;
-
-    this.http.put<ItineraryDay>(
-      `${this.apiBaseUrl}/Itinerary/day/${this.currentDayData.id}`,
-      this.currentDayData
-    ).subscribe({
-      next: (updatedDay) => {
-        const idx = this.itineraryDays.findIndex(d => d.id === updatedDay.id);
-        if (idx !== -1) this.itineraryDays[idx] = updatedDay;
-      },
-      error: (err) => {
-        console.error('Chyba při ukládání popisu dne:', err);
-      }
-    });
-  }
+  } */
 
   loadingExpenses: boolean = false;
   expenseSplits: ExpenseSplit[] = [];
@@ -341,10 +324,6 @@ export class TripItineraryComponent {
 
   setActiveTab(tab: string): void {
     this.activeTab = tab;
-  }
-
-  showUsedCurrency(currency: string) {
-    console.log('Showing used names for currency:', currency);
   }
 
 }

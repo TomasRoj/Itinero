@@ -1,0 +1,97 @@
+$primary-color: #ed2e3a;
+$dark-blue: #2d2d45;
+$light-gray: #f2f4f5;
+$border-radius: 8px;
+
+.row {
+  display: flex;
+  width: 100%;
+  margin: 0;
+}
+
+.form-control {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  background-color: $light-gray;
+  border-radius: $border-radius;
+  font-size: 16px;
+  
+  &::placeholder {
+    color: #888;
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba($dark-blue, 0.3);
+  }
+}
+
+.mx-2 {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.ms-4 {
+  margin-left: 1.5rem;
+}
+
+
+.col-md-6 {
+  width: 50%;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+}
+
+.col-md-4 {
+  width: 33.333333%;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+}
+
+.activity-card {
+  transition: all 0.2s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+}
+
+.summary-card {
+  background-color: #EF233C !important;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.btn {
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  
+  &.btn-primary {
+    background-color: $primary-color;
+    color: white;
+    
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.tab-content {
+  min-height: 300px;
+}
