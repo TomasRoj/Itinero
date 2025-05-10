@@ -1,44 +1,116 @@
 <div class="container-fluid p-0">
-    <div class="row g-0">
+  <div class="row g-0">
+  
+    <div class="col-md-3 col-lg-2">
+      <app-sidebar></app-sidebar>
+    </div>
     
-      <div class="col-md-3 col-lg-2">
-        <app-sidebar></app-sidebar>
-      </div>
-      
-     
-      <div class="col-md-9 col-lg-10 ps-0" style="background-image: url('/survey-bg.png');">
-        <div class="dashboard-content p-4">
-          <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
-            <h1 class="mb-0">Inspirujte se našimi destinacemi</h1>
-            <a [routerLink]="'/survey'"><button class="btn btn-danger rounded-pill px-4">Nový výlet</button></a>
-          </div>
-          
-          <div class="row pt-5">
-
-            <div class="col-lg-4 mb-4" *ngFor="let destination of Destinations">
-              <div class="card border-0 shadow-sm h-100">
-                <div class="card-body p-0">
-                  <img [src]='destination.photoURL' (error)="onImageError($event)" width="400" height="300" class="card-img-top">
-                  <div class="p-3">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                      <div>
-                        <h3 class="mb-0">{{ destination.name }}</h3>
-                        <p class="text-muted mb-0">{{ destination.country }}</p>
-                      </div>
-                    </div>
-                    <div class="timeRecommendation pt-4 pb-5">
-                        <h5>Kdy navštívit:</h5>
-                        <span class="me-2">{{ destination.best_time_to_visit }}</span>
-                    </div>
-                    <a [routerLink]="'/dashboard'" class="button btn btn-danger w-100">Moje výlety</a>
+   
+    <div class="col-md-9 col-lg-10 ps-0" style="background-image: url('/survey-bg.png');">
+      <div class="dashboard-content p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
+          <h1 class="mb-0">Inspirujte se našimi destinacemi</h1>
+          <a [routerLink]="'/survey'"><button class="btn btn-danger rounded-pill px-4">Nový výlet</button></a>
+        </div>
+  
+        <div class="row mb-2">
+          <div class="col-md-7">
+            <div>
+              <div class="card-body">
+                <h5 class="card-title mb-3 mt-3">Vyhledat podle země</h5>
+                <div class="input-group">
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    placeholder="Zadejte název země..." 
+                    [(ngModel)]="countrySearchTerm"
+                    (input)="onCountrySearch()"
+                    (focus)="onCountrySearch()"
+                    (keydown.enter)="filterDestinations(); $event.preventDefault()"
+                    >
+                  <button 
+                    class="btn btn-outline-secondary" 
+                    type="button"
+                    (click)="clearSearch()"
+                    *ngIf="countrySearchTerm"
+                  >
+                    <i class="bi bi-x"></i> Zrušit
+                  </button>
+                  <button 
+                    class="btn btn-primary"  style="background-color: #3e405a"
+                    type="button"
+                    (click)="filterDestinations()"
+                  >
+                    <i class="bi bi-search"></i> Hledat
+                  </button>
+                </div>
+                <div class="position-relative">
+                  <div class="country-suggestions shadow" *ngIf="showCountrySuggestions && filteredCountries.length > 0">
+                    <ul class="list-group">
+                      <li 
+                        class="list-group-item list-group-item-action" 
+                        *ngFor="let country of filteredCountries"
+                        (click)="selectCountry(country)"
+                      >
+                        {{ country }}
+                      </li>
+                    </ul>
                   </div>
                 </div>
               </div>
             </div>
-
           </div>
-          
         </div>
+
+        <div class="row" *ngIf="isLoading">
+          <div class="col-12 text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Načítání...</span>
+            </div>
+            <p class="mt-2">Načítání atrakcí...</p>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="errorMessage">
+          <div class="col-12 text-center py-5">
+            <div class="alert alert-danger">
+              {{ errorMessage }}
+            </div>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="filteredDestinations.length === 0 && !isLoading">
+          <div class="col-12 text-center py-5">
+            <h4>Žádné Destinace nenalezeny</h4>
+            <p>Zkuste prosím jiné vyhledávací kritérium.</p>
+            <button class="btn btn-outline-primary" style="background-color: #3e405a; color: white;" (click)="clearSearch()">Zobrazit všechny destinace</button>
+          </div>
+        </div>
+
+        <div class="row pt-5">
+          <div class="col-lg-4 mb-4" *ngFor="let destination of filteredDestinations">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body p-0">
+                <img [src]="destination.photoURL" (error)="onImageError($event)" width="400" height="300" class="card-img-top">
+                <div class="p-3">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                      <h3 class="mb-0">{{ destination.name }}</h3>
+                      <p class="text-muted mb-0">{{ destination.country }}</p>
+                    </div>
+                  </div>
+                  <div class="timeRecommendation pt-4 pb-5">
+                      <h5>Kdy navštívit:</h5>
+                      <span class="me-2">{{ destination.best_time_to_visit }}</span>
+                  </div>
+                  <a [routerLink]="'/dashboard'" class="button btn btn-danger w-100">Moje výlety</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
       </div>
     </div>
   </div>
+</div>
