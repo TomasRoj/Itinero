@@ -25,7 +25,10 @@
             <div class="member-item bg-light p-2 mb-3" style="border-radius: 10px;" *ngFor="let member of groupMembers">
                 <div class="member-info">
                     <span class="member-name" *ngIf="member.email">{{ member.name }} | {{ member.email }}</span>
-                    <span class="member-role">{{ member.role }}</span>
+                    <span class="member-name" *ngIf="!member.email">{{ member.name }}</span>
+                    <span class="member-role" [ngClass]="{'owner-badge': member.role === 'Vlastník'}">
+                        {{ member.role }}
+                    </span>
                 </div>
                 <div class="member-avatar">
                     <img [src]="member.avatar" alt="{{ member.name }}" onerror="this.src='profile.jpg'">
@@ -33,17 +36,16 @@
             </div>
         </div>
     </div>
-    <div class="form-row actions-row">
-        <h3>Nebezpečná zóna</h3>
-    </div>
+
     <div class="form-row actions-row">
         <input type="text" class="form-control" id="newOwnerId" style="border: 1px solid red"
-            placeholder="Předat vlastnictví skupiny přes ID" [(ngModel)]="newOwnerId"
-            (keyup.enter)="transferOwnership()">
+            placeholder="Předat vlastnictví skupiny přes ID" [(ngModel)]="newOwnerId">
+        <button class="btn btn-danger mt-2" (click)="transferOwnership()">Předat vlastnictví</button>
         <small class="hint-text">*Nový vlastník musí být ve skupině</small>
     </div>
     <div class="form-row actions-row">
-        <a [routerLink]="'/dashboard'"><button class="btn btn-warning mx-2" style="border-radius: 10px"
-                (click)="leaveTrip()">Odejít ze skupiny</button></a>
+        <button class="btn btn-warning mx-2" style="border-radius: 10px" (click)="leaveTrip()">
+            Odejít ze skupiny
+        </button>
     </div>
 </div>

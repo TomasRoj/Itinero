@@ -20,20 +20,19 @@ export class TripMemberService {
 
   constructor(private http: HttpClient) {}
 
-  addTripMember(tripId: number, userId: number): Observable<any> {
+  addTripMember(tripId: number, userId: number, role: string = 'Member'): Observable<any> {
     const now = new Date().toISOString();
   
     const payload = {
       trip_id: tripId,
       user_id: userId,
-      role: 'member', // výchozí hodnota
+      role: role,
       joined_at: now
     };
   
     return this.http.post(this.apiUrl, payload);
   }
   
-
   getTripMembers(): Observable<TripMember[]> {
     return this.http.get<TripMember[]>(this.apiUrl);
   }
@@ -42,15 +41,15 @@ export class TripMemberService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  updateMemberRole(memberId: number, updatedFields: Partial<TripMember>): Observable<any> {
-    return this.http.put(`${this.apiUrl}/updateRole/${memberId}`, updatedFields);
+ updateMemberRole(memberId: number, updatedFields: Partial<TripMember>): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${memberId}`, updatedFields);
   }
 
   getTripsForMember(userId: number): Observable<Trip[]> {
     return this.http.get<Trip[]>(`${this.apiUrl}/for-member/${userId}`);
   }  
+  
   getMembersByTripId(tripId: number): Observable<TripMember[]> {
     return this.http.get<TripMember[]>(`${this.apiUrl}/for-trip/${tripId}`);
   }
-
 }
