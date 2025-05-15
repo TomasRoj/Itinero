@@ -70,9 +70,10 @@ import { DestinationServiceService, Destination } from '../../../../services/des
   `]
 })
 export class StepDestinationComponent implements OnInit {
-  @Output() dataChange = new EventEmitter<{destination: string}>();
+  @Output() dataChange = new EventEmitter<{destination: string, destinationId?: number}>();
 
   destination = '';
+  destinationId?: number;
   destinations: Destination[] = [];
   filteredDestinations: Destination[] = [];
   showDropdown = false;
@@ -97,7 +98,9 @@ export class StepDestinationComponent implements OnInit {
 
   onInputChange() {
     this.filterDestinations();
-    this.dataChange.emit({ destination: this.destination });
+    // When user is typing, we reset the destinationId since we don't know if they're selecting something new
+    this.destinationId = undefined;
+    this.dataChange.emit({ destination: this.destination, destinationId: this.destinationId });
     this.showDropdown = true;
     this.activeIndex = -1;
   }
@@ -128,11 +131,13 @@ export class StepDestinationComponent implements OnInit {
 
   selectDestination(dest: Destination) {
     this.destination = dest.name;
+    this.destinationId = dest.id;
     this.showDropdown = false;
-    this.dataChange.emit({ destination: this.destination });
+    this.dataChange.emit({ destination: this.destination, destinationId: this.destinationId });
   }
 
   onKeyDown(event: KeyboardEvent) {
+    // Handle keyboard navigation in dropdown
     if (this.filteredDestinations.length > 0) {
       switch (event.key) {
         case 'ArrowDown':

@@ -27,6 +27,7 @@ export class SurveyComponent implements OnInit {
   formData = {
     name: '',
     destination: '',
+    destinationId: 0,
     startDate: '',
     endDate: '',
   }; // zde budou data z celého dotazníku
@@ -59,15 +60,14 @@ export class SurveyComponent implements OnInit {
         const newTrip: Trip = {
           name: this.formData.name,
           is_public: true, 
-          created_at: new Date(), // aktuální datum
-          updated_at: new Date(), // aktuální datum
+          created_at: new Date(),
+          updated_at: new Date(), 
           start_date: new Date(this.formData.startDate),
           end_date: new Date(this.formData.endDate),
-          destination_city_id: 1, // change this
+          destination_city_id: this.formData.destinationId, // Now using the destinationId
           creator_id: currentUser.id 
         };
 
-        // Volání POST metody
         this.tripService.createTrip(newTrip).subscribe({
           next: (response) => {
             console.log('Trip byl úspěšně vytvořen:', response);
@@ -91,12 +91,14 @@ export class SurveyComponent implements OnInit {
     if (stepData.destination !== undefined) {
       this.formData.destination = stepData.destination;
     }
+    if (stepData.destinationId !== undefined) {
+      this.formData.destinationId = stepData.destinationId;
+    }
     if (stepData.startDate !== undefined) {
       this.formData.startDate = stepData.startDate;
     }
     if (stepData.endDate !== undefined) {
       this.formData.endDate = stepData.endDate;
     }
-
   }
 }
