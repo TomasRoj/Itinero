@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DestinationServiceService, Destination } from '../../../../services/destination-service.service';
+import { SharedService } from '../../../../services/shared.service';
 
 @Component({
   selector: 'app-step-destination',
@@ -78,11 +79,20 @@ export class StepDestinationComponent implements OnInit {
   filteredDestinations: Destination[] = [];
   showDropdown = false;
   activeIndex = -1;
+  continueButtonDisabled = true;
+  nullError: string = '';
 
-  constructor(private destinationService: DestinationServiceService) {}
+  constructor(private destinationService: DestinationServiceService, private sharedService: SharedService) {
+    this.sharedService.continueButtonDisabled.subscribe(
+      (disabled) => {
+        this.continueButtonDisabled = disabled;
+      }
+    );
+  }
 
   ngOnInit() {
     this.loadDestinations();
+    this.sharedService.continueButtonDisabled.next(true);
   }
 
   loadDestinations() {
@@ -98,11 +108,16 @@ export class StepDestinationComponent implements OnInit {
 
   onInputChange() {
     this.filterDestinations();
-    // When user is typing, we reset the destinationId since we don't know if they're selecting something new
-    this.destinationId = undefined;
-    this.dataChange.emit({ destination: this.destination, destinationId: this.destinationId });
     this.showDropdown = true;
     this.activeIndex = -1;
+    
+    if (this.destinationId !== undefined) {
+      const selectedDest = this.destinations.find(d => d.id === this.destinationId);
+      if (!selectedDest || selectedDest.name !== this.destination) {
+        this.destinationId = undefined;
+        this.sharedService.continueButtonDisabled.next(true);
+      }
+    }
   }
 
   filterDestinations() {
@@ -133,7 +148,13 @@ export class StepDestinationComponent implements OnInit {
     this.destination = dest.name;
     this.destinationId = dest.id;
     this.showDropdown = false;
-    this.dataChange.emit({ destination: this.destination, destinationId: this.destinationId });
+    
+    // Aktivujte tlačítko po výběru destinace
+    this.sharedService.continueButtonDisabled.next(false);
+    this.dataChange.emit({ 
+      destination: this.destination, 
+      destinationId: this.destinationId 
+  });
   }
 
   onKeyDown(event: KeyboardEvent) {
@@ -162,7 +183,6 @@ export class StepDestinationComponent implements OnInit {
   }
 
   onBlur() {
-    // Small delay to allow click events on dropdown items to register before hiding
     setTimeout(() => {
       this.showDropdown = false;
     }, 150);

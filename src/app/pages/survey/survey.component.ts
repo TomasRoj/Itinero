@@ -10,6 +10,7 @@ import { TripService } from '../../services/trip-service.service';
 import { Trip } from '../../services/trip-service.service';
 import { Router } from '@angular/router';
 import { User, UserService } from '../../services/user-service.service';
+import { SharedService } from '../../services/shared.service';
 
 @Component({
   selector: 'app-survey',
@@ -19,10 +20,10 @@ import { User, UserService } from '../../services/user-service.service';
 })
 
 export class SurveyComponent implements OnInit {
-  constructor(private tripService: TripService, private router: Router, private userService: UserService) { }
+  constructor(private tripService: TripService, private router: Router, private userService: UserService, private sharedService: SharedService) { }
 
   currentStep = 1;
-  totalSteps = 4; // celkový počet kroků
+  totalSteps = 4; 
 
   formData = {
     name: '',
@@ -38,7 +39,9 @@ export class SurveyComponent implements OnInit {
 
   nextStep() {
     if (this.currentStep < this.totalSteps) {
-      this.currentStep++;
+      if (this.sharedService.continueButtonDisabled.value == false) {
+           this.currentStep++;
+      }
     }
   }
 

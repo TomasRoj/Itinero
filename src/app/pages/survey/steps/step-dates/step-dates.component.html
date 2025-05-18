@@ -2,6 +2,12 @@
 
   <div class="row justify-content-center">
     <div class="col-lg-8 text-center">
+
+      <!-- Error message -->
+      <div *ngIf="rangeError" class="alert alert-danger mb-3" role="alert">
+          {{ rangeError }}
+      </div>
+
       <div class="date-range-container">
       <h2 class="mb-2 fw-bold">Kdy vyrážíte?</h2>
       <p class="text-muted mb-5">Zadejte počáteční datum své cesty. Potvrďte klávesou enter.</p>

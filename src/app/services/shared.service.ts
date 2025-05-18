@@ -13,6 +13,8 @@ export class SharedService {
   private activeTabSubject = new BehaviorSubject<string>('destinace');
   activeTab$ = this.activeTabSubject.asObservable();
 
+  public continueButtonDisabled = new BehaviorSubject<boolean>(true);
+
   constructor() {}
 
   setActiveTab(tab: string): void {
