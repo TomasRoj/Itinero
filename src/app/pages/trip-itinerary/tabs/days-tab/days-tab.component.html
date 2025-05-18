@@ -14,7 +14,8 @@
             <div class="row mt-4">
                 <div class="col-md-6 mb-4">
                     <h5>Popis dne</h5>
-                    <textarea class="form-control" rows="5" [(ngModel)]="dayDescription" [placeholder]="currentDayData?.description || 'Popis dne'"
+                    <textarea class="form-control" rows="5" [(ngModel)]="dayDescription"
+                        [placeholder]="currentDayData?.description || 'Popis dne'"
                         (ngModelChange)="updateDayDescription()"></textarea>
 
                     <div class="col mt-3">
@@ -25,15 +26,21 @@
                                     class="summary-card bg-danger text-white p-3 text-center rounded d-flex flex-column h-100">
                                     <div>Počet aktivit:</div>
                                     <div class="fs-4 mt-1 flex-grow-1 d-flex align-items-center justify-content-center">
-                                        3</div>
+                                        {{ totalActivities }}
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div
                                     class="summary-card bg-danger text-white p-3 text-center rounded d-flex flex-column h-100">
                                     <div>Náklady na osobu:</div>
+
+                                    <!--
                                     <div class="fs-4 mt-1 flex-grow-1 d-flex align-items-center justify-content-center">
-                                        398 Kč</div>
+                                        {{ totalPrice }} Kč
+                                    </div>                                    
+                                    -->
+
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -41,69 +48,53 @@
                                     class="summary-card bg-danger text-white p-3 text-center rounded d-flex flex-column h-100">
                                     <div>Odhadovaný čas:</div>
                                     <div class="fs-4 mt-1 flex-grow-1 d-flex align-items-center justify-content-center">
-                                        6h</div>
+                                        {{ totalDuration }}h
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="col-md-6 mb-4">
                     <h5>Aktivity a atrakce</h5>
 
-                    <div class="activity-card mb-3 border rounded overflow-hidden">
+                    <div *ngFor="let activity of activities" class="activity-card mb-3 border rounded overflow-hidden">
                         <div class="row align-items-center mx-0">
                             <div class="col-md-6 bg-light p-3">
-                                <div class="fw-medium">Pražský hrad</div>
-                                <div class="text-muted">hlavní okruh</div>
+                                <div class="fw-medium">{{ activity.name }}</div>
+                                <div class="text-muted">{{ activity.description }}</div>
                             </div>
-                            <div class="col-md-2 text-center py-2">2H</div>
-                            <div class="col-md-2 text-center py-2">350 Kč</div>
+                            <div class="col-md-2 text-center py-2">{{ activity.estimatedtime }}</div>
+                            
+                            <!--
+                                                        <div class="col-md-2 text-center py-2">{{ activity.price }}</div>
                             <div class="col-md-2 text-center py-2">
-                                <a [routerLink]="'/attractioninfo'" style="color: inherit; text-decoration: none;"><i
-                                        class="bi bi-arrow-right"></i></a>
+                                <a [routerLink]="activity.link" style="color: inherit; text-decoration: none;">
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
                             </div>
-                        </div>
-                    </div>
+                            -->
 
-                    <div class="activity-card mb-3 border rounded overflow-hidden">
-                        <div class="row align-items-center mx-0">
-                            <div class="col-md-6 bg-light p-3">
-                                <div class="fw-medium">Pražský hrad</div>
-                                <div class="text-muted">hlavní okruh</div>
-                            </div>
-                            <div class="col-md-2 text-center py-2">2H</div>
-                            <div class="col-md-2 text-center py-2">350 Kč</div>
-                            <div class="col-md-2 text-center py-2">
-                                <a [routerLink]="'/attractioninfo'" style="color: inherit; text-decoration: none;"><i
-                                        class="bi bi-arrow-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="activity-card mb-3 border rounded overflow-hidden">
-                        <div class="row align-items-center mx-0">
-                            <div class="col-md-6 bg-light p-3">
-                                <div class="fw-medium">Pražský hrad</div>
-                                <div class="text-muted">hlavní okruh</div>
-                            </div>
-                            <div class="col-md-2 text-center py-2">2H</div>
-                            <div class="col-md-2 text-center py-2">350 Kč</div>
-                            <div class="col-md-2 text-center py-2">
-                                <a [routerLink]="'/attractioninfo'" style="color: inherit; text-decoration: none;"><i
-                                        class="bi bi-arrow-right"></i></a>
-                            </div>
                         </div>
                     </div>
 
                     <div class="d-flex justify-content-between mt-5">
                         <span class="text-muted"></span>
-                        <a [routerLink]="'/day-itinarary'" style="text-decoration: none;"><span
-                                class="text-primary cursor-pointer">Nová aktivita</span></a>
+                        <a [routerLink]="'/day-itinarary'" style="text-decoration: none;">
+                            <span class="text-primary cursor-pointer">Nová aktivita</span>
+                        </a>
                     </div>
-                    <a [routerLink]="'/dashboard'"><button class="btn btn-primary mx-2"
-                        (click)="updateDayDescription()">Potvrdit</button></a>
                 </div>
+
+
+                <!-- Success message -->
+                <div *ngIf="saveSuccess" class="alert alert-success mb-3" role="alert">
+                    Změny byly úspěšně uloženy.
+                </div>
+
+                <a><button class="btn btn-primary mx-2" (click)="updateDayDescription()">Potvrdit</button></a>
             </div>
         </div>
     </div>
