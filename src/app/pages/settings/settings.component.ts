@@ -4,12 +4,11 @@ import { RouterLink } from '@angular/router';
 import { UserService, User } from '../../services/user-service.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [SidebarComponent, RouterLink, CommonModule, FormsModule, HttpClientModule],
+  imports: [SidebarComponent, RouterLink, CommonModule, FormsModule],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
 })
@@ -20,7 +19,7 @@ export class SettingsComponent implements OnInit {
     surname: '',
     email: '',
     preferedcurrency: '',
-    profile_picture: 'assets/images/default-profile.jpg'
+    profile_picture: ''
   };
   
   passwordField: string = '';
@@ -63,7 +62,7 @@ export class SettingsComponent implements OnInit {
   }
 
   removeProfilePicture(): void {
-    this.user.profile_picture = 'assets/images/default-profile.jpg';
+    this.user.profile_picture = 'default.png';
     this.selectedFile = null;
   }
 

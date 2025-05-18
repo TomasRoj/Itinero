@@ -30,7 +30,7 @@ export class SurveyComponent implements OnInit {
     destinationId: 0,
     startDate: '',
     endDate: '',
-  }; // zde budou data z celého dotazníku
+  }; 
 
   ngOnInit() {
      this.showStep(this.currentStep);
