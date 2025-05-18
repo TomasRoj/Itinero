@@ -23,6 +23,7 @@ export class DestinationTabComponent {
   ) { }
 
   tripData: any = null;
+  saveSuccess: string = '';
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -139,6 +140,10 @@ export class DestinationTabComponent {
       next: (response) => {
         console.log('Trip updated successfully:', response);
         console.log('Updated trip data:', updatedTrip);
+        this.saveSuccess = 'Úspěšně uloženo';
+        setTimeout(() => {
+          this.saveSuccess = '';
+        }, 2000);
 
         this.tripData = { ...updatedTrip };
         this.updatePlaceholders();

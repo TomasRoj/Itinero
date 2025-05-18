@@ -3,7 +3,7 @@
         <div class="day-planning-container">
             <div class="day-header border-bottom pb-2 mb-4">
                 <h3>
-                    Den {{ activeDay }}
+                    Den {{ selectedDay }}
                     <span class="text-muted ms-4">
                         {{ currentDayData?.date | date:'d.M.yy' }}
                     </span>
@@ -14,8 +14,8 @@
             <div class="row mt-4">
                 <div class="col-md-6 mb-4">
                     <h5>Popis dne</h5>
-                    <textarea class="form-control" rows="5" [(ngModel)]="dayDescription"
-                        (blur)="updateDayDescription()"></textarea>
+                    <textarea class="form-control" rows="5" [(ngModel)]="dayDescription" [placeholder]="currentDayData?.description || 'Popis dne'"
+                        (ngModelChange)="updateDayDescription()"></textarea>
 
                     <div class="col mt-3">
                         <h5>Shrnutí dne</h5>

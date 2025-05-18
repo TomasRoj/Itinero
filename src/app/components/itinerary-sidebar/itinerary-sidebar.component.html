@@ -1,6 +1,6 @@
 <div class="sidebar text-white h-100 d-flex flex-column">
     <div class="d-flex align-items-center p-3 border-bottom border-secondary">
-      <img [src]="'profile.jpg'" class="rounded-circle me-2" width="40" height="40" alt="Profile">
+      <img [src]="user.profile_picture || 'profile.jpg'" class="rounded-circle me-2" width="40" height="40" alt="Profile">
       <div class="dropdown flex-grow-1">
         <a class="nav-link dropdown-toggle dropdown-header" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" ngbDropdownToggle>Můj účet</a>
         <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="userDropdown">

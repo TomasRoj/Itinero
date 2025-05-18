@@ -46,8 +46,14 @@
             </div>
         </div>
 
-        <a [routerLink]="'/dashboard'"><button class="btn btn-primary mx-2"
+        <a><button class="btn btn-primary mx-2"
                 (click)="updateTripData()">Potvrdit</button></a>
+
+        <br><br>
+        <!-- Success message -->
+        <div *ngIf="saveSuccess" class="alert alert-success mb-3" role="alert">
+            Změny byly úspěšně uloženy.
+        </div>
 
     </div>
 </div>

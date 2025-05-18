@@ -97,8 +97,6 @@ export class TripItineraryComponent {
     private userService: UserService,
     private http: HttpClient,
     private sharedService: SharedService,
-    private expenseService: ExpenseService,
-    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -223,14 +221,6 @@ export class TripItineraryComponent {
       this.currentDayData = null;
       this.currentDayItems = [];
       this.dayDescription = '';
-    }
-
-    // Debug výpisy
-    console.log('Aktivní den:', this.activeDay);
-    console.log('Počet dní:', this.itineraryDays.length);
-
-    if (selectedDay) {
-      console.log('Date aktivniho dne:', selectedDay.date);
     }
   }
 
