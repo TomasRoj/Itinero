@@ -13,6 +13,7 @@ export interface Trip {
   is_public: boolean;
   created_at: Date;
   updated_at: Date;
+  photoURL?: string;
 }
 
 @Injectable({

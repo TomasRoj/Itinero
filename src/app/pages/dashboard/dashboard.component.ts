@@ -74,7 +74,7 @@ export class DashboardComponent implements OnInit {
                 id: trip.id,
                 destination: trip.name,
                 country: 'Country',
-                image: 'assets/images/default.jpg',
+                image: trip.photoURL || 'default.png',
                 dateRange: this.formatDateRange(new Date(trip.start_date), new Date(trip.end_date)),
                 participants: memberCount,
                 description: trip.description || 'No description available'
