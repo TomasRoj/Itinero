@@ -32,12 +32,14 @@ export class DestinationTabComponent {
         next: (response: Trip) => {
           this.tripData = response;
 
+          console.log('Načtená data výletu:', this.tripData);
+
           this.placeholders = {
             startDate: new Date(this.tripData.start_date).toDateString(),
             endDate: new Date(this.tripData.end_date).toDateString(),
             destination: this.tripData.destination_city_id.toString(),
             tripName: this.tripData.name.toString(),
-            description: this.tripData.description.toString()
+            description: this.tripData.description.toString() || 'Zatím žádný popis',
           };
 
           let dayCount = 0;
@@ -128,7 +130,7 @@ export class DestinationTabComponent {
       is_public: this.tripData.is_public,
       created_at: this.tripData.created_at,
       updated_at: new Date(),
-      description: this.tripForm.description || this.tripData.description,
+      description: this.tripForm.description || 'Zatím žádný popis',
     };
 
     const tripId = this.route.snapshot.params['id'];

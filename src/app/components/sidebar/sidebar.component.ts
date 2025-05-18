@@ -15,7 +15,7 @@ export class SidebarComponent {
   navigationItems = [
     { name: 'Dashboard', icon: 'speedometer2', href: '/dashboard' },
     { name: 'Připojení do výletu', icon: 'people', href: '/join-group' },
-    { name: 'Moje výlety', icon: 'map', href: '' },
+    //{ name: 'Moje výlety', icon: 'map', href: '' }, momentálně není potřeba, pokud se pridaji funkce staci odkomentovat
     { name: 'Prohlížet destinace', icon: 'globe', href: '/destinations' },
     { name: 'Prohlížet atrakce', icon: 'camera', href: '/attractions' },
     { name: 'Přátelé', icon: 'person-plus', href: '/friends' }

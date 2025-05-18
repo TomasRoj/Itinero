@@ -11,6 +11,9 @@ import { Trip } from '../../services/trip-service.service';
 import { Router } from '@angular/router';
 import { User, UserService } from '../../services/user-service.service';
 import { SharedService } from '../../services/shared.service';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-survey',
@@ -20,7 +23,8 @@ import { SharedService } from '../../services/shared.service';
 })
 
 export class SurveyComponent implements OnInit {
-  constructor(private tripService: TripService, private router: Router, private userService: UserService, private sharedService: SharedService) { }
+  private apiUrl = 'http://localhost:5253/api';
+  constructor(private tripService: TripService, private router: Router, private userService: UserService, private sharedService: SharedService, private http: HttpClient) { }
 
   currentStep = 1;
   totalSteps = 4; 
@@ -74,7 +78,13 @@ export class SurveyComponent implements OnInit {
         this.tripService.createTrip(newTrip).subscribe({
           next: (response) => {
             console.log('Trip byl úspěšně vytvořen:', response);
-            this.router.navigate(['/trip-itinerary']);
+            this.getTripByNameAndUserId(currentUser.id, this.formData.name).subscribe({
+              next: (trip) => {
+                if (trip) {
+                  this.router.navigate(['/trip-itinerary/' + trip.id]);
+                }
+              }
+            });
           },
           error: (error) => {
             console.error('Chyba při vytváření tripu:', error);
@@ -104,4 +114,18 @@ export class SurveyComponent implements OnInit {
       this.formData.endDate = stepData.endDate;
     }
   }
+
+  getTripByNameAndUserId(userId: number, tripName: string): Observable<Trip | null> {
+    return this.http.get<Trip[]>(`${this.apiUrl}/Trips/user/${userId}`).pipe(
+      map(trips => {
+        const normalizedSearchName = tripName.toLowerCase().trim();
+        const foundTrip = trips.find(trip =>
+          trip.name.toLowerCase().trim() === normalizedSearchName
+        );
+
+        return foundTrip || null;
+      })
+    );
+  }
+
 }

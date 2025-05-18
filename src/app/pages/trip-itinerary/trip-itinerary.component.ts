@@ -114,7 +114,10 @@ export class TripItineraryComponent {
 
       this.tripService.getTripById(tripId).subscribe({
         next: (response: Trip) => {
-          this.tripData = response;
+          this.tripData = {
+            ...response,
+            description: response.description || 'Zatím žádný popis'
+          };
 
           let dayCount = 0;
           dayCount = Math.floor(
