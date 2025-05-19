@@ -7,7 +7,8 @@ import { HttpParams } from '@angular/common/http';
 import { Params } from '@angular/router';
 import { SharedService } from '../../../../services/shared.service';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { switchMap, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 export interface TripItem {
   id: number;
@@ -64,14 +65,28 @@ export class DaysTabComponent {
     return day ? day.id : null;
   }
 
-  // Ziskani trip itemu na zaklade id tripu a dne
   getTripItemsByDayAndTrip(dayId: number, tripId: number): Observable<TripItem[]> {
-    const params = new HttpParams().set('dayId', dayId.toString());
+    // Získáme všechny dny patřící danému tripu
+    return this.http.get<ItineraryDay[]>(`${this.apiUrl}/Itinerary/days?tripId=${tripId}`).pipe(
+      tap(days => {
+        console.log(`📦 Načteno ${days.length} dní pro tripId=${tripId}:`, days);
+      }),
+      switchMap(days => {
+        // Ověříme, že den skutečně patří k danému tripu
+        const matchingDay = days.find(day => day.id === dayId);
 
-    return this.http.get<TripItem[]>(`${this.apiUrl}/Itinerary/items`, { params }).pipe(
-      map(items => items.filter(item => item.trip_id === tripId))
+        if (!matchingDay) {
+          // Den k tripu nepatří – vracíme prázdné pole
+          return of([]);
+        }
+
+        // Den je validní – stáhneme itemy pro tento den
+        const params = new HttpParams().set('dayId', dayId.toString());
+        return this.http.get<TripItem[]>(`${this.apiUrl}/Itinerary/items`, { params });
+      })
     );
   }
+
 
   // Vypocty na zaklade pridanych aktivit
   get totalActivities(): number {
@@ -109,46 +124,43 @@ export class DaysTabComponent {
 
     this.sharedService.selectedDay.subscribe((day: number) => {
       this.selectedDay = day;
-
-      const dayId = this.getSelectedDayId();
-      if (dayId !== null) {
-        this.getTripItemsByDayAndTrip(dayId, this.sharedService.tripId.getValue()).subscribe(
-          items => this.activities = items,
-          error => console.error('Chyba při načítání aktivit:', error)
-        );
-      }
-
       this.loadItineraryDays(this.sharedService.tripId.getValue());
     });
-
-    console.log('Aktivity:', this.activities);
   }
 
   loadItineraryDays(tripId: number): void {
-    const params = new HttpParams().set('tripId', String(tripId));
+  const params = new HttpParams().set('tripId', String(tripId));
 
-    this.http.get<ItineraryDay[]>(`${this.apiUrl}/Itinerary/days`, { params }).subscribe({
-      next: (days) => {
-        console.log('Načtené dny z API:', days);
-        this.itineraryDays = days
-          .filter(day => day.trip_id === tripId)
-          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  this.http.get<ItineraryDay[]>(`${this.apiUrl}/Itinerary/days`, { params }).subscribe({
+    next: (days) => {
+      this.itineraryDays = days
+        .filter(day => day.trip_id === tripId)
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-        const selectedDayObj = this.itineraryDays[this.selectedDay - 1] ?? null;
+      const selectedDayObj = this.itineraryDays[this.selectedDay - 1] ?? null;
 
-        if (selectedDayObj) {
-          this.currentDayData = selectedDayObj;
-          this.dayDescription = selectedDayObj.description || '';
-        } else {
-          this.currentDayData = null;
-          this.dayDescription = '';
-        }
-      },
-      error: (error) => {
-        console.error('Chyba při načítání dnů itineráře:', error);
+      if (selectedDayObj) {
+        this.currentDayData = selectedDayObj;
+        this.dayDescription = selectedDayObj.description || '';
+        this.getTripItemsByDayAndTrip(selectedDayObj.id, tripId).subscribe({
+          next: items => {
+            this.activities = items;
+          },
+          error: error => {
+            console.error('Chyba při načítání aktivit:', error);
+          }
+        });
+      } else {
+        this.currentDayData = null;
+        this.dayDescription = '';
       }
-    });
-  }
+    },
+    error: (error) => {
+      console.error('Chyba při načítání dnů itineráře:', error);
+    }
+  });
+}
+
 
   updateDayDescription(): void {
     if (!this.currentDayData) return;
