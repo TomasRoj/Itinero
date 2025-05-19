@@ -4,7 +4,7 @@
             <app-itinerary-sidebar></app-itinerary-sidebar>
         </div>
 
-        <div class="col-lg-10 d-flex p-5" style="background-image: url('/survey-bg.png');background-size: contain; background-position: center bottom; background-repeat: no-repeat;">
+        <div class="col-lg-10 p-5" style="background-image: url('/survey-bg.png');background-size: contain; background-position: center top; background-repeat: no-repeat;">
             <div class="dashboard-content p-4 w-100 d-flex flex-column justify-content-center">
 
                 <div class="d-flex justify-content-between align-items-center pb-4">
@@ -14,88 +14,127 @@
 
                 <div class="row">
                     <div class="col-12">
-                        <div class="container mt-4">
-                            <div class="row">
-                              <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                  <label for="expenseCategory">Výběr kategorie výdaje</label>
-                                  <select class="form-select" id="expenseCategory">
-                                    <option value="">Vyberte kategorii</option>
-                                    <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
-                                  </select>
-                                </div>
-                                
-                                <div class="form-group mb-3">
-                                  <label for="paidBy">Kdo uhradil platbu</label>
-                                  <select class="form-select" id="paidBy">
-                                    <option value="">Vyberte osobu</option>
-                                    <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
-                                  </select>
-                                </div>
-                                
-                                <div class="form-group mb-3">
-                                  <label for="amount">Zaplacená suma</label>
-                                  <input type="number" class="form-control" id="amount" placeholder="0.00">
-                                </div>
-                              </div>
-                              
-                              <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                  <label for="currency">Používaná měna</label>
-                                  <select class="form-select" id="currency">
-                                    <option value="CZK">CZK</option>
-                                    <option value="EUR">EUR</option>
-                                    <option value="USD">USD</option>
-                                  </select>
-                                </div>
-                                
-                                <div class="form-group mb-3">
-                                    <label for="description">Název</label>
-                                    <textarea class="form-control" id="description" rows="1"></textarea>
-                                  <label for="description">Popis</label>
-                                  <textarea class="form-control" id="description" rows="4"></textarea>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div class="mt-4">
-                              <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h5>Je to už vyrovnané?</h5>
-                                <div>
-                                  <button class="btn btn-sm" [ngClass]="{'btn-success': isSettled, 'btn-outline-success': !isSettled}" (click)="isSettled = true">ANO</button>
-                                  <button class="btn btn-sm ms-2" [ngClass]="{'btn-danger': !isSettled, 'btn-outline-danger': isSettled}" (click)="isSettled = false">NE</button>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div class="mt-4">
-                              <h5>Rozdělení výdaje mezi uživatele</h5>
-                              <div class="card mb-3" *ngFor="let user of users; let i = index">
-                                <div class="card-body">
-                                  <div class="d-flex justify-content-between align-items-center">
-                                    <div class="form-check">
-                                      <input class="form-check-input" type="checkbox" [id]="'user' + i">
-                                      <label class="form-check-label" [for]="'user' + i">
-                                        {{ user.name }}
-                                      </label>
+                        <div class="container">
+                            <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="name">Název</label>
+                                            <input type="text" class="form-control" id="name" formControlName="name">
+                                            <div *ngIf="expenseForm.get('name')?.invalid && expenseForm.get('name')?.touched" class="text-danger">
+                                                Název je povinný
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label for="expenseCategory">Výběr kategorie výdaje</label>
+                                            <select class="form-select" id="expenseCategory" formControlName="categoryId">
+                                                <option value="">Vyberte kategorii</option>
+                                                <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+                                            </select>
+                                            <div *ngIf="expenseForm.get('categoryId')?.invalid && expenseForm.get('categoryId')?.touched" class="text-danger">
+                                                Kategorie je povinná
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label for="paidBy">Kdo uhradil platbu</label>
+                                            <select class="form-select" id="paidBy" formControlName="paidByUserId">
+                                                <option value="">Vyberte osobu</option>
+                                                <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+                                            </select>
+                                            <div *ngIf="expenseForm.get('paidByUserId')?.invalid && expenseForm.get('paidByUserId')?.touched" class="text-danger">
+                                                Prosím vyberte kdo platbu uhradil
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label for="amount">Zaplacená suma</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="amount" placeholder="0.00" formControlName="amount">
+                                                <select class="form-select" style="max-width: 80px;" formControlName="currency">
+                                                    <option *ngFor="let currency of currencies" [value]="currency.code">{{ currency.code }}</option>
+                                                </select>
+                                            </div>
+                                            <div *ngIf="expenseForm.get('amount')?.invalid && expenseForm.get('amount')?.touched" class="text-danger">
+                                                Prosím zadejte validní částku
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="input-group" style="max-width: 350px;">
-                                      <input type="number" class="form-control"  [disabled]="!user.included" min="0" max="100">
-                                      <span class="input-group-text">%</span>
-                                      <input type="number" class="form-control"  [disabled]="!user.included" min="1">
-                                      <span class="input-group-text">Kč</span>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="description">Popis</label>
+                                            <textarea class="form-control" id="description" rows="4" formControlName="description"></textarea>
+                                        </div>
+                                        
+                                        <div class="mt-4">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h5>Je to už vyrovnané?</h5>
+                                                <div>
+                                                    <button type="button" class="btn btn-sm" [ngClass]="{'btn-success': isSettled, 'btn-outline-success': !isSettled}" (click)="setIsSettled(true)">ANO</button>
+                                                    <button type="button" class="btn btn-sm ms-2" [ngClass]="{'btn-danger': !isSettled, 'btn-outline-danger': isSettled}" (click)="setIsSettled(false)">NE</button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                  </div>
                                 </div>
-                              </div>
-                            </div>
-                            
-                            <div class="d-flex justify-content-end mt-4">
-                              <a class="btn btn-outline-secondary me-2" [routerLink]="'/trip-itinerary'">Zpět</a>
-                              <a class="btn btn-outline-primary me-2" [routerLink]="'/trip-itinerary'">Potvrdit</a>
-                            </div>
-                          </div>
-                          
+                                
+                                <div class="mt-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5>Rozdělení výdaje mezi uživatele</h5>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="evenSplits()">
+                                            Rozdělit rovnoměrně
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="alert alert-info" *ngIf="userSplits.length === 0">
+                                        <span *ngIf="isLoading">Načítání uživatelů...</span>
+                                        <span *ngIf="!isLoading">Žádní uživatelé nejsou k dispozici pro rozdělení</span>
+                                    </div>
+                                    
+                                    <div formArrayName="userSplits">
+                                        <div class="card mb-3" *ngFor="let userSplit of userSplits.controls; let i = index" [formGroupName]="i">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" [id]="'user' + i" 
+                                                            [checked]="userSplit.get('included')?.value" 
+                                                            (change)="toggleUserInclusion(i)">
+                                                        <label class="form-check-label" [for]="'user' + i">
+                                                            {{ userSplit.get('userName')?.value }}
+                                                        </label>
+                                                    </div>
+                                                    <div class="input-group" style="max-width: 350px;">
+                                                        <input type="number" class="form-control" formControlName="percentage"
+                                                            [disabled]="!userSplit.get('included')?.value" 
+                                                            min="0" max="100" (change)="onPercentageChange(i)">
+                                                        <span class="input-group-text">%</span>
+                                                        <input type="number" class="form-control" formControlName="amount"
+                                                            [disabled]="!userSplit.get('included')?.value" 
+                                                            min="0" (change)="onAmountChange(i)">
+                                                        <span class="input-group-text">{{ expenseForm.get('currency')?.value }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+                                    {{ errorMessage }}
+                                </div>
+                                
+                                <div class="d-flex justify-content-end mt-4">
+                                    <button type="button" class="btn btn-outline-secondary me-2" (click)="goBack()">Zpět</button>
+                                    <button type="submit" class="btn btn-outline-primary" [disabled]="isLoading">
+                                        <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                                        Potvrdit
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

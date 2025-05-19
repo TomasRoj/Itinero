@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Trip} from './trip-service.service';  
+import { Trip } from './trip-service.service';
+import { User } from './finance-service.service';
 
 export interface TripMember {
   id: number;
@@ -11,10 +12,13 @@ export interface TripMember {
   joined_at?: Date;
 }
 
+export interface TripMemberWithUser extends TripMember {
+  user: User;
+}
+
 @Injectable({
   providedIn: 'root'
 })
-
 export class TripMemberService {
   private apiUrl = 'http://localhost:5253/api/TripMembers';
 
@@ -41,7 +45,7 @@ export class TripMemberService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
- updateMemberRole(memberId: number, updatedFields: Partial<TripMember>): Observable<any> {
+  updateMemberRole(memberId: number, updatedFields: Partial<TripMember>): Observable<any> {
     return this.http.put(`${this.apiUrl}/${memberId}`, updatedFields);
   }
 
@@ -51,5 +55,9 @@ export class TripMemberService {
   
   getMembersByTripId(tripId: number): Observable<TripMember[]> {
     return this.http.get<TripMember[]>(`${this.apiUrl}/for-trip/${tripId}`);
+  }
+
+  getMembersWithUsersByTripId(tripId: number): Observable<TripMemberWithUser[]> {
+    return this.http.get<TripMemberWithUser[]>(`${this.apiUrl}/for-trip/${tripId}/with-users`);
   }
 }
