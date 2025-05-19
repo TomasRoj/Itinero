@@ -83,7 +83,6 @@ export class DashboardComponent implements OnInit {
           },
           error: (err) => {
             console.error('Chyba při načítání výletů:', err);
-            this.loadStaticTrips();
           }
         });
       },
@@ -109,28 +108,5 @@ export class DashboardComponent implements OnInit {
 
   private formatDateRange(startDate: Date, endDate: Date): string {
     return `${startDate.getDate()}.${startDate.getMonth() + 1}.${startDate.getFullYear()}-${endDate.getDate()}.${endDate.getMonth() + 1}.${endDate.getFullYear()}`;
-  }
-
-  loadStaticTrips(): void {
-    this.trips = [
-      {
-        id: 1,
-        destination: 'Valetta',
-        country: 'Malta',
-        image: 'valetta.jpg',
-        dateRange: '7.-13.8.2025',
-        participants: 5,
-        description: 'Lorem ipsum dolor sit amet consectetur. Viverra mauris scelerisque nec in amet tortor tempus nullam sodales.'
-      },
-      {
-        id: 2,
-        destination: 'Ammán',
-        country: 'Jordánsko',
-        image: 'amman.jpg',
-        dateRange: '1.-7.12.2025',
-        participants: 2,
-        description: 'Lorem ipsum dolor sit amet consectetur. Viverra mauris scelerisque nec in amet tortor tempus nullam sodales.'
-      }
-    ];
   }
 }

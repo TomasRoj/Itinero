@@ -29,7 +29,7 @@ export const routes: Routes = [
         { path: 'attractioninfo/:id', component: AttractionInfoComponent},
         { path: 'trip-itinerary', component: TripItineraryComponent},
         { path: 'add-expense', component: AddExpenseComponent},
-        { path: 'day-itinarary', component: DayItineraryComponent},
+        { path: 'day-itinerary', component: DayItineraryComponent},
         { path: 'friends', component: FriendsComponent},
     ]},
 

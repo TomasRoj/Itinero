@@ -69,7 +69,7 @@ export class DaysTabComponent {
     // Získáme všechny dny patřící danému tripu
     return this.http.get<ItineraryDay[]>(`${this.apiUrl}/Itinerary/days?tripId=${tripId}`).pipe(
       tap(days => {
-        console.log(`📦 Načteno ${days.length} dní pro tripId=${tripId}:`, days);
+        console.log(`Načteno ${days.length} dní pro tripId=${tripId}:`, days);
       }),
       switchMap(days => {
         // Ověříme, že den skutečně patří k danému tripu
@@ -92,14 +92,6 @@ export class DaysTabComponent {
   get totalActivities(): number {
     return this.activities.length;
   }
-
-  /*
-  get totalPrice(): number {
-    return this.activities.reduce((sum, activity) => {
-      const price = parseInt(activity.price.replace(' Kč', '').replace(/\s/g, ''), 10);
-      return sum + (isNaN(price) ? 0 : price);
-    }, 0);
-  } */
 
   get totalDuration(): number {
     return this.activities.reduce((sum, activity) => {

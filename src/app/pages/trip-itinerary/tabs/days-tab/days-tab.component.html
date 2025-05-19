@@ -54,22 +54,12 @@
                                 <div class="text-muted">{{ activity.description }}</div>
                             </div>
                             <div class="col-md-2 text-center py-2">{{ activity.estimatedtime }}</div>
-                            
-                            <!--
-                                                        <div class="col-md-2 text-center py-2">{{ activity.price }}</div>
-                            <div class="col-md-2 text-center py-2">
-                                <a [routerLink]="activity.link" style="color: inherit; text-decoration: none;">
-                                    <i class="bi bi-arrow-right"></i>
-                                </a>
-                            </div>
-                            -->
-
                         </div>
                     </div>
 
                     <div class="d-flex justify-content-between mt-5">
                         <span class="text-muted"></span>
-                        <a [routerLink]="'/day-itinarary'" style="text-decoration: none;">
+                        <a [routerLink]="'/day-itinerary'" [queryParams]="{ dayId: getSelectedDayId()}" style="text-decoration: none;">
                             <span class="text-primary cursor-pointer">Nová aktivita</span>
                         </a>
                     </div>
