@@ -52,9 +52,11 @@ export class DaysTabComponent {
 
   activities: TripItem[] = [];
 
+  params: any = {};
+
   constructor(
     private http: HttpClient,
-    private route: ActivatedRoute,
+    public route: ActivatedRoute,
     private sharedService: SharedService
   ) { }
 

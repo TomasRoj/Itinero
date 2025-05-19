@@ -17,6 +17,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 export class DayItineraryComponent {
   apiUrl: string = 'http://localhost:5253/api';
   itineraryForm: FormGroup;
+  tripId: number = 0;
+  itineraryDayId: number = 0;
 
   constructor(private fb: FormBuilder, private http: HttpClient, private route: ActivatedRoute, private router: Router) {
     this.itineraryForm = this.fb.group({
@@ -29,6 +31,8 @@ export class DayItineraryComponent {
   }
 
   ngOnInit(): void {
+    this.tripId = +this.route.snapshot.params['tripId'];
+    this.itineraryDayId = +this.route.snapshot.params['dayId'];
   }
 
   submitDayItinerary(): void {
@@ -67,9 +71,4 @@ export class DayItineraryComponent {
       }
     });
   }
-
-  goToDashboard(): void {
-    this.router.navigate(['/dashboard']);
-  }
-
 }

@@ -59,7 +59,7 @@
 
                     <div class="d-flex justify-content-between mt-5">
                         <span class="text-muted"></span>
-                        <a [routerLink]="'/day-itinerary'" [queryParams]="{ dayId: getSelectedDayId()}" style="text-decoration: none;">
+                        <a [routerLink]="'/day-itinerary'" [queryParams]="{ dayId: getSelectedDayId(),  tripId: +route.snapshot.params['id']}" style="text-decoration: none;">
                             <span class="text-primary cursor-pointer">Nová aktivita</span>
                         </a>
                     </div>

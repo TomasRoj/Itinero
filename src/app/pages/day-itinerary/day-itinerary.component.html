@@ -114,9 +114,9 @@
 
         <div class="row mt-5 me-5">
           <div class="col-12 d-flex justify-content-end mt-5">
-            <a [routerLink]="'/trip-itinerary'" class="btn btn-outline-secondary px-4 me-2 "
+            <a [routerLink]="['/trip-itinerary', tripId]" class="btn btn-outline-secondary px-4 me-2 "
               style="border-radius: 20px;">Zpět</a>
-            <a (click)="submitDayItinerary()" class="btn px-4"
+            <a [routerLink]="['/trip-itinerary', tripId]" (click)="submitDayItinerary()" class="btn px-4"
               style="background-color: #EF233C; border-color: #e41f36; color: white; border-radius: 20px;">Potvrdit</a>
           </div>
         </div>
