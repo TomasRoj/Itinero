@@ -9,6 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AttractionService, Attraction } from '../../services/attraction-service.service';
 import { map } from 'rxjs/operators';
+import { TripService } from '../../services/trip-service.service';
 
 @Component({
   selector: 'app-day-itinerary',
@@ -26,7 +27,7 @@ export class DayItineraryComponent {
   addedAttractionIds: number[] = [];
   private subscription: Subscription = new Subscription();
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private route: ActivatedRoute, private router: Router, private attractionService: AttractionService) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private route: ActivatedRoute, private router: Router, private attractionService: AttractionService, private tripService: TripService) {
     this.itineraryForm = this.fb.group({
       name: ['', Validators.required],
       custom_location: [''],
@@ -41,7 +42,7 @@ export class DayItineraryComponent {
     this.itineraryDayId = +this.route.snapshot.queryParamMap.get('dayId')!;
     console.log('Trip ID:', this.tripId);
     console.log('Day ID:', this.itineraryDayId);
-    this.loadAttractionsByCity(19);
+    this.loadCityIdAndAttractions();
   }
 
   submitDayItinerary(): void {
@@ -97,6 +98,31 @@ export class DayItineraryComponent {
           }
         })
     );
+  }
+
+  loadCityIdAndAttractions(): void {
+    if (!this.tripId) {
+      console.error('Chybí tripId');
+      return;
+    }
+
+    this.tripService.getTripById(this.tripId).subscribe({
+      next: (trip) => {
+        const cityId = trip.destination_city_id;
+
+        if (!cityId) {
+          console.error('Trip neobsahuje city_id');
+          return;
+        }
+
+        console.log(`Načítám atrakce pro město s ID: ${cityId}`);
+
+        this.loadAttractionsByCity(cityId);
+      },
+      error: (error) => {
+        console.error('Chyba při získávání informací o tripu:', error);
+      }
+    });
   }
 
   addAttractionToDayItinerary(attraction: Attraction): void {
