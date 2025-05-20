@@ -19,7 +19,11 @@ export class DashboardComponent implements OnInit {
   username: string = '';
   trips: any[] = [];
 
-  constructor(private tripService: TripService, private router: Router, private userService: UserService, private TripMemberService: TripMemberService) {}
+  constructor(
+    private tripService: TripService,
+    private router: Router,
+    private userService: UserService,
+    private TripMemberService: TripMemberService) {}
 
   ngOnInit(): void {
     this.loadTrips();

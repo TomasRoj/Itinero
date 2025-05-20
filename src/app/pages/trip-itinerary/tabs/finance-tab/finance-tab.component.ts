@@ -4,12 +4,11 @@ import { ExpenseSplit } from '../../../../services/finance-service.service';
 import { ActivatedRoute } from '@angular/router';
 import { ExpenseService } from '../../../../services/finance-service.service';
 import { TripMemberService } from '../../../../services/trip-member.service';
-import { TripService } from '../../../../services/trip-service.service';
-import { Trip } from '../../../../services/trip-service.service';
+import { TripService, Trip } from '../../../../services/trip-service.service';
 import { TripMember } from '../../../../services/trip-member.service';
 import { HttpClient } from '@angular/common/http';
 import { User } from '../../../../services/user-service.service';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 
 @Component({
   selector: 'app-finance-tab',
@@ -18,11 +17,12 @@ import { RouterLink } from '@angular/router';
   styleUrl: './finance-tab.component.scss'
 })
 export class FinanceTabComponent {
-
+  
   loadingExpenses: boolean = false;
   expenseSplits: ExpenseSplit[] = [];
   groupMembers: { id: number, name: string, role: string, avatar: string, userId: number, email?: string }[] = [];
   expenses: any[] = [];
+  trip: Trip | null = null;
   tripData: any = null;
 
   constructor (
@@ -30,7 +30,8 @@ export class FinanceTabComponent {
     private tripService: TripService,
     private route: ActivatedRoute,
     private tripMemberService: TripMemberService,
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -41,7 +42,7 @@ export class FinanceTabComponent {
 
       this.tripService.getTripById(tripId).subscribe({
         next: (response: Trip) => {
-          this.tripData = response;
+          this.trip = response;
         },
         error: (error: any) => {
           console.error('Chyba při načítání dat výletu:', error);
@@ -50,6 +51,16 @@ export class FinanceTabComponent {
 
     });
 
+  }
+  goToAddExpense(): void {
+  const tripId = this.trip?.id;
+
+  if (tripId == null) {
+    console.error('Trip ID is not available yet.');
+    return;
+  }
+
+  this.router.navigate(['/trip', tripId, 'expenses', 'add']);
   }
 
   loadTripMembers(tripId: number): void {

@@ -28,7 +28,7 @@ export const routes: Routes = [
         { path: 'join-group', component: JoinGroupComponent},
         { path: 'attractioninfo/:id', component: AttractionInfoComponent},
         { path: 'trip-itinerary', component: TripItineraryComponent},
-        { path: 'add-expense', component: AddExpenseComponent},
+        { path: 'trip/:tripId/expenses/add', component: AddExpenseComponent},
         { path: 'day-itinerary', component: DayItineraryComponent},
         { path: 'friends', component: FriendsComponent},
     ]},
@@ -38,4 +38,3 @@ export const routes: Routes = [
 
     {path: '**', redirectTo: '/login'}
 ];
-    

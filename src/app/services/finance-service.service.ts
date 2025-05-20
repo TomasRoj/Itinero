@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map, catchError, of, forkJoin, throwError, switchMap } from 'rxjs';
 import { Trip } from './trip-service.service';
 import { TripMember } from './trip-member.service';
+import { User, UserService } from './user-service.service';
+
 
 export interface Expense {
   id: number;
@@ -34,12 +36,6 @@ export interface ExpenseSplit {
   trip_Id: number;
 }
 
-export interface User {
-  id: number;
-  name: string;
-  avatar?: string;
-}
-
 export interface ExpenseWithSplits {
   expense: Expense;
   splits: ExpenseSplit[];
@@ -61,7 +57,6 @@ export class ExpenseService {
   private expensesUrl = `${this.apiBaseUrl}/expenses`;
   private splitsUrl = `${this.apiBaseUrl}/expensesplits`;
   private categoriesUrl = `${this.apiBaseUrl}/expensecategories`;
-  private usersUrl = `${this.apiBaseUrl}/users`;
   
   private httpOptions = {
     headers: new HttpHeaders({
@@ -81,20 +76,7 @@ export class ExpenseService {
     return this.currencies;
   }
 
-  // User methods
-  getAllUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.usersUrl);
-  }
-
-  getUserById(id: number): Observable<User> {
-    return this.http.get<User>(`${this.usersUrl}/${id}`);
-  }
-
-  getUsersByTripId(tripId: number): Observable<User[]> {
-    return this.http.get<User[]>(`${this.usersUrl}/trip/${tripId}`);
-  }
-
-  // Expense methods
+  //#region expenses
   getAllExpenses(): Observable<Expense[]> {
     return this.http.get<Expense[]>(this.expensesUrl);
   }
@@ -118,8 +100,8 @@ export class ExpenseService {
   deleteExpense(id: number): Observable<void> {
     return this.http.delete<void>(`${this.expensesUrl}/${id}`);
   }
-
-  // ExpenseCategory methods
+//#endregion
+  //#region categories
   getAllCategories(): Observable<ExpenseCategory[]> {
     return this.http.get<ExpenseCategory[]>(this.categoriesUrl);
   }
@@ -140,7 +122,8 @@ export class ExpenseService {
     return this.http.delete<void>(`${this.categoriesUrl}/${id}`);
   }
 
-  // ExpenseSplit methods
+  //#endregion
+  //#region splits
   getAllSplits(): Observable<ExpenseSplit[]> {
     return this.http.get<ExpenseSplit[]>(this.splitsUrl);
   }
@@ -173,7 +156,7 @@ export class ExpenseService {
     return this.http.put<void>(`${this.splitsUrl}/settleexpense/${expenseId}`, {}, this.httpOptions);
   }
 
-  // Utility methods for the Add Expense page
+//#endregion splits
   createExpenseWithSplits(expense: Expense, splits: ExpenseSplit[]): Observable<Expense> {
     return this.createExpense(expense).pipe(
       switchMap(createdExpense => {

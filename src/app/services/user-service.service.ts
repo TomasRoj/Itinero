@@ -49,7 +49,6 @@ export class UserService {
     }
   }
 
-  // Get user ID from JWT token
   private getUserIdFromToken(): number | null {
     const token = localStorage.getItem('token');
     if (!token) return null;
@@ -63,7 +62,6 @@ export class UserService {
     }
   }
 
-  // Get currently logged-in user
   getCurrentUser(): Observable<User> {
     const userId = this.getUserIdFromToken();
     if (!userId) {
@@ -75,18 +73,20 @@ export class UserService {
     );
   }
 
-  // Update user profile
   updateUser(user: User): Observable<any> {
     return this.http.put(`${this.apiUrl}/${user.id}`, user).pipe(
       tap(() => this.currentUserSubject.next(user))
     );
   }
 
-  // Helper method to update profile picture
   updateProfilePicture(userId: number, imageFile: File): Observable<any> {
     const formData = new FormData();
     formData.append('image', imageFile);
     
     return this.http.post(`${this.apiUrl}/${userId}/profile-picture`, formData);
+  }
+
+  getUserById(id: number): Observable<User> {
+  return this.http.get<User>(`${this.apiUrl}/${id}`);
   }
 }
