@@ -121,7 +121,7 @@ export class FinanceTabComponent {
           return {
             id: expense.id,
             description: expense.name || expense.description || 'Unnamed Expense',
-            paidByUserId: expense.paidByUserId,
+            paidByUserId: expense.paid_by_user_id,
             date: expense.date,
             amount: expense.amount,
             currency: expense.currency_Code,

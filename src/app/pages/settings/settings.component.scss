@@ -1,22 +1,10 @@
-.form-floating .form-control, 
+.form-control, 
 .form-floating .form-select {
-  background-color: #f8f9fa;
+  background-color: #6c757d;
   border-radius: 10px;
   border: none;
   padding: 1.5rem 0.75rem 0.75rem;
 }
-
-.form-floating label {
-  padding: 1rem 0.75rem;
-}
-
-.badge.bg-light {
-  background-color: #f8f9fa !important;
-  color: #6c757d;
-  font-weight: normal;
-  border-radius: 10px;
-}
-
 .btn-danger {
   background-color: #e7333f;
   border-color: #e7333f;
@@ -33,5 +21,5 @@ img.rounded-circle {
 }
 
 hr {
-  opacity: 0.1;
+  opacity: 0.2;
 }

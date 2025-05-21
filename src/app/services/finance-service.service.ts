@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, map, catchError, of, forkJoin, throwError, switchMap } from 'rxjs';
+import { Observable, map, catchError, of, forkJoin, throwError, switchMap, tap } from 'rxjs';
+
 import { Trip } from './trip-service.service';
 import { TripMember } from './trip-member.service';
 import { User, UserService } from './user-service.service';
@@ -9,16 +10,16 @@ import { User, UserService } from './user-service.service';
 export interface Expense {
   id: number;
   name: string;
-  tripId: number;
+  trip_Id: number;
   category_Id?: number;
-  paidByUserId: number;
+  paid_by_user_id: number;
   amount: number;
   currency_Code: string;
   description: string;
   date: Date;
-  receiptImage?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  receipt_image?: string;
+  created_At?: Date;
+  updated_At?: Date;
 }
 
 export interface ExpenseCategory {
@@ -89,9 +90,36 @@ export class ExpenseService {
     return this.http.get<Expense>(`${this.expensesUrl}/${id}`);
   }
 
-  createExpense(expense: Expense): Observable<Expense> {
-    return this.http.post<Expense>(this.expensesUrl, expense, this.httpOptions);
-  }
+createExpense(expense: Expense): Observable<Expense> {
+  // Map Angular model properties to match the backend expected property names
+  const backendExpense = {
+    id: expense.id,
+    name: expense.name,
+    // Map tripId to Trip_Id as expected by the backend
+    Trip_Id: expense.trip_Id,
+    Category_Id: expense.category_Id,
+    // Map paidByUserId to paid_by_user_id as expected by the backend
+    paid_by_user_id: expense.paid_by_user_id,
+    Amount: expense.amount,
+    Currency_Code: expense.currency_Code,
+    Description: expense.description,
+    Date: expense.date,
+    Receipt_image: expense.receipt_image,
+    Created_At: expense.created_At,
+    Updated_At: expense.updated_At
+  };
+
+  return this.http.post<Expense>(this.expensesUrl, backendExpense, this.httpOptions)
+    .pipe(
+      // For debugging
+      tap(response => console.log('Expense created:', response)),
+      catchError(error => {
+        console.error('Error creating expense:', error);
+        return throwError(() => error);
+      })
+    );
+}
+
 
   updateExpense(id: number, expense: Expense): Observable<void> {
     return this.http.put<void>(`${this.expensesUrl}/${id}`, expense, this.httpOptions);
@@ -157,34 +185,7 @@ export class ExpenseService {
   }
 
 //#endregion splits
-  createExpenseWithSplits(expense: Expense, splits: ExpenseSplit[]): Observable<Expense> {
-    return this.createExpense(expense).pipe(
-      switchMap(createdExpense => {
-        const updatedSplits = splits.map(split => ({
-          ...split,
-          expense_id: createdExpense.id
-        }));
-        
-        if (updatedSplits.length === 0) {
-          return of(createdExpense);
-        }
-        
-        const splitObservables = updatedSplits.map(split => this.createSplit(split));
-        return forkJoin(splitObservables).pipe(
-          map(() => createdExpense),
-          catchError(error => {
-            console.error('Error creating splits', error);
-            this.deleteExpense(createdExpense.id).subscribe();
-            return throwError(() => new Error('Failed to create expense splits'));
-          })
-        );
-      }),
-      catchError(error => {
-        console.error('Error creating expense', error);
-        return throwError(() => error);
-      })
-    );
-  }
+
   calculateBalances(tripId: number): Observable<{ [userId: number]: number }> {
     return this.getSplitsByTripId(tripId).pipe(
       switchMap(splits => {
@@ -193,7 +194,7 @@ export class ExpenseService {
             const balances: { [userId: number]: number } = {};
             
             expenses.forEach(expense => {
-              const paidBy = expense.paidByUserId;
+              const paidBy = expense.paid_by_user_id;
               if (!balances[paidBy]) balances[paidBy] = 0;
               balances[paidBy] += expense.amount;
             });
@@ -210,4 +211,61 @@ export class ExpenseService {
       })
     );
   }
+
+
+  createExpenseWithSplits(expense: Expense, splits: ExpenseSplit[]): Observable<Expense> {
+  // Map Angular model properties to match the backend expected property names
+  const backendExpense = {
+    id: expense.id,
+    name: expense.name,
+    Trip_Id: expense.trip_Id,
+    Category_Id: expense.category_Id,
+    paid_by_user_id: expense.paid_by_user_id,
+    Amount: expense.amount,
+    Currency_Code: expense.currency_Code,
+    Description: expense.description,
+    Date: expense.date,
+    Receipt_image: expense.receipt_image,
+    Created_At: expense.created_At,
+    Updated_At: expense.updated_At
+  };
+
+  // Log what we're sending to help with debugging
+  console.log('Sending expense to backend:', backendExpense);
+
+  return this.http.post<Expense>(this.expensesUrl, backendExpense, this.httpOptions).pipe(
+    tap(createdExpense => console.log('Created expense:', createdExpense)),
+    switchMap(createdExpense => {
+      const updatedSplits = splits.map(split => ({
+        expense_id: createdExpense.id,
+        user_Id: split.user_Id,
+        amount: split.amount,
+        is_settled: split.is_settled,
+        settled_At: split.settled_At,
+        trip_Id: split.trip_Id
+      }));
+      
+      if (updatedSplits.length === 0) {
+        return of(createdExpense);
+      }
+      
+      // Log the splits we're creating
+      console.log('Creating splits:', updatedSplits);
+      
+      const splitObservables = updatedSplits.map(split => this.createSplit(split));
+      return forkJoin(splitObservables).pipe(
+        map(() => createdExpense),
+        catchError(error => {
+          console.error('Error creating splits', error);
+          this.deleteExpense(createdExpense.id).subscribe();
+          return throwError(() => new Error('Failed to create expense splits: ' + error.message));
+        })
+      );
+    }),
+    catchError(error => {
+      console.error('Error creating expense', error);
+      return throwError(() => error);
+    })
+  );
+}
 }

@@ -121,9 +121,9 @@ export class AddExpenseComponent implements OnInit {
     const expense: Expense = {
       id: 0,
       name: formValue.name,
-      tripId: this.tripId,
+      trip_Id: this.tripId,
       category_Id: parseInt(formValue.categoryId),
-      paidByUserId: parseInt(formValue.paidByUserId),
+      paid_by_user_id: parseInt(formValue.paidByUserId),
       amount: parseFloat(formValue.amount),
       currency_Code: formValue.currency,
       description: formValue.description || '',

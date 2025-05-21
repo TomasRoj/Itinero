@@ -22,7 +22,6 @@
   background-color: #EDF2F4;
 }
 
-// Custom styling for the friends list
 .friend-item {
   transition: all 0.2s ease;
   
@@ -31,7 +30,6 @@
   }
 }
 
-// Make sure the avatar images maintain aspect ratio
 img.rounded-circle {
   object-fit: cover;
 }
