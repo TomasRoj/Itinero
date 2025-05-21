@@ -4,56 +4,6 @@ $light-gray: #f2f4f5;
 $border-radius: 8px;
 $sidebar-width: 250px;
 
-.page-container {
-  position: relative;
-  min-height: 100vh;
-  background-color: white;
-  overflow: hidden;
-  display: flex;
-}
-
-.row {
-  display: flex;
-  width: 100%;
-  margin: 0;
-}
-
-.no-gutters {
-  margin-right: 0;
-  margin-left: 0;
-}
-
-.sidebar-column {
-  width: $sidebar-width;
-  min-height: 100vh;
-  background-color: $dark-blue;
-  z-index: 2;
-  flex-shrink: 0;
-}
-
-.main-content-column {
-  flex: 1;
-  position: relative;
-  padding: 20px;
-  min-height: 100vh;
-}
-
-.page-header {
-  margin-bottom: 20px;
-  
-  h1 {
-    font-size: 1.5rem;
-    color: $dark-blue;
-    font-weight: 500;
-  }
-}
-
-.content-container {
-  position: relative;
-  z-index: 1;
-  max-width: 960px;
-}
-
 .tabs-container {
   display: flex;
   background-color: $light-gray;
@@ -85,10 +35,6 @@ $sidebar-width: 250px;
   margin: 20px 0;
 }
 
-.form-container {
-  margin-bottom: 30px;
-}
-
 .form-row {
   display: flex;
   gap: 20px;
@@ -99,53 +45,10 @@ $sidebar-width: 250px;
   }
 }
 
-.form-group {
-  flex: 1;
-  
-  &.textarea-group {
-    flex: 2;
-  }
-  
-  &.dropdown-group {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-}
-
-.form-control {
-  width: 100%;
-  padding: 15px;
-  border: none;
-  background-color: $light-gray;
-  border-radius: $border-radius;
-  font-size: 16px;
-  
-  &::placeholder {
-    color: #888;
-  }
-  
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba($dark-blue, 0.3);
-  }
-}
-
 textarea.form-control {
   resize: none;
   min-height: 120px;
 }
-
-
-.action-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 15px;
-}
-
-.day-planning-container {
-    width: 100%;
-  }
   
   .activity-card {
     transition: all 0.2s ease;
@@ -194,59 +97,10 @@ textarea.form-control {
   }
 }
 
-.members-container {
-  margin-bottom: 30px;
-}
-
-.group-id {
-  display: flex;
-  align-items: center;
-  
-  label {
-    margin-right: 10px;
-    font-weight: 500;
-  }
-  
-  .id-value {
-    font-family: monospace;
-    font-size: 1.1rem;
-    letter-spacing: 1px;
-  }
-}
-
 .actions-row {
   margin-bottom: 15px;
 }
 
-.action-button {
-  width: 100%;
-  padding: 12px 15px;
-  background-color: $light-gray;
-  border: none;
-  border-radius: $border-radius;
-  text-align: left;
-  cursor: pointer;
-  position: relative;
-  
-  &:hover {
-    background-color: darken($light-gray, 5%);
-  }
-  
-  &.dropdown-button {
-    padding-right: 30px;
-  }
-  
-  .dropdown-icon {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    width: 10px;
-    height: 10px;
-    border-left: 2px solid #888;
-    border-bottom: 2px solid #888;
-    transform: translateY(-70%) rotate(-45deg);
-  }
-}
 
 .hint-text {
   display: block;
