@@ -93,6 +93,10 @@ export class StepDestinationComponent implements OnInit {
   ngOnInit() {
     this.loadDestinations();
     this.sharedService.continueButtonDisabled.next(true);
+    this.checkIfPrevious();
+    if (this.sharedService.formData.destination) {
+      this.destination = this.sharedService.formData.destination;
+    }
   }
 
   loadDestinations() {
@@ -154,7 +158,15 @@ export class StepDestinationComponent implements OnInit {
     this.dataChange.emit({ 
       destination: this.destination, 
       destinationId: this.destinationId 
-  });
+    });
+    this.sharedService.formData.destination = this.destination;
+  }
+
+  checkIfPrevious(){
+    if (this.sharedService.formData.destination.trim() !== ''){
+      this.nullError = '';
+      this.sharedService.continueButtonDisabled.next(false);
+    }
   }
 
   onKeyDown(event: KeyboardEvent) {

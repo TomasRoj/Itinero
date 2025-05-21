@@ -26,6 +26,16 @@ export class StepDatesComponent {
     this.sharedService.continueButtonDisabled.next(true);
   }
 
+  ngOnInit() {
+    this.checkIfPrevious();
+    if (this.sharedService.formData.startDate) {
+      this.startDate = this.sharedService.formData.startDate;
+    }
+    if (this.sharedService.formData.endDate) {
+      this.endDate = this.sharedService.formData.endDate;
+    }
+  }
+
   onDateChange() {
 
     if (this.startDate > this.endDate) {
@@ -44,8 +54,17 @@ export class StepDatesComponent {
       this.rangeError = '';
       this.dataChange.emit({ startDate: this.startDate, endDate: this.endDate });
       this.sharedService.continueButtonDisabled.next(false);
+      this.sharedService.formData.startDate = this.startDate;
+      this.sharedService.formData.endDate = this.endDate;
     }
 
+  }
+
+  checkIfPrevious(){
+    if (this.sharedService.formData.destination.trim() !== ''){
+      this.rangeError = '';
+      this.sharedService.continueButtonDisabled.next(false);
+    }
   }
 
 }

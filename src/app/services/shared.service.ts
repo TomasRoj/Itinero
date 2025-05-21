@@ -15,6 +15,14 @@ export class SharedService {
 
   public continueButtonDisabled = new BehaviorSubject<boolean>(true);
 
+  formData = {
+    name: '',
+    destination: '',
+    destinationId: 0,
+    startDate: '',
+    endDate: '',
+  }; 
+
   constructor() {}
 
   setActiveTab(tab: string): void {

@@ -24,13 +24,29 @@ export class StepNameComponent {
   nullError: string = 'Zadejte platný název výletu.';
   continueButtonDisabled: boolean = true;
 
+  ngOnInit() {
+    this.checkIfPrevious();
+    if (this.sharedService.formData.name) {
+      this.name = this.sharedService.formData.name;
+    }
+  }
+
   onInputChange() {
+
     if (this.name.trim() === '') {
       this.nullError = 'Zadejte platný název výletu.';
     } else {
       this.nullError = '';
       this.sharedService.continueButtonDisabled.next(false);
+      this.sharedService.formData.name = this.name;
       this.dataChange.emit({ name: this.name });
+    }
+  }
+
+  checkIfPrevious(){
+    if (this.sharedService.formData.name.trim() !== ''){
+      this.nullError = '';
+      this.sharedService.continueButtonDisabled.next(false);
     }
   }
 }

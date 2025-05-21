@@ -57,22 +57,32 @@
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between mt-5">
-                        <span class="text-muted"></span>
-                        <a [routerLink]="'/day-itinerary'" [queryParams]="{ dayId: getSelectedDayId(),  tripId: +route.snapshot.params['id']}" style="text-decoration: none;">
-                            <span class="text-primary cursor-pointer">Nová aktivita</span>
-                        </a>
+                    <div *ngIf="activities.length === 0">
+                        <div class="card border h-100">
+                            <div class="card-body d-flex justify-content-center align-items-center">
+                                <h5>Žádné aktivity pro tuto destinaci.</h5>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-
-                <!-- Success message -->
-                <div *ngIf="saveSuccess" class="alert alert-success mb-3" role="alert">
-                    Změny byly úspěšně uloženy.
+                <div class="d-flex justify-content-between mt-5">
+                    <span class="text-muted"></span>
+                    <a [routerLink]="'/day-itinerary'"
+                        [queryParams]="{ dayId: getSelectedDayId(),  tripId: +route.snapshot.params['id']}"
+                        style="text-decoration: none;">
+                        <span class="text-primary cursor-pointer">Nová aktivita</span>
+                    </a>
                 </div>
-
-                <a><button class="btn btn-primary mx-2" (click)="updateDayDescription()">Potvrdit</button></a>
             </div>
+
+
+            <!-- Success message -->
+            <div *ngIf="saveSuccess" class="alert alert-success mb-3" role="alert">
+                Změny byly úspěšně uloženy.
+            </div>
+
+            <a><button class="btn btn-primary mx-2" (click)="updateDayDescription()">Potvrdit</button></a>
         </div>
     </div>
 </div>
