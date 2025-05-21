@@ -9,11 +9,12 @@ import { RouterLink} from '@angular/router';
 import { TripService } from '../../services/trip-service.service';
 import { Trip } from '../../services/trip-service.service';
 import { Router } from '@angular/router';
-import { User, UserService } from '../../services/user-service.service';
+import { UserService } from '../../services/user-service.service';
 import { SharedService } from '../../services/shared.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
+import { TripMemberService } from '../../services/trip-member.service';
 
 @Component({
   selector: 'app-survey',
@@ -24,7 +25,7 @@ import { HttpClient } from '@angular/common/http';
 
 export class SurveyComponent implements OnInit {
   private apiUrl = 'http://localhost:5253/api';
-  constructor(private tripService: TripService, private router: Router, private userService: UserService, private sharedService: SharedService, private http: HttpClient) { }
+  constructor(private tripService: TripService, private router: Router, private userService: UserService, private sharedService: SharedService, private http: HttpClient, private tripMemberService: TripMemberService) { }
 
   currentStep = 1;
   totalSteps = 4; 
@@ -81,7 +82,13 @@ export class SurveyComponent implements OnInit {
             this.getTripByNameAndUserId(currentUser.id, this.formData.name).subscribe({
               next: (trip) => {
                 if (trip) {
-                  this.router.navigate(['/trip-itinerary/' + trip.id]);
+                  if (trip.id !== undefined) {
+                    this.tripMemberService.addTripMember(trip.id, currentUser.id, 'Owner').subscribe(() => {
+                      this.router.navigate(['/trip-itinerary/' + trip.id]);
+                    });
+                  } else {
+                    console.error('Trip ID is undefined.');
+                  }
                 }
               }
             });
