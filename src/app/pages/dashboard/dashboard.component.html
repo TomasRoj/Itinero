@@ -4,52 +4,54 @@
       <app-sidebar></app-sidebar>
     </div> 
 
-    <div class="col-md-9 col-lg-10 ps-0" style="background-image: url('/survey-bg.png');background-size:100%; background-position: center; background-repeat: no-repeat;">
+    <div class="col-md-9 col-lg-10 ps-0" id="background">
       <div class="dashboard-content p-4">
         <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
           <h1 class="mb-0">Dobré odpoledne, {{ username }}</h1>
-          <a [routerLink]="'/survey'"><button class="btn btn-danger rounded-pill px-4">Nový výlet</button></a>
-          </div>
-          
-          <p class="text-muted mb-4">Zde jsou vaše aktuální výlety:</p>
-          
-          <div class="row pt-5">
-
-            <div class="col-lg-4 mb-4" *ngFor="let trip of trips">
-              <div class="card border-0 shadow-sm h-100">
-                <div class="card-body p-0">
-                  <img [src]="trip.image" width="400" height="300" class="card-img-top">
-                  <div class="p-3">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                      <div>
-                        <h3 class="mb-0">{{ trip.destination }}</h3>
-                        <p class="text-muted mb-0">{{ trip.country }}</p>
-                      </div>
-                      <div class="d-flex align-items-center">
-                        <span class="me-2">{{ trip.participants }}</span>
-                        <i class="bi bi-people-fill text-muted"></i>
-                      </div>
-                    </div>
-                    <p class="text-muted bg-light py-2 px-3 rounded small">{{ trip.dateRange }}</p>
-                    <p class="small">{{ trip.description }}</p>
-                    <a (click)="getItemDetails(trip.id)" style="text-decoration: none; color: inherit"><button class="btn btn-danger w-100">Spravovat</button></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-4 mb-4">
-              <div class="h-100 d-flex justify-content-center align-items-center" 
-                   style="cursor: pointer;" [routerLink]="['/survey']">
-                <div class="text-center p-5">
-                  <i class="bi bi-plus-circle"></i>
-                </div>
-              </div>
-            </div>
-
-          </div>
-          
+          <a [routerLink]="'/survey'">
+            <button class="btn btn-danger rounded-pill px-4">Nový výlet</button>
+          </a>
         </div>
+        
+        <p class="text-muted mb-4">Zde jsou vaše aktuální výlety:</p>
+        
+        <div class="row pt-5">
+          <div class="col-lg-4 mb-4" *ngFor="let trip of trips">
+            <div class="card custom-card h-100">
+              <div class="card-body p-0">
+                <img [src]="trip.image" width="400" height="300" class="card-img-top">
+                <div class="p-3">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                      <h3 class="mb-0">{{ trip.destination }}</h3>
+                      <p class="text-muted mb-0">{{ trip.country }}</p>
+                    </div>
+                    <div class="d-flex align-items-center">
+                      <span class="me-2">{{ trip.participants }}</span>
+                      <i class="bi bi-people-fill text-muted"></i>
+                    </div>
+                  </div>
+                  <p class="text-muted bg-light py-2 px-3 rounded small">{{ trip.dateRange }}</p>
+                  <p class="small">{{ trip.description }}</p>
+                  <a (click)="getItemDetails(trip.id)" class="no-decoration">
+                    <button class="btn btn-danger w-100">Spravovat</button>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 mb-4">
+            <div class="h-100 d-flex justify-content-center align-items-center clickable" [routerLink]="['/survey']">
+              <div class="text-center p-5">
+                <i class="bi bi-plus-circle"></i>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        
       </div>
     </div>
   </div>
+</div>

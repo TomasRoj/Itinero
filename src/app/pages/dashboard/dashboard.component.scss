@@ -12,7 +12,13 @@
     border: rgba(239, 35, 60, 0.8) 1px solid !important;
     box-shadow: rgba(239, 35, 60, 0.25) 10px 10px 10px !important;
   }
-  
+  #background {
+    background-image: url('/survey-bg.png');
+    background-size:100%;
+     background-position: center;
+     background-repeat: no-repeat;
+  }
+
   .card:hover {
     transform: translateY(-5px);
   }
