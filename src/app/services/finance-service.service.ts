@@ -26,6 +26,13 @@ export interface ExpenseCategory {
   id: number;
   name: string;
 }
+export interface CreateMultipleExpenseSplitsRequest {
+  userIds: number[];
+  totalAmount: number;
+  splitType: string;
+  userAmounts?: { [key: string]: number };
+  isSettled?: boolean;
+}
 
 export interface ExpenseSplit {
   id?: number;

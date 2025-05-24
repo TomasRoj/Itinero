@@ -116,8 +116,7 @@ export class FinanceTabComponent {
         }
 
         this.expenses = expensesData.map(expense => {
-          const isSettled = Math.random() > 0.5; // jen pro testovani
-
+          const isSettled = Math.random() > 0.5; // asi můžem smazat
           return {
             id: expense.id,
             description: expense.name || expense.description || 'Unnamed Expense',
@@ -162,18 +161,21 @@ export class FinanceTabComponent {
     });
   }
 
-  deleteExpense(expense_id: number): void {
-    if (confirm('Opravdu chcete smazat tento výdaj?')) {
-      this.expenseService.deleteExpense(expense_id).subscribe({
-        next: () => {
-          console.log('Expense deleted successfully');
-          this.expenses = this.expenses.filter(e => e.expense_id !== expense_id);
-          this.loadExpenses(this.tripData.id);
-        },
-        error: (error) => {
-          console.error('Error deleting expense:', error);
+deleteExpense(expense_id: number): void { //have to referesh page before it displays right trips
+  if (confirm('Opravdu chcete smazat tento výdaj?')) {
+    this.expenseService.deleteExpense(expense_id).subscribe({
+      next: (res) => {
+        console.log('Expense deleted successfully:', res);
+        if (this.trip?.id) {
+          this.loadExpenses(this.trip.id);
+        } else {
+          console.error('trip.id is missing when trying to reload');
         }
-      });
-    }
+      },
+      error: (error) => {
+        console.error('Error deleting expense:', error);
+      }
+    });
+  }
   }
 }
