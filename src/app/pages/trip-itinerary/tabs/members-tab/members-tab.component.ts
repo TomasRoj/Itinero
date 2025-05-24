@@ -104,18 +104,18 @@ export class MembersTabComponent {
             next: (user) => {
               // Check if this user is the creator based on trip data
               const isCreator = this.tripData && this.tripData.creator_id === user.id;
-              
+
               // Determine the role - prioritize the database role
               let roleToDisplay = member.role || 'Member';
-              
+
               // Override with 'Vlastník' if the user is the creator and there's no specific role in DB
               // Or if the role in the database is already set to 'Vlastník' or 'Owner'
               if (isCreator || roleToDisplay === 'Vlastník' || roleToDisplay === 'Owner') {
                 roleToDisplay = 'Vlastník';
               }
-              
+
               console.log(`User ${user.id} role: ${roleToDisplay}`);
-              
+
               this.groupMembers.push({
                 id: member.id || 0,
                 name: `${user.name} ${user.surname}`,
@@ -124,7 +124,7 @@ export class MembersTabComponent {
                 userId: user.id,
                 email: user.email
               });
-              
+
               // Sort the members to show owner first
               this.groupMembers.sort((a, b) => {
                 if (a.role === 'Vlastník') return -1;
@@ -153,16 +153,28 @@ export class MembersTabComponent {
 
   addUser(userId: string): void {
     console.log('Adding user with ID:', userId);
-  
+
     if (!userId || !this.tripData?.id) {
       console.error('Invalid user ID or trip data');
       return;
     }
-  
-    // Default role for new members (make sure it matches what's expected in the database)
+
+    const parsedUserId = Number(userId.trim());
+    if (isNaN(parsedUserId)) {
+      alert('Neplatné ID uživatele.');
+      return;
+    }
+
+    // Zabrání přidání uživatele, který už je členem
+    const userAlreadyInTrip = this.groupMembers.some(member => member.userId === parsedUserId);
+    if (userAlreadyInTrip) {
+      alert('Tento uživatel je již členem výletu.');
+      return;
+    }
+
     const defaultRole = 'Member';
-  
-    this.tripMemberService.addTripMember(this.tripData.id, Number(userId), defaultRole).subscribe({
+
+    this.tripMemberService.addTripMember(this.tripData.id, parsedUserId, defaultRole).subscribe({
       next: (response) => {
         console.log('Member added successfully:', response);
         this.loadTripMembers(this.tripData.id);
@@ -179,24 +191,25 @@ export class MembersTabComponent {
     });
   }
 
+
   transferOwnership(): void {
     console.log('New owner ID:', this.newOwnerId);
-    
+
     if (!this.newOwnerId) {
       alert('Zadejte platné ID uživatele.');
       return;
     }
-    
+
     const userId = parseInt(this.newOwnerId, 10);
-  
+
     if (isNaN(userId)) {
       alert('Zadejte platné číslo ID.');
       return;
     }
-    
+
     // Find the member by userId, not by id
     const matchingMember = this.groupMembers.find(m => m.userId === userId);
-  
+
     if (!matchingMember) {
       alert('Uživatel musí být členem výletu pro převod vlastnictví.');
       return;
@@ -205,7 +218,7 @@ export class MembersTabComponent {
     // Debug information
     console.log('Found matching member:', matchingMember);
     console.log('Updating role for member ID:', matchingMember.id);
-    
+
     // Create a complete update payload
     const updatePayload = {
       id: matchingMember.id,
@@ -213,23 +226,23 @@ export class MembersTabComponent {
       user_id: matchingMember.userId,
       role: 'Vlastník'
     };
-  
+
     this.tripMemberService.updateMemberRole(matchingMember.id, updatePayload).subscribe({
       next: () => {
         console.log('Role updated to owner');
-        
+
         // If there's a previous owner, update their role
         const currentOwner = this.groupMembers.find(m => m.role === 'Vlastník' && m.id !== matchingMember.id);
         if (currentOwner) {
           console.log('Updating previous owner:', currentOwner);
-          
+
           const previousOwnerPayload = {
             id: currentOwner.id,
             trip_id: this.tripData.id,
             user_id: currentOwner.userId,
             role: 'Member'
           };
-          
+
           this.tripMemberService.updateMemberRole(currentOwner.id, previousOwnerPayload).subscribe({
             next: () => {
               console.log('Previous owner updated to member');
@@ -256,7 +269,7 @@ export class MembersTabComponent {
 
   leaveTrip(): void {
     console.log('Leaving trip with ID:', this.tripData.id);
-  
+
     this.userService.currentUser$.subscribe(user => {
       if (user) {
         this.processLeaveTrip(user.id);
@@ -290,7 +303,7 @@ export class MembersTabComponent {
           return;
         }
 
-        const isCreator = userMembership.role === 'owner';
+        const isCreator = userMembership.role === 'Owner';
 
         this.tripMemberService.deleteTripMember(userMembership.id).subscribe({
           next: () => {
@@ -309,7 +322,7 @@ export class MembersTabComponent {
                           next: () => {
                             console.log('Trip deleted successfully');
                             this.tripData = null;
-                            this.router.navigate(['/dahboard']);
+                            this.router.navigate(['/dashboard']);
                           },
                           error: (error) => {
                             console.error('Error deleting trip:', error);

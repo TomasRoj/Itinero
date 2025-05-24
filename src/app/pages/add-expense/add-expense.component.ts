@@ -13,10 +13,10 @@ import { forkJoin, catchError, of, switchMap, map } from 'rxjs';
   selector: 'app-add-expense',
   standalone: true,
   imports: [
-    ItinerarySidebarComponent, 
-    CommonModule, 
-    RouterLink, 
-    ReactiveFormsModule, 
+    ItinerarySidebarComponent,
+    CommonModule,
+    RouterLink,
+    ReactiveFormsModule,
     FormsModule,
   ],
   templateUrl: './add-expense.component.html',
@@ -35,7 +35,7 @@ export class AddExpenseComponent implements OnInit {
   currentTrip?: Trip;
   isSubmitting: boolean = false;
   isSettled: boolean = false;
-  
+
   constructor(
     private fb: FormBuilder,
     private expenseService: ExpenseService,
@@ -50,7 +50,7 @@ export class AddExpenseComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    
+
     this.route.paramMap.subscribe(params => {
       const tripIdParam = params.get('tripId');
       if (tripIdParam) {
@@ -76,7 +76,7 @@ export class AddExpenseComponent implements OnInit {
   onSubmit(): void {
     this.errorMessage = '';
     this.successMessage = '';
-    
+
     if (this.expenseForm.invalid) {
       this.expenseForm.markAllAsTouched();
       this.errorMessage = 'Please fill in all required fields.';
@@ -85,7 +85,7 @@ export class AddExpenseComponent implements OnInit {
 
     this.isSubmitting = true;
     const formValue = this.expenseForm.value;
-    
+
     const expense: Expense = {
       id: 0,
       name: formValue.name,
@@ -98,7 +98,7 @@ export class AddExpenseComponent implements OnInit {
       date: new Date(),
       //isSettled: this.isSettled
     };
-    
+
     this.expenseService.createExpense(expense)
       .subscribe({
         next: (createdExpense) => {
@@ -106,7 +106,7 @@ export class AddExpenseComponent implements OnInit {
         },
         error: (error) => {
           this.isSubmitting = false;
-          this.errorMessage = 'Error creating expense: ' + 
+          this.errorMessage = 'Error creating expense: ' +
             (error.error?.message || error.message || 'Unknown error');
           console.error('Full backend error response:', error);
         }
@@ -116,18 +116,18 @@ export class AddExpenseComponent implements OnInit {
   private handleSuccess(message: string = 'Expense added successfully!'): void {
     this.isSubmitting = false;
     this.successMessage = message;
-    
+
     setTimeout(() => {
-    this.router.navigate(['/trip-itinerary', this.tripId]);
+      this.router.navigate(['/trip-itinerary', this.tripId]);
     }, 100);
   }
 
   loadData(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    
+
     console.log('Loading data for trip ID:', this.tripId);
-    
+
     // First get the trip and categories
     forkJoin({
       trip: this.tripService.getTripById(this.tripId),
@@ -137,22 +137,22 @@ export class AddExpenseComponent implements OnInit {
       switchMap(initialData => {
         this.currentTrip = initialData.trip;
         this.categories = initialData.categories;
-        
+
         // Get trip members
         return this.tripMemberService.getMembersByTripId(this.tripId).pipe(
           // For each trip member, get the user details
           switchMap(members => {
             this.tripMembers = members;
-            
+
             if (members.length === 0) {
               return of([]);
             }
-            
+
             // Create an array of user detail requests
-            const userRequests = members.map(member => 
+            const userRequests = members.map(member =>
               this.userService.getUserById(member.user_id)
             );
-            
+
             // Run all user requests in parallel
             return forkJoin(userRequests);
           }),
@@ -171,17 +171,17 @@ export class AddExpenseComponent implements OnInit {
       })
     ).subscribe(result => {
       console.log('Loaded data:', result);
-      
+
       this.users = result.users;
-      
+
       if (this.users.length === 0) {
         this.errorMessage = 'No users found for this trip.';
       }
-      
+
       if (this.categories.length === 0) {
         this.errorMessage = 'No expense categories found.';
       }
-      
+
       this.isLoading = false;
     });
   }
@@ -194,7 +194,7 @@ export class AddExpenseComponent implements OnInit {
     this.router.navigate(['/trip-itinerary', this.tripId]);
   }
   setIsSettled(value: boolean): void {
-  this.isSettled = value;
-}
+    this.isSettled = value;
+  }
 
 }
