@@ -7,11 +7,10 @@ import { HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TripService } from '../../../../services/trip-service.service';
 import { Trip } from '../../../../services/trip-service.service';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-destination-tab',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './destination-tab.component.html',
   styleUrl: './destination-tab.component.scss'
 })
@@ -109,6 +108,13 @@ export class DestinationTabComponent {
   onDateChange() {
     this.changedDates.emit({ startDate: this.startDate, endDate: this.endDate });
     console.log('Změna data:', this.startDate, this.endDate);
+
+    if (this.tripForm.startDate) {
+      this.placeholders.startDate = new Date(this.tripForm.startDate).toDateString();
+    }
+    if (this.tripForm.endDate) {
+      this.placeholders.endDate = new Date(this.tripForm.endDate).toDateString();
+    }
   }
 
   @HostListener('document:click', ['$event'])

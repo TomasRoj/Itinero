@@ -4,7 +4,8 @@
             <app-itinerary-sidebar></app-itinerary-sidebar>
         </div>
 
-        <div class="col-lg-10 p-5" style="background-image: url('/survey-bg.png');background-size: contain; background-position: center top; background-repeat: no-repeat;">
+        <div class="col-lg-10 p-5"
+            style="background-image: url('/survey-bg.png');background-size: contain; background-position: center top; background-repeat: no-repeat;">
             <div class="dashboard-content p-4 w-100 d-flex flex-column justify-content-center">
 
                 <div class="d-flex justify-content-between align-items-center pb-4">
@@ -38,33 +39,39 @@
                                         <div class="form-group mb-3">
                                             <label for="name">Název</label>
                                             <input type="text" class="form-control" id="name" formControlName="name">
-                                            <div *ngIf="expenseForm.get('name')?.invalid && expenseForm.get('name')?.touched" class="text-danger">
+                                            <div *ngIf="expenseForm.get('name')?.invalid && expenseForm.get('name')?.touched"
+                                                class="text-danger">
                                                 Název je povinný
                                             </div>
                                         </div>
-                                        
+
                                         <div class="form-group mb-3">
                                             <label for="expenseCategory">Výběr kategorie výdaje</label>
-                                            <select class="form-select" id="expenseCategory" formControlName="categoryId">
+                                            <select class="form-select" id="expenseCategory"
+                                                formControlName="categoryId">
                                                 <option value="">Vyberte kategorii</option>
-                                                <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+                                                <option *ngFor="let category of categories" [value]="category.id">{{
+                                                    category.name }}</option>
                                             </select>
-                                            <div *ngIf="expenseForm.get('categoryId')?.invalid && expenseForm.get('categoryId')?.touched" class="text-danger">
+                                            <div *ngIf="expenseForm.get('categoryId')?.invalid && expenseForm.get('categoryId')?.touched"
+                                                class="text-danger">
                                                 Kategorie je povinná
                                             </div>
                                         </div>
-                                        
+
                                         <div class="form-group mb-3">
                                             <label for="paidBy">Kdo uhradil platbu</label>
                                             <select class="form-select" id="paidBy" formControlName="paidByUserId">
                                                 <option value="">Vyberte osobu</option>
-                                                <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+                                                <option *ngFor="let user of users" [value]="user.id">{{ user.name }}
+                                                </option>
                                             </select>
-                                            <div *ngIf="expenseForm.get('paidByUserId')?.invalid && expenseForm.get('paidByUserId')?.touched" class="text-danger">
+                                            <div *ngIf="expenseForm.get('paidByUserId')?.invalid && expenseForm.get('paidByUserId')?.touched"
+                                                class="text-danger">
                                                 Prosím vyberte kdo platbu uhradil
                                             </div>
                                         </div>
-                                        
+
                                         <div class="form-group mb-3">
                                             <label for="amount">Zaplacená suma</label>
                                             <div class="input-group">
@@ -73,7 +80,8 @@
                                                     <option *ngFor="let currency of currencies" [value]="currency.code">{{ currency.code }}</option>
                                                 </select>
                                             </div>
-                                            <div *ngIf="expenseForm.get('amount')?.invalid && expenseForm.get('amount')?.touched" class="text-danger">
+                                            <div *ngIf="expenseForm.get('amount')?.invalid && expenseForm.get('amount')?.touched"
+                                                class="text-danger">
                                                 Prosím zadejte validní částku
                                             </div>
                                         </div>
@@ -185,7 +193,7 @@
                                 <div *ngIf="errorMessage" class="alert alert-danger mt-3">
                                     <i class="fas fa-exclamation-circle me-2"></i>{{ errorMessage }}
                                 </div>
-                                
+
                                 <div *ngIf="successMessage" class="alert alert-success mt-3">
                                     <i class="fas fa-check-circle me-2"></i>{{ successMessage }}
                                 </div>

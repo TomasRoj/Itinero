@@ -20,10 +20,10 @@ interface UserSplit {
   selector: 'app-add-expense',
   standalone: true,
   imports: [
-    ItinerarySidebarComponent, 
-    CommonModule, 
-    RouterLink, 
-    ReactiveFormsModule, 
+    ItinerarySidebarComponent,
+    CommonModule,
+    RouterLink,
+    ReactiveFormsModule,
     FormsModule,
   ],
   templateUrl: './add-expense.component.html',
@@ -49,7 +49,7 @@ export class AddExpenseComponent implements OnInit {
   userSplits: UserSplit[] = [];
   splitError: string = '';
   isSettled: boolean = false;
-  
+
   constructor(
     private fb: FormBuilder,
     private expenseService: ExpenseService,
@@ -64,7 +64,7 @@ export class AddExpenseComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    
+
     this.route.paramMap.subscribe(params => {
       const tripIdParam = params.get('tripId');
       if (tripIdParam) {
@@ -279,8 +279,7 @@ export class AddExpenseComponent implements OnInit {
   onSubmit(): void {
     this.clearErrors();
     this.successMessage = '';
-    
-    // Validate form
+
     if (this.expenseForm.invalid) {
       this.expenseForm.markAllAsTouched();
       this.errorMessage = 'Prosím vyplňte všechna povinná pole.';
@@ -294,7 +293,7 @@ export class AddExpenseComponent implements OnInit {
 
     this.isSubmitting = true;
     const formValue = this.expenseForm.value;
-    
+
     const expense: Expense = {
       id: 0,
       name: formValue.name,
@@ -306,7 +305,7 @@ export class AddExpenseComponent implements OnInit {
       description: formValue.description || '',
       date: new Date(),
     };
-    
+
     this.expenseService.createExpense(expense)
       .pipe(
         switchMap(createdExpense => {
@@ -361,17 +360,17 @@ export class AddExpenseComponent implements OnInit {
   private handleSuccess(message: string = 'Výdaj byl úspěšně přidán!'): void {
     this.isSubmitting = false;
     this.successMessage = message;
-    
+
     setTimeout(() => {
       this.router.navigate(['/trip-itinerary', this.tripId]);
-    }, 1500);
+    }, 100);
   }
 
   // === DATA LOADING ===
   loadData(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    
+
     console.log('Loading data for trip ID:', this.tripId);
     
     forkJoin({
@@ -385,7 +384,7 @@ export class AddExpenseComponent implements OnInit {
         return this.tripMemberService.getMembersByTripId(this.tripId).pipe(
           switchMap(members => {
             this.tripMembers = members;
-            
+
             if (members.length === 0) {
               return of([]);
             }
@@ -410,13 +409,13 @@ export class AddExpenseComponent implements OnInit {
       })
     ).subscribe(result => {
       console.log('Loaded data:', result);
-      
+
       this.users = result.users;
-      
+
       if (this.users.length === 0) {
         this.errorMessage = 'Pro tento výlet nebyli nalezeni žádní uživatelé.';
       }
-      
+
       if (this.categories.length === 0) {
         this.errorMessage = 'Nebyly nalezeny žádné kategorie výdajů.';
       }
@@ -426,7 +425,7 @@ export class AddExpenseComponent implements OnInit {
       if (this.expenseType === 'shared' && this.users.length > 0) {
         this.initializeUserSplits();
       }
-      
+
       this.isLoading = false;
     });
   }
