@@ -37,6 +37,13 @@ export interface ExpenseSplit {
   trip_Id: number;
 }
 
+export interface CreateMultipleExpenseSplitsRequest {
+  userIds: number[];
+  totalAmount: number;
+  splitType: string;
+  userAmounts?: { [key: string]: number };
+}
+
 export interface ExpenseWithSplits {
   expense: Expense;
   splits: ExpenseSplit[];
@@ -90,36 +97,35 @@ export class ExpenseService {
     return this.http.get<Expense>(`${this.expensesUrl}/${id}`);
   }
 
-createExpense(expense: Expense): Observable<Expense> {
-  // Map Angular model properties to match the backend expected property names
-  const backendExpense = {
-    id: expense.id,
-    name: expense.name,
-    // Map tripId to Trip_Id as expected by the backend
-    Trip_Id: expense.trip_Id,
-    Category_Id: expense.category_Id,
-    // Map paidByUserId to paid_by_user_id as expected by the backend
-    paid_by_user_id: expense.paid_by_user_id,
-    Amount: expense.amount,
-    Currency_Code: expense.currency_Code,
-    Description: expense.description,
-    Date: expense.date,
-    Receipt_image: expense.receipt_image,
-    Created_At: expense.created_At,
-    Updated_At: expense.updated_At
-  };
+  createExpense(expense: Expense): Observable<Expense> {
+    // Map Angular model properties to match the backend expected property names
+    const backendExpense = {
+      id: expense.id,
+      name: expense.name,
+      // Map tripId to Trip_Id as expected by the backend
+      Trip_Id: expense.trip_Id,
+      Category_Id: expense.category_Id,
+      // Map paidByUserId to paid_by_user_id as expected by the backend
+      paid_by_user_id: expense.paid_by_user_id,
+      Amount: expense.amount,
+      Currency_Code: expense.currency_Code,
+      Description: expense.description,
+      Date: expense.date,
+      Receipt_image: expense.receipt_image,
+      Created_At: expense.created_At,
+      Updated_At: expense.updated_At
+    };
 
-  return this.http.post<Expense>(this.expensesUrl, backendExpense, this.httpOptions)
-    .pipe(
-      // For debugging
-      tap(response => console.log('Expense created:', response)),
-      catchError(error => {
-        console.error('Error creating expense:', error);
-        return throwError(() => error);
-      })
-    );
-}
-
+    return this.http.post<Expense>(this.expensesUrl, backendExpense, this.httpOptions)
+      .pipe(
+        // For debugging
+        tap(response => console.log('Expense created:', response)),
+        catchError(error => {
+          console.error('Error creating expense:', error);
+          return throwError(() => error);
+        })
+      );
+  }
 
   updateExpense(id: number, expense: Expense): Observable<void> {
     return this.http.put<void>(`${this.expensesUrl}/${id}`, expense, this.httpOptions);
@@ -128,7 +134,8 @@ createExpense(expense: Expense): Observable<Expense> {
   deleteExpense(id: number): Observable<void> {
     return this.http.delete<void>(`${this.expensesUrl}/${id}`);
   }
-//#endregion
+  //#endregion
+
   //#region categories
   getAllCategories(): Observable<ExpenseCategory[]> {
     return this.http.get<ExpenseCategory[]>(this.categoriesUrl);
@@ -149,11 +156,15 @@ createExpense(expense: Expense): Observable<Expense> {
   deleteCategory(id: number): Observable<void> {
     return this.http.delete<void>(`${this.categoriesUrl}/${id}`);
   }
-
   //#endregion
+
   //#region splits
   getAllSplits(): Observable<ExpenseSplit[]> {
     return this.http.get<ExpenseSplit[]>(this.splitsUrl);
+  }
+
+  getSplitById(id: number): Observable<ExpenseSplit> {
+    return this.http.get<ExpenseSplit>(`${this.splitsUrl}/${id}`);
   }
 
   getSplitsByExpenseId(expenseId: number): Observable<ExpenseSplit[]> {
@@ -168,8 +179,15 @@ createExpense(expense: Expense): Observable<Expense> {
     return this.http.get<ExpenseSplit[]>(`${this.splitsUrl}/trip/${tripId}`);
   }
 
-  createSplit(split: ExpenseSplit): Observable<ExpenseSplit> {
-    return this.http.post<ExpenseSplit>(this.splitsUrl, split, this.httpOptions);
+  createMultipleExpenseSplits(expenseId: number, request: CreateMultipleExpenseSplitsRequest): Observable<ExpenseSplit[]> {
+    return this.http.post<ExpenseSplit[]>(`${this.splitsUrl}/CreateMultipleForExpense/${expenseId}`, request, this.httpOptions)
+      .pipe(
+        tap(response => console.log('Multiple expense splits created:', response)),
+        catchError(error => {
+          console.error('Error creating multiple expense splits:', error);
+          return throwError(() => error);
+        })
+      );
   }
 
   updateSplit(id: number, split: ExpenseSplit): Observable<void> {
@@ -183,8 +201,6 @@ createExpense(expense: Expense): Observable<Expense> {
   settleExpenseSplits(expenseId: number): Observable<void> {
     return this.http.put<void>(`${this.splitsUrl}/settleexpense/${expenseId}`, {}, this.httpOptions);
   }
-
-//#endregion splits
 
   calculateBalances(tripId: number): Observable<{ [userId: number]: number }> {
     return this.getSplitsByTripId(tripId).pipe(
@@ -211,61 +227,5 @@ createExpense(expense: Expense): Observable<Expense> {
       })
     );
   }
-
-
-  createExpenseWithSplits(expense: Expense, splits: ExpenseSplit[]): Observable<Expense> {
-  // Map Angular model properties to match the backend expected property names
-  const backendExpense = {
-    id: expense.id,
-    name: expense.name,
-    Trip_Id: expense.trip_Id,
-    Category_Id: expense.category_Id,
-    paid_by_user_id: expense.paid_by_user_id,
-    Amount: expense.amount,
-    Currency_Code: expense.currency_Code,
-    Description: expense.description,
-    Date: expense.date,
-    Receipt_image: expense.receipt_image,
-    Created_At: expense.created_At,
-    Updated_At: expense.updated_At
-  };
-
-  // Log what we're sending to help with debugging
-  console.log('Sending expense to backend:', backendExpense);
-
-  return this.http.post<Expense>(this.expensesUrl, backendExpense, this.httpOptions).pipe(
-    tap(createdExpense => console.log('Created expense:', createdExpense)),
-    switchMap(createdExpense => {
-      const updatedSplits = splits.map(split => ({
-        expense_id: createdExpense.id,
-        user_Id: split.user_Id,
-        amount: split.amount,
-        is_settled: split.is_settled,
-        settled_At: split.settled_At,
-        trip_Id: split.trip_Id
-      }));
-      
-      if (updatedSplits.length === 0) {
-        return of(createdExpense);
-      }
-      
-      // Log the splits we're creating
-      console.log('Creating splits:', updatedSplits);
-      
-      const splitObservables = updatedSplits.map(split => this.createSplit(split));
-      return forkJoin(splitObservables).pipe(
-        map(() => createdExpense),
-        catchError(error => {
-          console.error('Error creating splits', error);
-          this.deleteExpense(createdExpense.id).subscribe();
-          return throwError(() => new Error('Failed to create expense splits: ' + error.message));
-        })
-      );
-    }),
-    catchError(error => {
-      console.error('Error creating expense', error);
-      return throwError(() => error);
-    })
-  );
-}
+  //#endregion splits
 }
