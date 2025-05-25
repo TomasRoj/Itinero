@@ -100,6 +100,30 @@ export class DayItineraryComponent {
     );
   }
 
+  loadAddedAttractionsForDay(callback: () => void): void {
+    if (!this.itineraryDayId) {
+      console.error('Chybí itineraryDayId');
+      return;
+    }
+
+    const url = `${this.apiUrl}/Itinerary/items?dayId=${this.itineraryDayId}`;
+
+    this.http.get<any[]>(url).subscribe({
+      next: (items) => {
+        this.addedAttractionIds = items
+          .filter(item => item.attraction_id != null)
+          .map(item => item.attraction_id);
+        console.log('Atrakce již přidané do dne (IDs):', this.addedAttractionIds);
+        callback();
+      },
+      error: (err) => {
+        console.error('Chyba při načítání položek dne:', err);
+        callback();
+      }
+    });
+  }
+
+
   loadCityIdAndAttractions(): void {
     if (!this.tripId) {
       console.error('Chybí tripId');
@@ -117,13 +141,38 @@ export class DayItineraryComponent {
 
         console.log(`Načítám atrakce pro město s ID: ${cityId}`);
 
-        this.loadAttractionsByCity(cityId);
+        // Nejprve načteme existující položky dne
+        this.loadAddedAttractionsForDay(() => {
+          // Poté načteme atrakce a filtrujeme je
+          this.subscription.add(
+            this.attractionService.getAttractions()
+              .pipe(
+                map(attractions =>
+                  attractions.filter(attraction =>
+                    attraction.city_id === cityId &&
+                    attraction.id != null &&
+                    !this.addedAttractionIds.includes(attraction.id)
+                  )
+                )
+              )
+              .subscribe({
+                next: (filteredAttractions) => {
+                  this.attractions = filteredAttractions;
+                  console.log('Načtené atrakce (filtrované):', this.attractions);
+                },
+                error: (error) => {
+                  console.error('Chyba při získávání atrakcí:', error);
+                }
+              })
+          );
+        });
       },
       error: (error) => {
         console.error('Chyba při získávání informací o tripu:', error);
       }
     });
   }
+
 
   addAttractionToDayItinerary(attraction: Attraction): void {
     const dayId = this.itineraryDayId;

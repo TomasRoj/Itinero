@@ -6,9 +6,9 @@
                     [(ngModel)]="tripForm.tripName" name="tripName">
             </div>
             <div class="form-group dropdown">
-                <input type="text" class="form-control" [placeholder]="placeholders.destination"
-                    [(ngModel)]="tripForm.destination" name="destinationName" readonly>
-                <i class="dropdown-icon"></i>
+                <button class="action-button dropdown-button" disabled>
+                    {{placeholders.destination}}
+                </button>
             </div>
         </div>
 
