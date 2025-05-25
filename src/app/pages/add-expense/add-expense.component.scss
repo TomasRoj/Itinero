@@ -5,3 +5,21 @@ $light-gray: #f2f4f5;
   background-color: $light-gray;
   margin: 20px 0;
 }
+
+.bg-selected {
+  background-color: rgba(43, 45, 66, 0.95) !important;
+  color: #ffffff !important;
+  border: 2px solid #2B2D42 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  border-radius: 0.375rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-outline-selected {
+  background-color: rgba(43, 45, 66, 0.05) !important;
+  color: #2B2D42 !important;
+  border: 2px solid #2B2D42 !important;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+}

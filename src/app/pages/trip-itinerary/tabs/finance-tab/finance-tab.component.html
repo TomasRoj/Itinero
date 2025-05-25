@@ -1,52 +1,109 @@
 <div class="tab-content">
-    <div class="expense-list-container my-3">
-        <div class="expense-items">
+  <div class="expense-list-container my-3">
+    <div class="expense-items">
 
-            <div *ngIf="loadingExpenses" class="text-center p-4">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                <p class="mt-2">Načítání výdajů...</p>
-            </div>
-
-
-            <div *ngIf="!loadingExpenses && expenses.length === 0" class="text-center p-4">
-                <p>Žádné výdaje nenalezeny pro tento výlet.</p>
-            </div>
-
-
-            <div *ngIf="!loadingExpenses && expenses.length > 0" class="expense-items">
-                <div *ngFor="let expense of expenses"
-                    class="expense-item mb-2 p-3 bg-light rounded d-flex align-items-center justify-content-between">
-                    <div class="expense-info d-flex align-items-center">
-                        <div [ngClass]="{'bg-success': expense.isSettled, 'bg-danger': !expense.isSettled}"
-                            class="expense-type px-4 py-2 bg-opacity-100 rounded text-truncate"
-                            style="min-width: 250px; max-width: 250px; text-align: center; color: white;">
-                            {{ expense.description }}
-                        </div>
-                        <div class="ms-3">
-                            <div class="expense-paid-by">Zaplatil: User ID {{ expense.paidByUserId }}</div>
-                            <div class="expense-date text-muted small">{{ expense.date | date:'dd.MM.yyyy' }}</div>
-                        </div>
-                    </div>
-                    <div class="expense-actions d-flex align-items-center">
-                        <div class="expense-amount me-3">
-                            <span class="fw-bold">{{ expense.amount }} {{ expense.currency }}</span>
-                        </div>
-                        <button class="btn btn-outline-danger btn-sm" (click)="deleteExpense(expense.id)">
-                            <i class="bi bi-x"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
+      <!-- Loading State -->
+      <div *ngIf="loadingExpenses" class="text-center p-4">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
         </div>
+        <p class="mt-2">Načítání výdajů...</p>
+      </div>
 
-        <div class="add-expense-button text-center">
-            <a (click)="goToAddExpense()">
-                <button class="btn btn-light border">
-                    <i class="bi bi-plus fs-3"></i>
-                </button>
-            </a>
+      <!-- Empty State -->
+      <div *ngIf="!loadingExpenses && expenses.length === 0" class="text-center p-4">
+        <p>Žádné výdaje nenalezeny pro tento výlet.</p>
+      </div>
+
+      <!-- Expense Items -->
+      <div *ngIf="!loadingExpenses && expenses.length > 0" class="expense-items">
+        <div *ngFor="let expense of expenses" 
+             class="expense-item mb-2 bg-light rounded" 
+             [class.expanded]="expandedExpenseId === expense.id"
+             (click)="toggleExpenseDetails(expense.id)">
+          
+          <!-- Main expense row -->
+          <div class="expense-main p-3 d-flex align-items-center justify-content-between">
+            <div class="expense-info d-flex align-items-center flex-grow-1">
+              <div [ngClass]="{'bg-success': expense.isSettled, 'bg-danger': !expense.isSettled}"
+                   class="expense-type px-4 py-2 bg-opacity-100 rounded text-truncate"
+                   style="min-width: 250px; max-width: 250px; text-align: center; color: white;">
+                {{ expense.description }}
+              </div>
+              <div class="ms-3 flex-grow-1">
+                <div class="expense-paid-by">Zaplatil: {{ getUserName(expense.paidByUserId) }}</div>
+                <div class="expense-date text-muted small">{{ expense.date | date:'dd.MM.yyyy' }}</div>
+              </div>
+            </div>
+            
+            <div class="expense-actions d-flex align-items-center">
+              <div class="expense-amount me-3">
+                <span class="fw-bold">{{ expense.amount }} {{ expense.currency }}</span>
+              </div>
+              
+              <!-- Settlement Toggle -->
+              <div class="settlement-toggle me-3" (click)="$event.stopPropagation()">
+                <input type="checkbox" 
+                       [checked]="expense.isSettled" 
+                       (change)="toggleSettlement(expense.id)">
+                <span class="slider"></span>
+              </div>
+              
+              <!-- Delete Button -->
+              <button class="btn btn-outline-danger btn-sm me-2" 
+                      (click)="$event.stopPropagation(); deleteExpense(expense.id)">
+                <i class="bi bi-x"></i>
+              </button>
+              
+              <!-- Expand Icon -->
+              <i class="bi bi-chevron-down expand-icon"></i>
+            </div>
+          </div>
+          
+          <!-- Expandable Details -->
+          <div *ngIf="expandedExpenseId === expense.id" class="expense-details p-3">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="detail-item">
+                    <strong>Category:</strong> 
+                    <span>{{ getCategoryName(expense.category_Id) }}</span>
+                </div>
+                <div class="detail-item">
+                  <strong>Created At:</strong> 
+                  <span>{{ expense.createdAt | date:'dd.MM.yyyy HH:mm' }}</span>
+                </div>
+                <div class="detail-item">
+                  <strong>Name:</strong> 
+                  <span>{{ expense.name || 'N/A' }}</span>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="detail-item">
+                  <strong>Paid By User ID:</strong> 
+                  <span>{{ expense.paid_by_user_id }}</span>
+                </div>
+                <div class="detail-item">
+                  <strong>Receipt Image:</strong> 
+                  <span>{{ expense.receipt_image || 'N/A' }}</span>
+                </div>
+                <!--<div class="detail-item">
+                  <strong>Status:</strong> 
+                  <span class="badge" [ngClass]="expense.isSettled ? 'bg-success' : 'bg-danger'">
+                    {{ expense.isSettled ? 'Settled' : 'Pending' }}
+                  </span>
+                </div>-->
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+
+    <!-- Add Expense Button -->
+    <div class="add-expense-button text-center mt-4">
+      <button class="btn btn-light border" (click)="goToAddExpense()">
+        <i class="bi bi-plus fs-3"></i>
+      </button>
+    </div>
+  </div>
 </div>

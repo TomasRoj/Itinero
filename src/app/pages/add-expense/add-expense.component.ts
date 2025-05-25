@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ItinerarySidebarComponent } from '../../components/itinerary-sidebar/itinerary-sidebar.component';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, FormArray, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ExpenseService, ExpenseCategory, Expense, Currency, CreateMultipleExpenseSplitsRequest } from '../../services/finance-service.service';
 import { TripMemberService, TripMember } from '../../services/trip-member.service';
 import { Trip, TripService } from '../../services/trip-service.service';
 import { User, UserService } from '../../services/user-service.service';
 import { forkJoin, catchError, of, switchMap, map } from 'rxjs';
+import { AbstractControl } from '@angular/forms';
 
 interface UserSplit {
   userId: number;
@@ -43,10 +44,9 @@ export class AddExpenseComponent implements OnInit {
   isSubmitting: boolean = false;
   submitted: boolean = false;
   
-  // Expense type and splitting
   expenseType: 'personal' | 'shared' = 'personal';
   splitType: 'equal' | 'custom' = 'equal';
-  userSplits: UserSplit[] = [];
+  userSplits: UserSplit[] = []; // Keep this for display purposes
   splitError: string = '';
   isSettled: boolean = false;
 
@@ -83,107 +83,176 @@ export class AddExpenseComponent implements OnInit {
       paidByUserId: ['', Validators.required],
       amount: [0, [Validators.required, Validators.min(0.01)]],
       currency: ['CZK', Validators.required],
-      description: ['', Validators.maxLength(500)]
+      description: ['', Validators.maxLength(500)],
+      userSplits: this.fb.array([]) // Add FormArray for user splits
     });
 
-    // Watch for amount changes to recalculate splits
     this.expenseForm.get('amount')?.valueChanges.subscribe(() => {
       if (this.expenseType === 'shared') {
         this.recalculateSplits();
       }
     });
+
+    this.expenseForm.get('paidByUserId')?.valueChanges.subscribe((paidByUserId) => {
+      if (this.expenseType === 'shared' && paidByUserId) {
+        this.selectPayerInSplits(parseInt(paidByUserId));
+      }
+    });
   }
 
-  // === EXPENSE TYPE MANAGEMENT ===
+  // Getter for the FormArray
+  get userSplitsFormArray(): FormArray {
+    return this.expenseForm.get('userSplits') as FormArray;
+  }
+
   onExpenseTypeChange(type: 'personal' | 'shared'): void {
     this.expenseType = type;
     this.clearErrors();
     
     if (type === 'shared') {
       this.initializeUserSplits();
+      const paidByUserId = this.expenseForm.get('paidByUserId')?.value;
+      if (paidByUserId) {
+        this.selectPayerInSplits(parseInt(paidByUserId));
+      }
       this.recalculateSplits();
     } else {
       this.userSplits = [];
+      this.userSplitsFormArray.clear();
       this.isSettled = false;
     }
   }
 
-  // === SETTLEMENT STATUS MANAGEMENT ===
   setIsSettled(settled: boolean): void {
     this.isSettled = settled;
   }
 
-  // === USER SPLITS INITIALIZATION ===
   private initializeUserSplits(): void {
+    // Clear existing FormArray
+    this.userSplitsFormArray.clear();
+    
+    // Initialize userSplits array and FormArray
     this.userSplits = this.users.map(user => ({
       userId: user.id,
       userName: user.name,
       amount: 0,
-      selected: true
+      selected: false
     }));
-      this.recalculateSplits();
+
+    // Add FormGroups to FormArray
+    this.users.forEach(user => {
+      const splitFormGroup = this.fb.group({
+        userId: [user.id],
+        userName: [user.name],
+        amount: [0, [Validators.min(0)]],
+        selected: [false]
+      });
+      this.userSplitsFormArray.push(splitFormGroup);
+    });
   }
 
-  // === SPLIT TYPE MANAGEMENT ===
+  private selectPayerInSplits(payerUserId: number): void {
+    console.log('selectPayerInSplits called with payerUserId:', payerUserId);
+    
+    // Update both the display array and FormArray
+    const payerIndex = this.userSplits.findIndex(split => split.userId === payerUserId);
+    if (payerIndex !== -1) {
+      this.userSplits[payerIndex].selected = true;
+      this.userSplitsFormArray.at(payerIndex).patchValue({ selected: true });
+      this.recalculateSplits();
+    } else {
+      console.warn('Payer not found for userId:', payerUserId);
+    }
+  }
+
   onSplitTypeChange(type: 'equal' | 'custom'): void {
+    console.log('Split type changed to:', type);
     this.splitType = type;
     this.clearErrors();
     this.recalculateSplits();
   }
 
-  // === USER SELECTION MANAGEMENT ===
   onUserSelectionChange(): void {
+    console.log('User selection changed.');
     this.clearErrors();
+    
+    // Sync FormArray values to display array
+    this.userSplitsFormArray.controls.forEach((control, index) => {
+      this.userSplits[index].selected = control.get('selected')?.value || false;
+    });
+    
     this.recalculateSplits();
   }
 
   selectAllUsers(): void {
-    this.userSplits.forEach(split => split.selected = true);
+    console.log('Selecting all users');
+    this.userSplits.forEach((split, index) => {
+      split.selected = true;
+      this.userSplitsFormArray.at(index).patchValue({ selected: true });
+    });
     this.onUserSelectionChange();
   }
 
   deselectAllUsers(): void {
-    this.userSplits.forEach(split => {
+    console.log('Deselecting all users');
+    this.userSplits.forEach((split, index) => {
       split.selected = false;
       split.amount = 0;
+      this.userSplitsFormArray.at(index).patchValue({ 
+        selected: false, 
+        amount: 0 
+      });
     });
     this.clearErrors();
   }
 
-  // === AMOUNT MANAGEMENT ===
-  onCustomAmountChange(): void {
+  onCustomAmountChange(index: number): void {
+    console.log('Custom amount changed for index:', index);
     if (this.splitType === 'custom') {
-      // Ensure non-selected users have 0 amount
-      this.userSplits.forEach(split => {
-        if (!split.selected) {
-          split.amount = 0;
-        }
-      });
-      // Only validate on submit, not during typing
+      const formControl = this.userSplitsFormArray.at(index);
+      const isSelected = formControl.get('selected')?.value;
+      const amount = formControl.get('amount')?.value || 0;
+      
+      if (!isSelected) {
+        formControl.patchValue({ amount: 0 });
+        this.userSplits[index].amount = 0;
+      } else {
+        this.userSplits[index].amount = amount;
+      }
     }
   }
 
-  // === SPLIT CALCULATION ===
   private recalculateSplits(): void {
+    console.log('Recalculating splits. Expense type:', this.expenseType);
     if (this.expenseType !== 'shared') {
+      console.log('Not shared expense — skipping recalculation.');
       return;
     }
 
     const selectedUsers = this.userSplits.filter(split => split.selected);
     const totalAmount = this.expenseForm.get('amount')?.value || 0;
 
+    console.log('Selected users:', selectedUsers);
+    console.log('Total amount:', totalAmount);
+
     if (selectedUsers.length === 0 || totalAmount <= 0) {
-      this.userSplits.forEach(split => split.amount = 0);
+      console.warn('No users selected or total amount <= 0. Resetting all amounts to 0.');
+      this.userSplits.forEach((split, index) => {
+        split.amount = 0;
+        this.userSplitsFormArray.at(index).patchValue({ amount: 0 });
+      });
       return;
     }
 
     if (this.splitType === 'equal') {
+      console.log('Splitting equally...');
       this.calculateEqualSplits(selectedUsers, totalAmount);
     } else {
-      // For custom splits, only reset non-selected users to 0
-      this.userSplits.forEach(split => {
+      console.log('Custom split — zeroing out unselected users');
+      this.userSplits.forEach((split, index) => {
         if (!split.selected) {
           split.amount = 0;
+          this.userSplitsFormArray.at(index).patchValue({ amount: 0 });
         }
       });
     }
@@ -193,20 +262,28 @@ export class AddExpenseComponent implements OnInit {
     const baseAmount = Math.floor((totalAmount * 100) / selectedUsers.length) / 100;
     const remainder = Math.round((totalAmount - (baseAmount * selectedUsers.length)) * 100) / 100;
 
-    // Reset all amounts first
-    this.userSplits.forEach(split => split.amount = 0);
+    // Reset all amounts
+    this.userSplits.forEach((split, index) => {
+      split.amount = 0;
+      this.userSplitsFormArray.at(index).patchValue({ amount: 0 });
+    });
 
-    // Assign base amounts to selected users
-    selectedUsers.forEach((split, index) => {
-      split.amount = baseAmount;
-      // Add remainder to the first user to handle rounding
-      if (index === 0 && remainder > 0) {
-        split.amount = Math.round((split.amount + remainder) * 100) / 100;
+    // Calculate equal splits
+    let firstSelectedIndex = -1;
+    selectedUsers.forEach((split, splitIndex) => {
+      const userIndex = this.userSplits.findIndex(u => u.userId === split.userId);
+      if (userIndex !== -1) {
+        let amount = baseAmount;
+        if (splitIndex === 0 && remainder > 0) {
+          amount = Math.round((amount + remainder) * 100) / 100;
+        }
+        
+        this.userSplits[userIndex].amount = amount;
+        this.userSplitsFormArray.at(userIndex).patchValue({ amount: amount });
       }
     });
   }
 
-  // === VALIDATION ===
   private validateSplits(): boolean {
     if (this.expenseType === 'personal') {
       this.splitError = '';
@@ -216,19 +293,16 @@ export class AddExpenseComponent implements OnInit {
     const selectedSplits = this.userSplits.filter(split => split.selected);
     const totalAmount = this.expenseForm.get('amount')?.value || 0;
 
-    // Check if at least one user is selected
     if (selectedSplits.length === 0) {
       this.splitError = 'Vyberte alespoň jednu osobu pro rozdělení výdaje.';
       return false;
     }
 
-    // Check if total amount is positive
     if (totalAmount <= 0) {
       this.splitError = 'Zadejte platnou částku výdaje.';
       return false;
     }
 
-    // Check individual amounts for custom splits
     if (this.splitType === 'custom') {
       for (const split of selectedSplits) {
         if (!split.amount || split.amount <= 0) {
@@ -238,7 +312,6 @@ export class AddExpenseComponent implements OnInit {
       }
     }
 
-    // Check if amounts match total
     const totalSplitAmount = this.getTotalSplitAmount();
     const difference = Math.abs(totalSplitAmount - totalAmount);
 
@@ -251,7 +324,6 @@ export class AddExpenseComponent implements OnInit {
     return true;
   }
 
-  // === UTILITY METHODS ===
   getTotalSplitAmount(): number {
     return this.userSplits
       .filter(split => split.selected)
@@ -275,7 +347,6 @@ export class AddExpenseComponent implements OnInit {
     this.errorMessage = '';
   }
 
-  // === FORM SUBMISSION ===
   onSubmit(): void {
     this.clearErrors();
     this.successMessage = '';
@@ -286,7 +357,6 @@ export class AddExpenseComponent implements OnInit {
       return;
     }
 
-    // Validate splits for shared expenses
     if (this.expenseType === 'shared' && !this.validateSplits()) {
       return;
     }
@@ -346,7 +416,6 @@ export class AddExpenseComponent implements OnInit {
       isSettled: this.isSettled
     };
 
-    // Add user amounts for custom splits
     if (this.splitType === 'custom') {
       request.userAmounts = {};
       selectedSplits.forEach(split => {
@@ -366,7 +435,6 @@ export class AddExpenseComponent implements OnInit {
     }, 100);
   }
 
-  // === DATA LOADING ===
   loadData(): void {
     this.isLoading = true;
     this.errorMessage = '';
@@ -419,18 +487,21 @@ export class AddExpenseComponent implements OnInit {
       if (this.categories.length === 0) {
         this.errorMessage = 'Nebyly nalezeny žádné kategorie výdajů.';
       }
-        this.expenseType = 'shared';
 
-      // Initialize user splits when users are loaded
+      this.expenseType = 'shared';
+
       if (this.expenseType === 'shared' && this.users.length > 0) {
         this.initializeUserSplits();
+        const paidByUserId = this.expenseForm.get('paidByUserId')?.value;
+        if (paidByUserId) {
+          this.selectPayerInSplits(parseInt(paidByUserId));
+        }
       }
 
       this.isLoading = false;
     });
   }
 
-  // === NAVIGATION ===
   goBack(): void {
     if (!this.tripId) {
       console.error('Trip ID not available to navigate back.');
@@ -439,8 +510,7 @@ export class AddExpenseComponent implements OnInit {
     this.router.navigate(['/trip-itinerary', this.tripId]);
   }
 
-  // === TRACKING ===
-  trackByUserId(index: number, item: UserSplit): number {
-    return item.userId;
-  }
+trackByUserId(index: number, control: AbstractControl): any {
+  return control.get('userId')?.value;
+}
 }
