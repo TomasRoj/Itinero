@@ -7,6 +7,7 @@ import { HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TripService } from '../../../../services/trip-service.service';
 import { Trip } from '../../../../services/trip-service.service';
+import { Destination, DestinationServiceService } from '../../../../services/destination-service.service';
 
 @Component({
   selector: 'app-destination-tab',
@@ -19,6 +20,7 @@ export class DestinationTabComponent {
   constructor(
     private route: ActivatedRoute,
     private tripService: TripService,
+    private destinationService: DestinationServiceService
   ) { }
 
   tripData: any = null;
@@ -34,19 +36,25 @@ export class DestinationTabComponent {
 
           console.log('Načtená data výletu:', this.tripData);
 
-          this.placeholders = {
-            startDate: new Date(this.tripData.start_date).toDateString(),
-            endDate: new Date(this.tripData.end_date).toDateString(),
-            destination: this.tripData.destination_city_id.toString(),
-            tripName: this.tripData.name.toString(),
-            description: this.tripData.description.toString() || 'Zatím žádný popis',
-          };
-
-          let dayCount = 0;
-          dayCount = Math.floor(
+          const dayCount = Math.floor(
             (new Date(this.tripData.end_date).getTime() - new Date(this.tripData.start_date).getTime()) /
             (1000 * 3600 * 24)
           ) + 1;
+
+          this.destinationService.getDestinationById(this.tripData.destination_city_id).subscribe({
+            next: (destination: Destination) => {
+              this.placeholders = {
+                startDate: new Date(this.tripData.start_date).toDateString(),
+                endDate: new Date(this.tripData.end_date).toDateString(),
+                destination: destination.name,
+                tripName: this.tripData.name.toString(),
+                description: this.tripData.description?.toString() || 'Zatím žádný popis',
+              };
+            },
+            error: (err) => {
+              console.error('Chyba při načítání destinace:', err);
+            }
+          });
         },
         error: (error: any) => {
           console.error('Chyba při načítání dat výletu:', error);
