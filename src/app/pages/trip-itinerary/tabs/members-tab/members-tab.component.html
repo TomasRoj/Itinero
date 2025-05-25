@@ -26,9 +26,7 @@
                 <div class="member-info">
                     <span class="member-name" *ngIf="member.email">{{ member.name }} | {{ member.email }}</span>
                     <span class="member-name" *ngIf="!member.email">{{ member.name }}</span>
-                    <span class="member-role" [ngClass]="{'owner-badge': member.role === 'Vlastník'}">
-                        {{ member.role }}
-                    </span>
+                    <span class="member-role"> {{ member.role }} </span>
                 </div>
                 <div class="member-avatar">
                     <img [src]="member.avatar" alt="{{ member.name }}" onerror="this.src='profile.jpg'">
