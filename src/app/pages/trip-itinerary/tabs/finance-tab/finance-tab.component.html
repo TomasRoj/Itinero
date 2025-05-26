@@ -113,7 +113,10 @@
     </div>
   </div>
 </div>
-
+<div class="add-expense-button text-center mt-4">
+  <button class="btn btn-light border" (click)="goToAddExpense()">
+    <i class="bi bi-plus fs-3"></i>
+  </button>
 <!-- Loading States -->
 <div *ngIf="loadingExpenses" class="text-center p-4">
   <div class="spinner-border" role="status">
