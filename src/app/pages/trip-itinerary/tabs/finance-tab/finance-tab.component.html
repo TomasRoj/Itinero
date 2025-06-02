@@ -117,15 +117,3 @@
   <button class="btn btn-light border" (click)="goToAddExpense()">
     <i class="bi bi-plus fs-3"></i>
   </button>
-<!-- Loading States -->
-<div *ngIf="loadingExpenses" class="text-center p-4">
-  <div class="spinner-border" role="status">
-    <span class="visually-hidden">Loading expenses...</span>
-  </div>
-  <p class="mt-2">Loading expenses...</p>
-</div>
-
-<div *ngIf="!loadingExpenses && expenses.length === 0" class="text-center p-4">
-  <p class="text-muted">No expenses found for this trip.</p>
-</div>
-</div>
