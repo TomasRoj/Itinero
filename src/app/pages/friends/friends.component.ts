@@ -33,7 +33,7 @@ export class FriendsComponent implements OnInit {
   constructor(
     private friendService: FriendService, 
     private userService: UserService,
-    private http: HttpClient
+    private http: HttpClient,
   ) { }
 
   ngOnInit(): void {
@@ -61,11 +61,9 @@ export class FriendsComponent implements OnInit {
           this.errorMessage = 'Could not load friends. Please try again later.';
           this.showError = true;
           
-          // Only use fallback data in development
-          if (error.status === 0) {
-            // This likely means the API is not running
-            this.loadFallbackData();
-            this.simulateFallbackUserDetails();
+          if (error.status === 0) { 
+            this.errorMessage = 'API not working right.';
+            this.showError = true;
           }
         }
       }
@@ -110,40 +108,6 @@ export class FriendsComponent implements OnInit {
     });
   }
 
-  private loadFallbackData(): void {
-    // Fallback mock data
-    this.friends = [
-      { id: 'D56LAX', name: 'Honza Novák', avatar: 'profile.jpg' },
-      { id: 'R18JFK', name: 'Tomáš Veselý', avatar: 'profile.jpg' },
-      { id: 'U44ATL', name: 'Petr Šťastný', avatar: 'profile.jpg' },
-      { id: 'S26PRG', name: 'Ms. Jacksonová', avatar: 'profile.jpg' }
-    ];
-  }
-
-  private simulateFallbackUserDetails(): void {
-    const mockSurnames = ['Novák', 'Veselý', 'Šťastný', 'Jacksonová'];
-    
-    this.friendsWithUserDetails = this.friends.map((friend, index) => {
-      const nameParts = friend.name.split(' ');
-      const firstName = nameParts[0];
-      const surname = mockSurnames[index % mockSurnames.length];
-      
-      return {
-        ...friend,
-        userDetails: {
-          id: parseInt(friend.id, 10) || index + 1,
-          name: firstName,
-          surname: surname,
-          email: `${firstName.toLowerCase()}.${surname.toLowerCase()}@example.com`,
-          preferedcurrency: 'CZK'
-        }
-      };
-    });
-    
-    this.filteredFriends = this.friendsWithUserDetails;
-    this.extractUniqueSurnames();
-  }
-  
   extractUniqueSurnames(): void {
     const surnames = new Set<string>();
     
