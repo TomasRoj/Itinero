@@ -47,13 +47,16 @@
                 <div class="col-md-6 mb-4">
                     <h5>Aktivity a atrakce</h5>
 
-                    <div *ngFor="let activity of activities" class="activity-card mb-3 border rounded overflow-hidden">
+                    <div *ngFor="let activity of activities" class="activity-card mb-3 border rounded overflow-hidden bg-light">
                         <div class="row align-items-center mx-0">
                             <div class="col-md-6 bg-light p-3">
                                 <div class="fw-medium">{{ activity.name }}</div>
                                 <div class="text-muted">{{ activity.description }}</div>
                             </div>
-                            <div class="col-md-2 text-center py-2">{{ activity.estimatedtime }}</div>
+                            <div class="col-md-2 text-center py-2">{{ activity.estimatedtime }} min</div>
+                            <div class="col-md-2 text-center py-2"><button class="btn btn-primary mx-2" (click)="removeActivity(activity.id)">
+                                Odstranit
+                            </button></div>
                         </div>
                     </div>
 

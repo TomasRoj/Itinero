@@ -93,59 +93,56 @@ export class MembersTabComponent {
     });
   }
 
-loadTripMembers(tripId: number): void {
-  this.tripMemberService.getMembersByTripId(tripId).subscribe({
-    next: (members: TripMember[]) => {
-      console.log('Members loaded:', members);
-      this.groupMembers = [];
+  loadTripMembers(tripId: number): void {
+    this.tripMemberService.getMembersByTripId(tripId).subscribe({
+      next: (members: TripMember[]) => {
+        console.log('Members loaded:', members);
+        this.groupMembers = [];
 
-      members.forEach(member => {
-        this.http.get<User>(`http://localhost:5253/api/Users/${member.user_id}`).subscribe({
-          next: (user) => {
-            // Use the role directly from the database
-            let roleToDisplay = member.role || 'Member';
-            
-            // Normalize role display - convert 'Owner' to 'Vlastník' if needed
-            if (roleToDisplay === 'Owner' || roleToDisplay === 'Vlastník') {
-              roleToDisplay = 'Vlastník';
+        members.forEach(member => {
+          this.http.get<User>(`http://localhost:5253/api/Users/${member.user_id}`).subscribe({
+            next: (user) => {
+              let roleToDisplay = member.role || 'Member';
+
+              if (roleToDisplay === 'Owner' || roleToDisplay === 'Vlastník') {
+                roleToDisplay = 'Vlastník';
+              }
+
+              console.log(`User ${user.id} role: ${roleToDisplay}`);
+
+              this.groupMembers.push({
+                id: member.id || 0,
+                name: `${user.name} ${user.surname}`,
+                role: roleToDisplay,
+                avatar: user.profile_picture || 'assets/avatars/user1.jpg',
+                userId: user.id,
+                email: user.email
+              });
+
+              this.groupMembers.sort((a, b) => {
+                if (a.role === 'Vlastník') return -1;
+                if (b.role === 'Vlastník') return 1;
+                return 0;
+              });
+            },
+            error: (err) => {
+              console.error(`Error loading user ${member.user_id}:`, err);
+              this.groupMembers.push({
+                id: member.id || 0,
+                name: `User ID: ${member.user_id}`,
+                role: member.role || 'Member',
+                avatar: 'assets/avatars/user1.jpg',
+                userId: member.user_id
+              });
             }
-            
-            console.log(`User ${user.id} role: ${roleToDisplay}`);
-
-            this.groupMembers.push({
-              id: member.id || 0,
-              name: `${user.name} ${user.surname}`,
-              role: roleToDisplay,
-              avatar: user.profile_picture || 'assets/avatars/user1.jpg',
-              userId: user.id,
-              email: user.email
-            });
-
-            // Sort the members to show owner first
-            this.groupMembers.sort((a, b) => {
-              if (a.role === 'Vlastník') return -1;
-              if (b.role === 'Vlastník') return 1;
-              return 0;
-            });
-          },
-          error: (err) => {
-            console.error(`Error loading user ${member.user_id}:`, err);
-            this.groupMembers.push({
-              id: member.id || 0,
-              name: `User ID: ${member.user_id}`,
-              role: member.role || 'Member',
-              avatar: 'assets/avatars/user1.jpg',
-              userId: member.user_id
-            });
-          }
+          });
         });
-      });
-    },
-    error: (error) => {
-      console.error('Error loading trip members:', error);
-    }
-  });
-}
+      },
+      error: (error) => {
+        console.error('Error loading trip members:', error);
+      }
+    });
+  }
 
   addUser(userId: string): void {
     console.log('Adding user with ID:', userId);
@@ -161,7 +158,6 @@ loadTripMembers(tripId: number): void {
       return;
     }
 
-    // Zabrání přidání uživatele, který už je členem
     const userAlreadyInTrip = this.groupMembers.some(member => member.userId === parsedUserId);
     if (userAlreadyInTrip) {
       alert('Tento uživatel je již členem výletu.');
@@ -187,83 +183,101 @@ loadTripMembers(tripId: number): void {
     });
   }
 
+  transferOwnership(): void {
+    const newOwnerIdParsed = parseInt(this.newOwnerId, 10);
+    if (isNaN(newOwnerIdParsed)) {
+      alert('Zadejte platné ID.');
+      return;
+    }
 
-transferOwnership(): void {
-  const newOwnerIdParsed = parseInt(this.newOwnerId, 10);
-  if (isNaN(newOwnerIdParsed)) {
-    alert('Zadejte platné ID.');
-    return;
-  }
+    const targetUi = this.groupMembers.find(m => m.userId === newOwnerIdParsed);
+    if (!targetUi) {
+      alert('Uživatel není členem výletu.');
+      return;
+    }
 
-  const targetUi = this.groupMembers.find(m => m.userId === newOwnerIdParsed);
-  if (!targetUi) {
-    alert('Uživatel není členem výletu.');
-    return;
-  }
-
-  this.tripMemberService.getMembersByTripId(this.tripData.id).subscribe({
-    next: (members) => {
-      const newOwner = members.find(m => m.user_id === newOwnerIdParsed);
-      const previousOwnerUi = this.groupMembers.find(m => m.role === 'Vlastník' && m.userId !== newOwnerIdParsed);
-      const previousOwner = previousOwnerUi
-        ? members.find(m => m.user_id === previousOwnerUi.userId)
-        : null;
-
-      if (!newOwner) {
-        alert('Nelze najít nového vlastníka v databázi.');
+    // Kontrola oprávnění - pouze vlastník může převádět vlastnictví
+    this.userService.currentUser$.subscribe(currentUser => {
+      if (!currentUser) {
+        alert('Nejste přihlášeni.');
         return;
       }
 
-      const updateNewOwner = {
-        id: newOwner.id,
-        trip_id: newOwner.trip_id,
-        user_id: newOwner.user_id,
-        role: 'Vlastník',
-        joined_at: newOwner.joined_at
-      };
+      const currentUserInGroup = this.groupMembers.find(m => m.userId === currentUser.id);
+      if (!currentUserInGroup || currentUserInGroup.role !== 'Vlastník') {
+        alert('Pouze vlastník výletu může převádět vlastnictví.');
+        return;
+      }
 
-      this.tripMemberService.updateMemberRole(newOwner.id, updateNewOwner).subscribe({
-        next: () => {
-          console.log('Nový vlastník aktualizován:', updateNewOwner);
+      if (currentUser.id === newOwnerIdParsed) {
+        alert('Nelze převést vlastnictví sám sobě.');
+        return;
+      }
 
-          if (previousOwner) {
-            const updatePreviousOwner = {
-              id: previousOwner.id,
-              trip_id: previousOwner.trip_id,
-              user_id: previousOwner.user_id,
-              role: 'Member',
-              joined_at: previousOwner.joined_at
-            };
+      this.tripMemberService.getMembersByTripId(this.tripData.id).subscribe({
+        next: (members) => {
+          const newOwner = members.find(m => m.user_id === newOwnerIdParsed);
+          const previousOwnerUi = this.groupMembers.find(m => m.role === 'Vlastník' && m.userId !== newOwnerIdParsed);
+          const previousOwner = previousOwnerUi
+            ? members.find(m => m.user_id === previousOwnerUi.userId)
+            : null;
 
-            this.tripMemberService.updateMemberRole(previousOwner.id, updatePreviousOwner).subscribe({
-              next: () => {
-                console.log('Předchozí vlastník převeden na člena.');
+          if (!newOwner) {
+            alert('Nelze najít nového vlastníka v databázi.');
+            return;
+          }
+
+          const updateNewOwner = {
+            id: newOwner.id,
+            trip_id: newOwner.trip_id,
+            user_id: newOwner.user_id,
+            role: 'Vlastník',
+            joined_at: newOwner.joined_at
+          };
+
+          this.tripMemberService.updateMemberRole(newOwner.id, updateNewOwner).subscribe({
+            next: () => {
+              console.log('Nový vlastník aktualizován:', updateNewOwner);
+
+              if (previousOwner) {
+                const updatePreviousOwner = {
+                  id: previousOwner.id,
+                  trip_id: previousOwner.trip_id,
+                  user_id: previousOwner.user_id,
+                  role: 'Member',
+                  joined_at: previousOwner.joined_at
+                };
+
+                this.tripMemberService.updateMemberRole(previousOwner.id, updatePreviousOwner).subscribe({
+                  next: () => {
+                    console.log('Předchozí vlastník převeden na člena.');
+                    alert('Vlastnictví bylo úspěšně převedeno.');
+                    this.loadTripMembers(this.tripData.id);
+                  },
+                  error: err => {
+                    console.error('Chyba při aktualizaci předchozího vlastníka:', err);
+                    alert('Nový vlastník nastaven, ale původní nebyl změněn.');
+                    this.loadTripMembers(this.tripData.id);
+                  }
+                });
+              } else {
                 alert('Vlastnictví bylo úspěšně převedeno.');
                 this.loadTripMembers(this.tripData.id);
-              },
-              error: err => {
-                console.error('Chyba při aktualizaci předchozího vlastníka:', err);
-                alert('Nový vlastník nastaven, ale původní nebyl změněn.');
-                this.loadTripMembers(this.tripData.id);
               }
-            });
-          } else {
-            alert('Vlastnictví bylo úspěšně převedeno.');
-            this.loadTripMembers(this.tripData.id);
-          }
+            },
+            error: err => {
+              console.error('Chyba při nastavování nového vlastníka:', err);
+              alert('Nepodařilo se změnit vlastníka.');
+            }
+          });
         },
         error: err => {
-          console.error('Chyba při nastavování nového vlastníka:', err);
-          alert('Nepodařilo se změnit vlastníka.');
+          console.error('Chyba při načítání členů:', err);
+          alert('Chyba při načítání členů výletu.');
         }
       });
-    },
-    error: err => {
-      console.error('Chyba při načítání členů:', err);
-      alert('Chyba při načítání členů výletu.');
-    }
-  });
-}
+    });
+  }
 
 
   leaveTrip(): void {

@@ -83,7 +83,7 @@ export class SurveyComponent implements OnInit {
               next: (trip) => {
                 if (trip) {
                   if (trip.id !== undefined) {
-                    this.tripMemberService.addTripMember(trip.id, currentUser.id, 'Owner').subscribe(() => {
+                    this.tripMemberService.addTripMember(trip.id, currentUser.id, 'Vlastník').subscribe(() => {
                       this.router.navigate(['/trip-itinerary/' + trip.id]);
                     });
                   } else {

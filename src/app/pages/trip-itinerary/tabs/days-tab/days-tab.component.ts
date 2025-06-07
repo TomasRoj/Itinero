@@ -123,37 +123,37 @@ export class DaysTabComponent {
   }
 
   loadItineraryDays(tripId: number): void {
-  const params = new HttpParams().set('tripId', String(tripId));
+    const params = new HttpParams().set('tripId', String(tripId));
 
-  this.http.get<ItineraryDay[]>(`${this.apiUrl}/Itinerary/days`, { params }).subscribe({
-    next: (days) => {
-      this.itineraryDays = days
-        .filter(day => day.trip_id === tripId)
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    this.http.get<ItineraryDay[]>(`${this.apiUrl}/Itinerary/days`, { params }).subscribe({
+      next: (days) => {
+        this.itineraryDays = days
+          .filter(day => day.trip_id === tripId)
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-      const selectedDayObj = this.itineraryDays[this.selectedDay - 1] ?? null;
+        const selectedDayObj = this.itineraryDays[this.selectedDay - 1] ?? null;
 
-      if (selectedDayObj) {
-        this.currentDayData = selectedDayObj;
-        this.dayDescription = selectedDayObj.description || '';
-        this.getTripItemsByDayAndTrip(selectedDayObj.id, tripId).subscribe({
-          next: items => {
-            this.activities = items;
-          },
-          error: error => {
-            console.error('Chyba při načítání aktivit:', error);
-          }
-        });
-      } else {
-        this.currentDayData = null;
-        this.dayDescription = '';
+        if (selectedDayObj) {
+          this.currentDayData = selectedDayObj;
+          this.dayDescription = selectedDayObj.description || '';
+          this.getTripItemsByDayAndTrip(selectedDayObj.id, tripId).subscribe({
+            next: items => {
+              this.activities = items;
+            },
+            error: error => {
+              console.error('Chyba při načítání aktivit:', error);
+            }
+          });
+        } else {
+          this.currentDayData = null;
+          this.dayDescription = '';
+        }
+      },
+      error: (error) => {
+        console.error('Chyba při načítání dnů itineráře:', error);
       }
-    },
-    error: (error) => {
-      console.error('Chyba při načítání dnů itineráře:', error);
-    }
-  });
-}
+    });
+  }
 
 
   updateDayDescription(): void {
@@ -176,4 +176,17 @@ export class DaysTabComponent {
       }
     });
   }
+
+  removeActivity(activityId: number): void {
+    this.http.delete(`${this.apiUrl}/Itinerary/item/${activityId}`).subscribe({
+      next: () => {
+        this.activities = this.activities.filter(item => item.id !== activityId);
+        console.log(`Aktivita s ID ${activityId} byla úspěšně odstraněna.`);
+      },
+      error: (error) => {
+        console.error('Chyba při odstraňování aktivity:', error);
+      }
+    });
+  }
+
 }
