@@ -9,8 +9,8 @@
         <div class="position-relative">
           <input type="text" class="form-control form-control-lg border-danger border-2 rounded-pill py-3 px-4" 
                  [(ngModel)]="friendID"
+                 (input)="onFriendChange()"
                  id="survey-friend-input" 
-                 (keyup.enter)="addFriend()"
             placeholder="Začněte psát, potvrďte klávesou enter..." style="border-width: 3px !important;">
         </div>
       </div>

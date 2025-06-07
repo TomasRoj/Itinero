@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -32,4 +33,22 @@ export class SharedService {
   selectDay(dayNumber: number): void {
     this.selectedDay.next(dayNumber);
   }
+
+  private friendIdSubject = new BehaviorSubject<string>('');
+  
+  friendId$: Observable<string> = this.friendIdSubject.asObservable();
+
+  setFriendId(friendId: string): void {
+    this.friendIdSubject.next(friendId);
+    console.log('Service: Friend ID set to:', friendId);
+  }
+
+  getFriendId(): string {
+    return this.friendIdSubject.value;
+  }
+
+  clearFriendId(): void {
+    this.friendIdSubject.next('');
+  }
+  
 }

@@ -16,7 +16,7 @@ import { HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-members-tab',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './members-tab.component.html',
   styleUrl: './members-tab.component.scss'
 })

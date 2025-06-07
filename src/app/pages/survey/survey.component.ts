@@ -11,7 +11,7 @@ import { Trip } from '../../services/trip-service.service';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user-service.service';
 import { SharedService } from '../../services/shared.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { TripMemberService } from '../../services/trip-member.service';
@@ -30,6 +30,9 @@ export class SurveyComponent implements OnInit {
   currentStep = 1;
   totalSteps = 4; 
 
+  selectedFriendId: string = '';
+  private friendIdSubscription?: Subscription;
+
   formData = {
     name: '',
     destination: '',
@@ -40,6 +43,12 @@ export class SurveyComponent implements OnInit {
 
   ngOnInit() {
      this.showStep(this.currentStep);
+     this.friendIdSubscription = this.sharedService.friendId$.subscribe(
+      friendId => {
+        this.selectedFriendId = friendId;
+        console.log('Survey: Friend ID updated to:', friendId);
+      }
+    );
   }
 
   nextStep() {
@@ -61,48 +70,109 @@ export class SurveyComponent implements OnInit {
   }
 
   submitSurvey() {
-    console.log('Odeslaná data:', this.formData);
-    
-    this.userService.getCurrentUser().subscribe({
-      next: (currentUser) => {
-        const newTrip: Trip = {
-          name: this.formData.name,
-          is_public: true, 
-          created_at: new Date(),
-          updated_at: new Date(), 
-          start_date: new Date(this.formData.startDate),
-          end_date: new Date(this.formData.endDate),
-          destination_city_id: this.formData.destinationId, // Now using the destinationId
-          creator_id: currentUser.id 
-        };
+  console.log('Odeslaná data:', this.formData);
+  
+  // Získání friend ID ze service
+  const friendId = this.sharedService.getFriendId();
+  console.log('Selected Friend ID:', friendId);
 
-        this.tripService.createTrip(newTrip).subscribe({
-          next: (response) => {
-            console.log('Trip byl úspěšně vytvořen:', response);
-            this.getTripByNameAndUserId(currentUser.id, this.formData.name).subscribe({
-              next: (trip) => {
-                if (trip) {
-                  if (trip.id !== undefined) {
-                    this.tripMemberService.addTripMember(trip.id, currentUser.id, 'Vlastník').subscribe(() => {
+  this.userService.getCurrentUser().subscribe({
+    next: (currentUser) => {
+      const newTrip: Trip = {
+        name: this.formData.name,
+        is_public: true, 
+        created_at: new Date(),
+        updated_at: new Date(), 
+        start_date: new Date(this.formData.startDate),
+        end_date: new Date(this.formData.endDate),
+        destination_city_id: this.formData.destinationId,
+        creator_id: currentUser.id 
+      };
+
+      // 1. Vytvoření tripu
+      this.tripService.createTrip(newTrip).subscribe({
+        next: (response) => {
+          console.log('Trip byl úspěšně vytvořen:', response);
+          
+          // 2. Získání vytvořeného tripu
+          this.getTripByNameAndUserId(currentUser.id, this.formData.name).subscribe({
+            next: (trip) => {
+              if (trip && trip.id !== undefined) {
+                
+                // 3. Přidání vlastníka jako člena tripu
+                this.tripMemberService.addTripMember(trip.id, currentUser.id, 'Vlastník').subscribe({
+                  next: () => {
+                    console.log('Owner added as trip member');
+                    
+                    // 4. Přidání přítele (pokud je zadán)
+                    this.addFriendToTrip(trip.id!, friendId, () => {
+                      // 5. Přesměrování po úspěšném dokončení
                       this.router.navigate(['/trip-itinerary/' + trip.id]);
                     });
-                  } else {
-                    console.error('Trip ID is undefined.');
+                  },
+                  error: (error) => {
+                    console.error('Chyba při přidávání vlastníka:', error);
+                    // I při chybě zkusíme přidat přítele a přesměrovat
+                    this.addFriendToTrip(trip.id!, friendId, () => {
+                      this.router.navigate(['/trip-itinerary/' + trip.id]);
+                    });
                   }
-                }
+                });
+                
+              } else {
+                console.error('Trip ID is undefined.');
               }
-            });
-          },
-          error: (error) => {
-            console.error('Chyba při vytváření tripu:', error);
-          }
-        });
-      },
-      error: (err) => {
-        console.error('Nepodařilo se načíst uživatele:', err);
-      }
-    });
+            },
+            error: (error) => {
+              console.error('Chyba při získávání tripu:', error);
+            }
+          });
+        },
+        error: (error) => {
+          console.error('Chyba při vytváření tripu:', error);
+        }
+      });
+    },
+    error: (err) => {
+      console.error('Nepodařilo se načíst uživatele:', err);
+    }
+  });
+}
+
+private addFriendToTrip(tripId: number, friendId: string, callback: () => void): void {
+  if (!friendId || friendId.trim() === '') {
+    console.log('No friend ID provided, skipping friend addition');
+    callback();
+    return;
   }
+
+  const friendIdNum = parseInt(friendId, 10);
+  
+  if (isNaN(friendIdNum)) {
+    console.error('Invalid friend ID:', friendId);
+    alert('Neplatné ID přítele');
+    callback();
+    return;
+  }
+
+  console.log(`Adding friend ${friendIdNum} to trip ${tripId}`);
+  
+  this.tripMemberService.addTripMember(tripId, friendIdNum, "Member").subscribe({
+    next: () => {
+      console.log('Friend added successfully');
+      alert('Přítel byl úspěšně přidán do výletu!');
+      
+      this.sharedService.clearFriendId();
+      
+      callback();
+    },
+    error: (error) => {
+      console.error('Error adding friend:', error);
+      alert('Nepodařilo se přidat přítele do výletu.');
+      callback();
+    }
+  });
+}
 
   updateFormData(stepData: any) {
     if (stepData.name !== undefined) {
