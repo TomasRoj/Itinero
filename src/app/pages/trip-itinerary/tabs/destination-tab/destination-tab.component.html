@@ -1,59 +1,67 @@
 <div class="tab-content">
-    <div class="form-container">
-        <div class="form-row">
-            <div class="form-group">
-                <input type="text" class="form-control" [placeholder]="placeholders.tripName"
-                    [(ngModel)]="tripForm.tripName" name="tripName">
+    <div class="form-container p-4 bg-light rounded shadow-sm">
+
+        <div class="form-row row">
+            <div class="form-group col-md-6">
+                <label for="tripName">Název výletu</label>
+                <input type="text" class="form-control" id="tripName" [placeholder]="placeholders.tripName"
+                    [(ngModel)]="tripForm.tripName" name="tripName" />
             </div>
-            <div class="form-group dropdown">
-                <button class="action-button dropdown-button" disabled>
-                    {{placeholders.destination}}
-                </button>
+            <div class="form-group col-md-6">
+                <label>Vaše destinace</label>
+                <div class="d-flex align-items-center p-3 bg-white border rounded shadow-sm">
+                    <i class="bi bi-pin-map me-2 fs-4"></i>
+                    <p class="mb-0 fw-semibold text-secondary">
+                        {{ placeholders.destination }}
+                    </p>
+                </div>
             </div>
         </div>
 
-        <div class="form-row">
-            <div class="form-group textarea-group">
-                <textarea class="form-control" [placeholder]="placeholders.description"
+        <div class="form-row row mt-3">
+            <div class="form-group col-md-6">
+                <label for="description">Popis výletu</label>
+                <textarea class="form-control" id="description" [placeholder]="placeholders.description"
                     [(ngModel)]="tripForm.description" name="description" rows="4"></textarea>
             </div>
-            <div class="form-group dropdown-group">
-                <button class="action-button dropdown-button" (click)="toggleDropdown('departureDropdown')" >
-                    {{placeholders.startDate}}
-                    <i class="dropdown-icon"></i>
+
+            <div class="form-group col-md-6">
+                <label>Datum odjezdu a příjezdu</label><br />
+
+                <button class="action-button dropdown-button mt-2 w-100" (click)="toggleDropdown('departureDropdown')">
+                    {{ placeholders.startDate }}
+                    <i class="dropdown-icon float-end"></i>
                 </button>
-                <div class="dropdown-menu" [ngClass]="{'show': isDropdownOpen('departureDropdown')}" style='max-width: 25%;'>
-                    <div class="input-group">
+                <div class="dropdown-menu" [ngClass]="{ show: isDropdownOpen('departureDropdown') }"
+                    style="width: 25%">
+                    <div class="input-group p-2">
                         <span class="input-group-text">Od</span>
                         <input [(ngModel)]="tripForm.startDate" (ngModelChange)="onDateChange()" type="date"
-                            class="form-control"  name="startDate"
-                            aria-label="Start date">
+                            class="form-control" name="startDate" aria-label="Start date" />
                     </div>
                 </div>
-
-                <button class="action-button dropdown-button" (click)="toggleDropdown('arrivalDropdown')">
-                    {{placeholders.endDate}}
-                    <i class="dropdown-icon"></i>
+                <button class="action-button dropdown-button mt-2 w-100" (click)="toggleDropdown('arrivalDropdown')">
+                    {{ placeholders.endDate }}
+                    <i class="dropdown-icon float-end"></i>
                 </button>
-                <div class="dropdown-menu" [ngClass]="{'show': isDropdownOpen('arrivalDropdown')}" style='max-width: 25%;'>
-                    <div class="input-group">
+                <div class="dropdown-menu" [ngClass]="{ show: isDropdownOpen('arrivalDropdown') }" style="width: 25%">
+                    <div class="input-group p-2">
                         <span class="input-group-text">Do</span>
                         <input [(ngModel)]="tripForm.endDate" (ngModelChange)="onDateChange()" type="date"
-                            class="form-control" name="endDate"
-                            aria-label="End date">
+                            class="form-control" name="endDate" aria-label="End date" />
                     </div>
                 </div>
             </div>
         </div>
 
-        <a><button class="btn btn-primary mx-2"
-                (click)="updateTripData()">Potvrdit</button></a>
-
-        <br><br>
-        <!-- Success message -->
-        <div *ngIf="saveSuccess" class="alert alert-success mb-3" role="alert">
-            Změny byly úspěšně uloženy.
+        <div class="mt-4 text-end">
+            <button class="btn btn-primary mx-2" (click)="updateTripData()">
+                Potvrdit
+            </button>
         </div>
 
+        <div *ngIf="saveSuccess" class="alert alert-success mt-4 mb-3" role="alert">
+            Změny byly úspěšně uloženy.
+        </div>
     </div>
 </div>
