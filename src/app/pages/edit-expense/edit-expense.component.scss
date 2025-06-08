@@ -1,0 +1,42 @@
+        .bg-selected {
+            background-color: #3e405a !important;
+            border-color: #3e405a !important;
+        }
+        
+        .btn-outline-selected {
+            border-color: #3e405a !important;
+            color: #3e405a !important;
+        }
+        
+        .btn-outline-selected:hover {
+            background-color: #3e405a !important;
+            border-color: #3e405a !important;
+            color: white !important;
+        }
+        
+        .divider {
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .dashboard-content {
+            min-height: 100vh;
+        }
+        
+        .user-splits-container {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .text-danger {
+            color: #dc3545 !important;
+            font-size: 0.875em;
+        }
+        
+        .text-success {
+            color: #198754 !important;
+        }
+        
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }

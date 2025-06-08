@@ -49,7 +49,9 @@ export class AddExpenseComponent implements OnInit {
   userSplits: UserSplit[] = []; // Keep this for display purposes
   splitError: string = '';
   isSettled: boolean = false;
-
+  isEditMode: boolean = false; // Set to true when editing existing expense
+  currentExpenseId?: number; 
+  
   constructor(
     private fb: FormBuilder,
     private expenseService: ExpenseService,
@@ -122,11 +124,6 @@ export class AddExpenseComponent implements OnInit {
       this.isSettled = false;
     }
   }
-
-  setIsSettled(settled: boolean): void {
-    this.isSettled = settled;
-  }
-
   private initializeUserSplits(): void {
     // Clear existing FormArray
     this.userSplitsFormArray.clear();
@@ -513,4 +510,53 @@ export class AddExpenseComponent implements OnInit {
 trackByUserId(index: number, control: AbstractControl): any {
   return control.get('userId')?.value;
 }
+
+setIsSettled(settled: boolean): void {
+  this.isSettled = settled;
+
+}
+
+// Add this new method for updating settlement status of existing expenses
+updateExpenseSettlement(expenseId: number, settled: boolean): void {
+  this.isSubmitting = true;
+  this.clearErrors();
+
+  const serviceCall = settled 
+    ? this.expenseService.settleExpenseSplits(expenseId)
+    : this.expenseService.unsettleExpenseSplits(expenseId);
+
+  serviceCall.subscribe({
+    next: () => {
+      this.isSubmitting = false;
+      this.isSettled = settled;
+      this.successMessage = settled 
+        ? 'Výdaj byl označen jako vyrovnaný!' 
+        : 'Výdaj byl označen jako nevyrovnaný!';
+      
+      // Optional: Refresh data or navigate back
+      setTimeout(() => {
+        this.successMessage = '';
+      }, 3000);
+    },
+    error: (error) => {
+      this.isSubmitting = false;
+      this.errorMessage = 'Chyba při aktualizaci stavu vyrovnání: ' + 
+        (error.error?.message || error.message || 'Neznámá chyba');
+      console.error('Settlement update error:', error);
+    }
+  });
+}
+
+// If you're editing an existing expense, you'll need to load its current settlement status
+loadExpenseSettlementStatus(expenseId: number): void {
+  this.expenseService.getExpenseWithSettlementStatus(expenseId).subscribe({
+    next: (result) => {
+      this.isSettled = result.isSettled;
+    },
+    error: (error) => {
+      console.error('Error loading settlement status:', error);
+    }
+  });
+}
+
 }

@@ -5,6 +5,7 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { AttractionInfoComponent } from './pages/attraction-info/attraction-info.component';
 import { SurveyComponent } from './pages/survey/survey.component';
+import { EditExpenseComponent } from './pages/edit-expense/edit-expense.component';
 import { InspirationAttractionsComponent } from './pages/inspiration-attractions/inspiration-attractions.component';
 import { InspirationDestinationsComponent } from './pages/inspiration-destinations/inspiration-destinations.component';
 import { JoinGroupComponent } from './pages/join-group/join-group.component';
@@ -29,12 +30,12 @@ export const routes: Routes = [
         { path: 'attractioninfo/:id', component: AttractionInfoComponent},
         { path: 'trip-itinerary', component: TripItineraryComponent},
         { path: 'trip/:tripId/expenses/add', component: AddExpenseComponent},
+        { path: 'trip/:tripId/expenses/edit-expense/:expenseId', component: EditExpenseComponent},
         { path: 'day-itinerary', component: DayItineraryComponent},
         { path: 'friends', component: FriendsComponent},
     ]},
 
     // Dynamic
     { path: 'trip-itinerary/:id', component: TripItineraryComponent},
-
     {path: '**', redirectTo: '/login'}
 ];

@@ -163,12 +163,22 @@
                         <div class="d-flex float-end align-items-center mb-2">
                           <h6>Je to už vyrovnané?</h6>
                           <div>
-                            <button type="button" class="btn ms-2 btn-sm" 
-                                    [ngClass]="{'btn-success': isSettled, 'btn-outline-success': !isSettled}" 
-                                    (click)="setIsSettled(true)">ANO</button>
-                            <button type="button" class="btn btn-sm ms-2" 
-                                    [ngClass]="{'btn-danger': !isSettled, 'btn-outline-danger': isSettled}" 
-                                    (click)="setIsSettled(false)">NE</button>
+                            <ng-container *ngIf="!isEditMode">
+                                    <button type="button" 
+                                            class="btn ms-2 btn-sm" 
+                                            [ngClass]="{'btn-success': isSettled, 'btn-outline-success': !isSettled}" 
+                                            (click)="setIsSettled(true)"
+                                            [disabled]="isSubmitting">
+                                      ANO
+                                    </button>
+                                    <button type="button" 
+                                            class="btn btn-sm ms-2" 
+                                            [ngClass]="{'btn-danger': !isSettled, 'btn-outline-danger': isSettled}" 
+                                            (click)="setIsSettled(false)"
+                                            [disabled]="isSubmitting">
+                                      NE
+                                    </button>
+                                  </ng-container>
                           </div>
                         </div>
                       </div>

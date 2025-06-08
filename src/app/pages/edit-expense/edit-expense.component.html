@@ -1,0 +1,314 @@
+<!-- edit-expense.component.html -->
+<div class="container-fluid p-0">
+  <div class="row g-0">
+    <div class="col-md-3 col-lg-2">
+      <!-- Sidebar placeholder -->
+      <app-itinerary-sidebar></app-itinerary-sidebar>
+    </div>
+
+    <div class="col-lg-10 p-5" style="background-image: url('/survey-bg.png'); background-size: cover; background-position: center top; background-repeat: no-repeat;">
+      <div class="dashboard-content p-4 w-100 d-flex flex-column justify-content-center">
+        <div class="d-flex justify-content-between align-items-center pb-0">
+          <h1 class="mb-0">Upravit výdaj</h1>
+        </div>
+        <div class="divider mb-4"></div>
+
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()">
+              <div class="row">
+                <div [class]="currentExpenseType === 'shared' ? 'col-md-6' : 'col-12'" id="mainColumn">
+                  <!-- Expense Type Selection -->
+                  <div class="form-group mb-3">
+                    <div class="btn-group w-100" role="group">
+                      <input 
+                        type="radio" 
+                        class="btn-check" 
+                        name="expenseType" 
+                        id="personalExpense" 
+                        [checked]="currentExpenseType === 'personal'"
+                        (change)="onExpenseTypeChange('personal')">
+                      <label 
+                        [class]="'btn text-white ' + (currentExpenseType === 'personal' ? 'bg-selected' : 'btn-outline-selected')" 
+                        for="personalExpense">
+                        Osobní výdaj
+                      </label>
+
+                      <input 
+                        type="radio" 
+                        class="btn-check" 
+                        name="expenseType" 
+                        id="sharedExpense" 
+                        [checked]="currentExpenseType === 'shared'"
+                        (change)="onExpenseTypeChange('shared')">
+                      <label 
+                        [class]="'btn text-white ' + (currentExpenseType === 'shared' ? 'bg-selected' : 'btn-outline-selected')" 
+                        for="sharedExpense">
+                        Sdílený výdaj
+                      </label>
+                    </div>
+                    <small class="form-text text-muted">
+                      Osobní výdaj: Pouze pro vás | Sdílený výdaj: Rozdělený mezi více lidí
+                    </small>
+                  </div>
+
+                  <!-- Name Field -->
+                  <div class="form-group mb-3">
+                    <label for="name">Název</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="name" 
+                      formControlName="name"
+                      [class.is-invalid]="isFieldInvalid('name')">
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('name')">
+                      {{ getFieldError('name') }}
+                    </div>
+                  </div>
+
+                  <!-- Category Selection -->
+                  <div class="form-group mb-3">
+                    <label for="expenseCategory">Výběr kategorie výdaje</label>
+                    <select 
+                      class="form-select" 
+                      id="expenseCategory" 
+                      formControlName="categoryId"
+                      [class.is-invalid]="isFieldInvalid('categoryId')">
+                      <option value="">Vyberte kategorii</option>
+                      <option *ngFor="let category of categories" [value]="category.id">
+                        {{ category.name }}
+                      </option>
+                    </select>
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('categoryId')">
+                      {{ getFieldError('categoryId') }}
+                    </div>
+                  </div>
+
+                  <!-- Paid By Selection -->
+                  <div class="form-group mb-3">
+                    <label for="paidBy">Kdo uhradil platbu</label>
+                    <select 
+                      class="form-select" 
+                      id="paidBy" 
+                      formControlName="paidByUserId"
+                      [class.is-invalid]="isFieldInvalid('paidByUserId')">
+                      <option value="">Vyberte osobu</option>
+                      <option *ngFor="let user of users" [value]="user.id">
+                        {{ user.name }}
+                      </option>
+                    </select>
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('paidByUserId')">
+                      {{ getFieldError('paidByUserId') }}
+                    </div>
+                  </div>
+
+                  <!-- Amount Field -->
+                  <div class="form-group mb-3">
+                    <label for="amount">Zaplacená suma</label>
+                    <div class="input-group">
+                      <input 
+                        type="number" 
+                        class="form-control" 
+                        id="amount" 
+                        placeholder="0.00" 
+                        step="0.01" 
+                        formControlName="amount"
+                        [class.is-invalid]="isFieldInvalid('amount')">
+                      <select class="form-select" style="max-width: 80px;" formControlName="currency">
+                        <option value="CZK">CZK</option>
+                        <option value="EUR">EUR</option>
+                        <option value="USD">USD</option>
+                      </select>
+                    </div>
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('amount')">
+                      {{ getFieldError('amount') }}
+                    </div>
+                  </div>
+
+                  <!-- Description Field -->
+                  <div class="form-group">
+                    <label for="description">Popis</label>
+                    <textarea 
+                      class="form-control" 
+                      id="description" 
+                      rows="3" 
+                      formControlName="description">
+                    </textarea>
+                  </div>
+                </div>
+
+                <!-- Shared Expense Column -->
+                <div class="col-md-6" *ngIf="currentExpenseType === 'shared'" id="sharedExpenseColumn">
+                  <h4 class="ps-3 mb-0">Rozdělení výdaje</h4>
+                  <div class="card-body">
+                    <!-- Split Type Selection -->
+                    <div class="mb-3">
+                      <label class="form-label">Způsob rozdělení</label>
+                      <div class="btn-group w-100" role="group">
+                        <input 
+                          type="radio" 
+                          class="btn-check" 
+                          name="splitType" 
+                          id="equalSplit" 
+                          [checked]="currentSplitType === 'equal'"
+                          (change)="onSplitTypeChange('equal')">
+                        <label 
+                          [class]="'btn ' + (currentSplitType === 'equal' ? 'bg-selected' : 'btn-outline-selected')" 
+                          for="equalSplit">
+                          Rovným dílem
+                        </label>
+
+                        <input 
+                          type="radio" 
+                          class="btn-check" 
+                          name="splitType" 
+                          id="customSplit" 
+                          [checked]="currentSplitType === 'custom'"
+                          (change)="onSplitTypeChange('custom')">
+                        <label 
+                          [class]="'btn ' + (currentSplitType === 'custom' ? 'bg-selected' : 'btn-outline-selected')" 
+                          for="customSplit">
+                          Vlastní částky
+                        </label>
+                      </div>
+                    </div>
+
+                    <!-- Select/Deselect All Buttons -->
+                    <div class="d-flex justify-content-end mb-3">
+                      <button 
+                        type="button" 
+                        class="btn btn-sm btn-outline-secondary me-1" 
+                        (click)="selectAllUsers()">
+                        Vybrat vše
+                      </button>
+                      <button 
+                        type="button" 
+                        class="btn btn-sm btn-outline-secondary" 
+                        (click)="deselectAllUsers()">
+                        Zrušit výběr
+                      </button>
+                    </div>
+
+                    <!-- User Splits Container -->
+                    <div class="user-splits-container" id="userSplitsContainer">
+                      <div 
+                        *ngFor="let split of userSplits; let i = index" 
+                        class="d-flex align-items-center mb-2 p-2 border rounded">
+                        <div class="form-check me-3">
+                          <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            [id]="'user-' + i"
+                            [checked]="split.selected"
+                            (change)="toggleUserSelection(i)">
+                          <label class="form-check-label" [for]="'user-' + i">
+                            {{ split.userName }}
+                          </label>
+                        </div>
+                        <div class="flex-grow-1 text-end">
+                          <input 
+                            *ngIf="currentSplitType === 'custom'" 
+                            type="number" 
+                            class="form-control form-control-sm" 
+                            [value]="split.amount.toFixed(2)"
+                            [disabled]="!split.selected"
+                            [style.background-color]="split.selected ? '' : '#f8f9fa'"
+                            [style.max-width.px]="100"
+                            (input)="updateCustomAmount(i, $any($event.target).value)"
+                            step="0.01" 
+                            min="0" 
+                            placeholder="0.00">
+                          <small 
+                            *ngIf="currentSplitType === 'equal'" 
+                            class="text-muted">
+                            {{ split.amount.toFixed(2) }} {{ getCurrency() }}
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Totals Summary -->
+                    <div class="mt-3 p-3 bg-light rounded">
+                      <div class="d-flex justify-content-between mb-1">
+                        <small>Celková částka:</small>
+                        <small class="fw-bold">{{ getTotalAmount().toFixed(2) }} {{ getCurrency() }}</small>
+                      </div>
+                      <div class="d-flex justify-content-between">
+                        <small>Rozděleno:</small>
+                        <small [class]="isSplitMatching() ? 'text-success' : 'text-danger'">
+                          {{ getSplitAmount().toFixed(2) }} {{ getCurrency() }}
+                        </small>
+                      </div>
+                    </div>
+
+                    <!-- Split Error Alert -->
+                    <div class="alert alert-warning mt-2 py-2" *ngIf="splitErrorMessage">
+                      <small>
+                        <i class="fas fa-exclamation-triangle me-1"></i>
+                        {{ splitErrorMessage }}
+                      </small>
+                    </div>
+
+                    <!-- Settlement Status -->
+                    <div class="mt-3">
+                      <div class="d-flex float-end align-items-center mb-2">
+                        <h6>Je to už vyrovnané?</h6>
+                        <div>
+                          <button 
+                            type="button" 
+                            [class]="'btn ms-2 btn-sm ' + (isSettled ? 'btn-success' : 'btn-outline-success')"
+                            (click)="setSettlement(true)">
+                            ANO
+                          </button>
+                          <button 
+                            type="button" 
+                            [class]="'btn btn-sm ms-2 ' + (!isSettled ? 'btn-danger' : 'btn-outline-danger')"
+                            (click)="setSettlement(false)">
+                            NE
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Error Message -->
+              <div class="alert alert-danger mt-3" *ngIf="errorMessage">
+                <i class="fas fa-exclamation-circle me-2"></i>{{ errorMessage }}
+              </div>
+
+              <!-- Success Message -->
+              <div class="alert alert-success mt-3" *ngIf="successMessage">
+                <i class="fas fa-check-circle me-2"></i>{{ successMessage }}
+              </div>
+
+              <!-- Form Actions -->
+              <div class="d-flex justify-content-end mt-4">
+                <button 
+                  type="button" 
+                  class="btn btn-outline-secondary me-2" 
+                  (click)="goBack()">
+                  Zpět
+                </button>
+                <button 
+                  type="submit" 
+                  class="btn btn-primary" 
+                  style="border: none; background-color: #3e405a;"
+                  [disabled]="isLoading">
+                  <span 
+                    class="spinner-border spinner-border-sm me-1" 
+                    *ngIf="isLoading" 
+                    role="status" 
+                    aria-hidden="true">
+                  </span>
+                  {{ isLoading ? 'Ukládání...' : 'Uložit změny' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

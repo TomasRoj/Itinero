@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, map, catchError, of, forkJoin, throwError, switchMap, tap } from 'rxjs';
-
 import { Trip } from './trip-service.service';
 import { TripMember } from './trip-member.service';
 import { User, UserService } from './user-service.service';
@@ -26,13 +25,6 @@ export interface ExpenseCategory {
   id: number;
   name: string;
 }
-export interface CreateMultipleExpenseSplitsRequest {
-  userIds: number[];
-  totalAmount: number;
-  splitType: string;
-  userAmounts?: { [key: string]: number };
-  isSettled?: boolean;
-}
 
 export interface ExpenseSplit {
   id?: number;
@@ -49,6 +41,7 @@ export interface CreateMultipleExpenseSplitsRequest {
   totalAmount: number;
   splitType: string;
   userAmounts?: { [key: string]: number };
+  isSettled?: boolean; 
 }
 
 export interface ExpenseWithSplits {
@@ -90,6 +83,97 @@ export class ExpenseService {
   getAllCurrencies(): Currency[] {
     return this.currencies;
   }
+  //#region splits
+  getAllSplits(): Observable<ExpenseSplit[]> {
+    return this.http.get<ExpenseSplit[]>(this.splitsUrl);
+  }
+
+unsettleExpenseSplits(expenseId: number): Observable<void> {
+  return this.http.put<void>(`${this.splitsUrl}/UnsettleExpense/${expenseId}`, {}, this.httpOptions)
+    .pipe(
+      catchError(error => {
+        console.error('Error unsettling expense splits:', error);
+        return throwError(() => error);
+      })
+    );
+}
+getExpensesByTripIdWithSettlementStatus(tripId: number): Observable<{expense: Expense, isSettled: boolean}[]> {
+  return this.http.get<{expense: Expense, isSettled: boolean}[]>(`${this.expensesUrl}/trip/${tripId}/with-settlement-status`);
+}
+
+  getSplitById(id: number): Observable<ExpenseSplit> {
+    return this.http.get<ExpenseSplit>(`${this.splitsUrl}/${id}`);
+  }
+getExpenseWithSettlementStatus(expenseId: number): Observable<{expense: Expense, isSettled: boolean}> {
+  return this.http.get<{expense: Expense, isSettled: boolean}>(`${this.expensesUrl}/${expenseId}/settlement-status`);
+}
+  getSplitsByExpenseId(expenseId: number): Observable<ExpenseSplit[]> {
+    return this.http.get<ExpenseSplit[]>(`${this.splitsUrl}/expense/${expenseId}`);
+  }
+
+  getSplitsByUserId(userId: number): Observable<ExpenseSplit[]> {
+    return this.http.get<ExpenseSplit[]>(`${this.splitsUrl}/user/${userId}`);
+  }
+
+  getSplitsByTripId(tripId: number): Observable<ExpenseSplit[]> {
+    return this.http.get<ExpenseSplit[]>(`${this.splitsUrl}/trip/${tripId}`);
+  }
+
+  createMultipleExpenseSplits(expenseId: number, request: CreateMultipleExpenseSplitsRequest): Observable<ExpenseSplit[]> {
+    return this.http.post<ExpenseSplit[]>(`${this.splitsUrl}/CreateMultipleForExpense/${expenseId}`, request, this.httpOptions)
+      .pipe(
+        tap(response => console.log('Multiple expense splits created:', response)),
+        catchError(error => {
+          console.error('Error creating multiple expense splits:', error);
+          return throwError(() => error);
+        })
+      );
+  }
+
+  updateSplit(id: number, split: ExpenseSplit): Observable<void> {
+    return this.http.put<void>(`${this.splitsUrl}/${id}`, split, this.httpOptions);
+  }
+
+  deleteSplit(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.splitsUrl}/${id}`);
+  }
+
+  settleExpenseSplits(expenseId: number): Observable<void> {
+    return this.http.put<void>(`${this.splitsUrl}/SettleExpense/${expenseId}`, {}, this.httpOptions)
+      .pipe(
+        tap(response => console.log('Expense splits settled successfully:', response)),
+        catchError(error => {
+          console.error('Error settling expense splits:', error);
+          return throwError(() => error);
+        })
+      );
+  }
+  calculateBalances(tripId: number): Observable<{ [userId: number]: number }> {
+    return this.getSplitsByTripId(tripId).pipe(
+      switchMap(splits => {
+        return this.getExpensesByTripId(tripId).pipe(
+          map(expenses => {
+            const balances: { [userId: number]: number } = {};
+            
+            expenses.forEach(expense => {
+              const paidBy = expense.paid_by_user_id;
+              if (!balances[paidBy]) balances[paidBy] = 0;
+              balances[paidBy] += expense.amount;
+            });
+            
+            splits.forEach(split => {
+              const owedBy = split.user_Id;
+              if (!balances[owedBy]) balances[owedBy] = 0;
+              balances[owedBy] -= split.amount;
+            });
+            
+            return balances;
+          })
+        );
+      })
+    );
+  }
+  //#endregion splits
 
   //#region expenses
   getAllExpenses(): Observable<Expense[]> {
@@ -165,74 +249,4 @@ export class ExpenseService {
   }
   //#endregion
 
-  //#region splits
-  getAllSplits(): Observable<ExpenseSplit[]> {
-    return this.http.get<ExpenseSplit[]>(this.splitsUrl);
-  }
-
-  getSplitById(id: number): Observable<ExpenseSplit> {
-    return this.http.get<ExpenseSplit>(`${this.splitsUrl}/${id}`);
-  }
-
-  getSplitsByExpenseId(expenseId: number): Observable<ExpenseSplit[]> {
-    return this.http.get<ExpenseSplit[]>(`${this.splitsUrl}/expense/${expenseId}`);
-  }
-
-  getSplitsByUserId(userId: number): Observable<ExpenseSplit[]> {
-    return this.http.get<ExpenseSplit[]>(`${this.splitsUrl}/user/${userId}`);
-  }
-
-  getSplitsByTripId(tripId: number): Observable<ExpenseSplit[]> {
-    return this.http.get<ExpenseSplit[]>(`${this.splitsUrl}/trip/${tripId}`);
-  }
-
-  createMultipleExpenseSplits(expenseId: number, request: CreateMultipleExpenseSplitsRequest): Observable<ExpenseSplit[]> {
-    return this.http.post<ExpenseSplit[]>(`${this.splitsUrl}/CreateMultipleForExpense/${expenseId}`, request, this.httpOptions)
-      .pipe(
-        tap(response => console.log('Multiple expense splits created:', response)),
-        catchError(error => {
-          console.error('Error creating multiple expense splits:', error);
-          return throwError(() => error);
-        })
-      );
-  }
-
-  updateSplit(id: number, split: ExpenseSplit): Observable<void> {
-    return this.http.put<void>(`${this.splitsUrl}/${id}`, split, this.httpOptions);
-  }
-
-  deleteSplit(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.splitsUrl}/${id}`);
-  }
-
-  settleExpenseSplits(expenseId: number): Observable<void> {
-    return this.http.put<void>(`${this.splitsUrl}/settleexpense/${expenseId}`, {}, this.httpOptions);
-  }
-
-  calculateBalances(tripId: number): Observable<{ [userId: number]: number }> {
-    return this.getSplitsByTripId(tripId).pipe(
-      switchMap(splits => {
-        return this.getExpensesByTripId(tripId).pipe(
-          map(expenses => {
-            const balances: { [userId: number]: number } = {};
-            
-            expenses.forEach(expense => {
-              const paidBy = expense.paid_by_user_id;
-              if (!balances[paidBy]) balances[paidBy] = 0;
-              balances[paidBy] += expense.amount;
-            });
-            
-            splits.forEach(split => {
-              const owedBy = split.user_Id;
-              if (!balances[owedBy]) balances[owedBy] = 0;
-              balances[owedBy] -= split.amount;
-            });
-            
-            return balances;
-          })
-        );
-      })
-    );
-  }
-  //#endregion splits
 }
